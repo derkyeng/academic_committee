@@ -16,18 +16,20 @@ const supabase = createClient(
 
 function randomInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+} 
 
 const getData = async () => {
-  let { data, error } = await supabase
-    .from('testingData')
+  let { data: committees, error } = await supabase
+    .from('committees')
     .select('*')
   if (error) {
     console.error(error)
     return
   }
-  console.log(data)
+  console.log(committees)
 }
+
+getData()
 
 const insertData = async (name) => {
   let { data, error } = await supabase
