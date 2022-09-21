@@ -23,7 +23,7 @@ const Navigationbar = ({ session }) => {
           ) : (
             <Navbar.Collapse style={{ marginTop: "9px", marginRight: "24px" }}>
               <Navbar.Link href="/">Dashboard</Navbar.Link>
-              <Navbar.Link href="/">Committees</Navbar.Link>
+              <Navbar.Link href="/committees">Committees</Navbar.Link>
               <Navbar.Link href="/account">Account</Navbar.Link>
             </Navbar.Collapse>
           )}
