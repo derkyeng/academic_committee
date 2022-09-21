@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
+import { Navbar, Button, TextInput, Label, Card } from "flowbite-react";
 
 export default function Account({ session }) {
   const [loading, setLoading] = useState(true);
@@ -81,47 +82,41 @@ export default function Account({ session }) {
   }
 
   return (
-    <div className="form-widget">
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session?.user.email} disabled />
+    <div className="container mx-auto py-4">
+      <div className="mt-2 ">
+        <Label htmlFor="email">Email</Label>
+        <TextInput
+          id="email"
+          type="text"
+          value={session?.user.email}
+          disabled
+        />
       </div>
-      <div>
-        <label htmlFor="username">Name</label>
-        <input
+      <div className="mt-2">
+        <Label htmlFor="username">Name</Label>
+        <TextInput
           id="username"
           type="text"
           value={username || ""}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div>
-        <label htmlFor="website">Website</label>
-        <input
-          id="website"
-          type="website"
-          value={website || ""}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <button
-          className="button primary block"
-          onClick={() => updateProfile({ username, website, avatar_url })}
-          disabled={loading}
-        >
-          {loading ? "Loading ..." : "Update"}
-        </button>
-      </div>
-
-      <div>
-        <button
+      <div className="mt-4 flex">
+        <div className="pr-4">
+          <Button
+            className="button primary block"
+            onClick={() => updateProfile({ username, website, avatar_url })}
+            disabled={loading}
+          >
+            {loading ? "Loading ..." : "Update"}
+          </Button>
+        </div>
+        <Button
           className="button block"
           onClick={() => supabase.auth.signOut()}
         >
           Sign Out
-        </button>
+        </Button>
       </div>
     </div>
   );
