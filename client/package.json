@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.0.0-rc.10",
+    "@supabase/ui": "^0.36.5",
     "axios": "^0.27.2",
+    "flowbite": "^1.5.3",
+    "flowbite-react": "^0.1.10",
     "next": "12.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
