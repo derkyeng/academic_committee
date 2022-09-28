@@ -1,8 +1,14 @@
 .item {
-    text-align: center;
-    border-style: dashed;
+    border-style: solid;
+    border-radius: 25px;
+    border-width: 2px;
+    border-color: black;
+    padding: 2em;
+    margin: 2em;
 }
 
-.name {
-    color: red;
+.committee_name {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: large;
+    font-weight: bold;
 }

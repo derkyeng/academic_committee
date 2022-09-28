@@ -1,10 +1,11 @@
 import React from 'react'
-import './Committee.module.css'
+import styles from './Committee.module.css'
 
 function Committee({committee}) {
     return(
-        <div className="item">
-          <p className="name">{committee.display_name}</p>
+        <div className={styles.item}>
+          <p className={styles.committee_name}>{committee.display_name}</p>
+          <p>{committee.description}</p>
         </div>
       );
 }
