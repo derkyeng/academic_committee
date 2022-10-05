@@ -67,6 +67,13 @@ const Navigationbar = ({ session }) => {
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={() => {
+                  router.push("/committees");
+                }}
+              >
+                Committees
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
                   router.push("/account");
                 }}
               >
