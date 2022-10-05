@@ -59,12 +59,10 @@ function committees() {
       committees.map((committee_item) => 
         <Committee committee={committee_item} key={committee_item.id}/>
       )}
-        <div style={BUTTON_WRAPPER_STYLES} onClick={() => console.log('clicked')}>
+      
         <button onClick={() => setIsOpen(true)}>Open Modal</button>
-
         <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-        </Modal>
-      </div>
+        </Modal>    
     </div>
   )
 }
