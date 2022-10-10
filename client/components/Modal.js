@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState, useEffect } from "react";
 
 const MODAL_STYLES = {
   position: 'fixed',
@@ -21,14 +22,42 @@ const OVERLAY_STYLES = {
 }
 
 export default function Modal({ open, children, onClose }) {
+  const [committeeName, setCommitteeName] = useState("");
+  const [committeeDescription, setCommitteeDescription] = useState("");
+
   if (!open) return null
 
   return  (
     <>
       <div style={OVERLAY_STYLES} onClick={onClose}/>
       <div style={MODAL_STYLES}>
-        <button onClick={onClose}>Close Modal</button>
-        {children}
+        <form onSubmit={console.log("submit")}>
+          <label>
+            Name: 
+            <input 
+              type="text" 
+              name="name"
+              required
+              value={committeeName}
+              onChange={(e) => {setCommitteeName(e.target.value)}}
+            />
+          </label>
+          <br/>
+          <label>
+            Description:
+            <textarea
+              type="text"
+              required
+              value={committeeDescription}
+              onChange={(e) => setCommitteeDescription(e.target.value)}
+            >
+            </textarea>        
+          </label>
+          <br/>
+          <button className="submitBtn" type="submit" onClick={onClose}>
+            Submit
+          </button>
+        </form>
       </div>
     </>
   )
