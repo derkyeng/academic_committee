@@ -19,7 +19,7 @@ export default function FacultySearch({ session }) {
 
     return(
         <div>
-            <h2 style={{fontSize: 40}}>Faculty Search</h2>
+            <h2 style={{fontSize: 30}}>Faculty Search</h2>
             <p>
                 Fill out the fields below In order to find 
                 faculty with specific committee interests,
