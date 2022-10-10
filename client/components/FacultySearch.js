@@ -56,6 +56,20 @@ export default function FacultySearch({ session }) {
                 </Select>
             </div>
 
+            <div className="input-field">
+                <form>
+                    <Label htmlFor="facultyName">
+                        Full Name
+                    </Label>
+                    <input 
+                        id="facultyName" 
+                        type="text" 
+                        name="name"
+                        placeholder="N/A"
+                        style={{display: "flex"}}/>
+                </form>
+            </div>
+
             <Button
                 className="button primary block"
                 onClick={() => SearchDatabase()}
