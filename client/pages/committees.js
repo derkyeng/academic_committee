@@ -114,7 +114,7 @@ function committees() {
     let { data: profiles, error } = await supabase
       .from('profiles')
       .select('id')
-      .where(`id=${profile_id}`)
+      .eq('id', profile_id)
     if (error) {
       console.error(error)
       return
