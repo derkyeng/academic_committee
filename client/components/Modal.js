@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from "react";
+import styles from './Modal.module.css'
 
 const MODAL_STYLES = {
   position: 'fixed',
@@ -21,9 +22,20 @@ const OVERLAY_STYLES = {
   zIndex: 1000
 }
 
-export default function Modal({ open, children, onClose }) {
+export default function Modal({ open, onClose, onSubmit }) {
   const [committeeName, setCommitteeName] = useState("");
   const [committeeDescription, setCommitteeDescription] = useState("");
+
+  const validateForm = (title, description) => {
+    if (title.length === 0 || description.length === 0){
+      return
+    }
+    else{
+      onSubmit({committeeName, committeeDescription});
+      setCommitteeName("");
+      setCommitteeDescription("");
+    }
+  }
 
   if (!open) return null
 
@@ -31,10 +43,11 @@ export default function Modal({ open, children, onClose }) {
     <>
       <div style={OVERLAY_STYLES} onClick={onClose}/>
       <div style={MODAL_STYLES}>
-        <form onSubmit={console.log("submit")}>
+        <form>
           <label>
             Name: 
             <input 
+              className={styles.name}
               type="text" 
               name="name"
               required
@@ -46,6 +59,7 @@ export default function Modal({ open, children, onClose }) {
           <label>
             Description:
             <textarea
+              className={styles.description}
               type="text"
               required
               value={committeeDescription}
@@ -54,9 +68,9 @@ export default function Modal({ open, children, onClose }) {
             </textarea>        
           </label>
           <br/>
-          <button className="submitBtn" type="submit" onClick={onClose}>
-            Submit
-          </button>
+          <button type="button" onClick={() => {
+            validateForm(committeeName, committeeDescription);
+          }}>Submit</button>
         </form>
       </div>
     </>

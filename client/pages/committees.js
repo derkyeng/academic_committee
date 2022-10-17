@@ -32,22 +32,20 @@ function committees() {
     setCommittees(committees_data)
   }
   
-  
-  const insertData = async (name) => {
+  const insertData = async (name, description) => {
     let { data, error } = await supabase
       .from('committees')
       .insert([
-        { display_name: "More Committee"},
+        { display_name: name,
+          description: description
+        },
       ])
     if (error) {
       console.error(error)
       return
     }
     console.log(data)
-  }
-
-  const enterToDatabase = () => {
-    insertData()
+    getData()
   }
 
   useEffect(() => {
@@ -62,8 +60,11 @@ function committees() {
       )}
       
         <button onClick={() => setIsOpen(true)}>Open Modal</button>
-        <Modal open={isOpen} onClose={() => setIsOpen(false)}>
-        </Modal>    
+        <Modal open={ isOpen } onClose={() => setIsOpen(false)} onSubmit={(list) => {
+          setIsOpen(false);
+          console.log(list) 
+          insertData(list.committeeName, list.committeeDescription) 
+        }}/>
     </div>
   )
 }

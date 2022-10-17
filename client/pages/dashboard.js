@@ -2,8 +2,11 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import FacultySearch from "../components/FacultySearch";
+import User from "../components/User";
 
 function dashboard() {
+
+    const [profiles, setProfiles] = useState([]);
 
     const getCommitteeDisplayNames = async () => {
         let { data: committees, error } = await supabase
@@ -16,7 +19,7 @@ function dashboard() {
         console.log(committees)
       }
       
-      getCommitteeDisplayNames()
+    //  getCommitteeDisplayNames()
       
     const getCommitteeDescriptions = async () => {
         let { data: committees, error } = await supabase
@@ -29,7 +32,7 @@ function dashboard() {
         console.log(committees)
       }
       
-      getCommitteeDescriptions()
+    //  getCommitteeDescriptions()
       
     const getCommitteeRequiredRanks = async () => {
         let { data: committees, error } = await supabase
@@ -42,7 +45,7 @@ function dashboard() {
         console.log(committees)
     }
       
-    getCommitteeRequiredRanks()
+    // getCommitteeRequiredRanks()
       
     const getProfileUsernames = async () => {
         let { data: profiles, error } = await supabase
@@ -55,7 +58,7 @@ function dashboard() {
         console.log(profiles)
       }
       
-    getProfileUsernames()
+    // getProfileUsernames()
       
     const getProfileRanks = async () => {
         let { data: profiles, error } = await supabase
@@ -68,7 +71,7 @@ function dashboard() {
         console.log(profiles)
       }
       
-    getProfileRanks()
+    // getProfileRanks()
       
     const getProfileIds = async () => {
         let { data: profiles, error } = await supabase
@@ -81,7 +84,7 @@ function dashboard() {
         console.log(profiles)
       }
       
-    getProfileIds()
+    // getProfileIds()
       
     const getProfileWithId = async (profile_id) => {
         let { data: profiles, error } = await supabase
@@ -94,12 +97,31 @@ function dashboard() {
         }
     }
       
-    getProfileWithId()
+    // getProfileWithId()
+
+    const getData = async () => {
+      let { data: profiles_data, error } = await supabase
+        .from('profiles')
+        .select('*')
+      if (error) {
+        console.error(error)
+        return
+      }
+      setProfiles(profiles_data)
+    }
+    
+    useEffect(() => {
+      getData()
+    }, []);
     
   return (
     <div className="container" style={{ padding: "50px 0 100px 0" }}>
       <h1 style={{fontSize:50}}>Dashboard</h1>
       <FacultySearch></FacultySearch>
+      {profiles.length == 0 ? 'loading' : 
+      profiles.map((user) => 
+        <User user={user} key={user.key}></User>
+      )}
   </div>
   )
 }
