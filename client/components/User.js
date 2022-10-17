@@ -11,7 +11,6 @@ function User({user}) {
           <p>{user.description}</p>
           <Button
                 className="button primary block"
-                onClick={() => SearchDatabase()}
                 style={{marginLeft: "auto"}}
             >
                 Add to Ballot
