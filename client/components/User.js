@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import styles from './User.module.css'
 import {
+    Card,
     Button,
     Avatar
   } from "flowbite-react";
@@ -22,16 +23,18 @@ function User({user}) {
         getProfile()
     }, []);
     return(
-        <div className={styles.item}>
-            <Avatar img={profilePic} rounded={true} />
-            <p className={styles.profile_name}>{user.username}</p>
-            <p>{user.description}</p>
-            <Button
-                className="button primary block"
-                style={{marginLeft: "auto"}}
-            >
-            Add to Ballot
-            </Button>
+        <div className={styles.user}>
+            <Card href="#">
+                <Avatar img={profilePic} rounded={true} />
+                <p className={styles.profile_name}>{user.username}</p>
+                <p>{user.description}</p>
+                <Button
+                    className="button primary block"
+                    style={{marginLeft: "auto"}}
+                >
+                Add to Ballot
+                </Button>
+          </Card>
         </div>
       );
 }
