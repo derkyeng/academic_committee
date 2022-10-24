@@ -67,7 +67,7 @@ const Navigationbar = ({ session }) => {
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={() => {
-                  router.push("/committees");
+                  router.push("/committees/committees");
                 }}
               >
                 Committees

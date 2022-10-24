@@ -3,10 +3,12 @@ import styles from './Committee.module.css'
 import {
   Card
 } from "flowbite-react";
+import Link from 'next/link';
 
 function Committee({committee}) {
     return(
         <div className={styles.card}>
+          <Link href={'/committees/' + committee.id}>
           <Card href="#">
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
               {committee.display_name}
@@ -15,6 +17,7 @@ function Committee({committee}) {
               {committee.description}
             </p>
           </Card>
+          </Link>
         </div>
       );
 }

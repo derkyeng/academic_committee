@@ -1,8 +1,9 @@
-import Committee from "../components/Committee";
-import Modal from "../components/Modal";
+import Committee from "../../components/Committee";
+import Modal from "../../components/Modal";
 import React from 'react'
 import { useState, useEffect } from "react";
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "../../utils/supabaseClient";
+import Link from 'next/link'
 
 
 function committees() {
@@ -59,12 +60,12 @@ function committees() {
         <Committee committee={committee_item} key={committee_item.id}/>
       )}
       
-        <button onClick={() => setIsOpen(true)}>Open Modal</button>
-        <Modal open={ isOpen } onClose={() => setIsOpen(false)} onSubmit={(list) => {
-          setIsOpen(false);
-          console.log(list) 
-          insertData(list.committeeName, list.committeeDescription) 
-        }}/>
+      <button onClick={() => setIsOpen(true)}>Open Modal</button>
+      <Modal open={ isOpen } onClose={() => setIsOpen(false)} onSubmit={(list) => {
+        setIsOpen(false);
+        console.log(list) 
+        insertData(list.committeeName, list.committeeDescription) 
+      }}/>
     </div>
   )
 }
