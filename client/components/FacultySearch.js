@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
+import User from "../components/User";
 import {
   Navbar,
   Button,
@@ -12,9 +13,31 @@ import {
 } from "flowbite-react";
 
 export default function FacultySearch({ session }) {
+    const [profiles, setProfiles] = useState([])
+    const [name, setName] = useState("")
+    const [committeeInterest, setCommitteeInterest] = useState("")
+    const [rank, setRank] = useState("")
 
-    async function SearchDatabase(){
-        console.log("Howdy");
+
+    async function SearchDatabase(query_username="", query_rank="", query_committee=""){
+        let AllProfiles = []
+        let { data: profiles_data, error } = await supabase
+            .from('profiles')
+            .select('*')
+        if (error) {
+            console.error(error)
+            return
+        }
+        profiles_data.map((user) => {
+            if (query_username && user.username != query_username ){}
+            else if (query_rank && user.rank != query_rank) {}
+            else if (query_committee && user.committee != query_committee) {}
+            else{
+                AllProfiles.push(user)
+            }
+
+        })
+        setProfiles(AllProfiles)
     }
 
     return(
@@ -34,8 +57,10 @@ export default function FacultySearch({ session }) {
                 id="rank"
                 type="text"
                 style={{maxWidth: 200}}
+                value={rank || ""}
+                onChange={(event) => setRank(event.target.value)}
                 >
-                    <option value="NotApplicable">N/A</option>
+                    <option value="">N/A</option>
                     <option value="fullProfessorTenured">Full Professor (tenured)</option>
                     <option value="fullProfessorNotTenured">Full Professor (not tenured)</option>
                     <option value="AssistantProfessor">Assistant Professor</option>
@@ -48,9 +73,11 @@ export default function FacultySearch({ session }) {
                 <Select
                 id="committeeInterest"
                 type="text"
+                value={committeeInterest}
+                onChange={(event) => setCommitteeInterest(event.target.value)}
                 style={{maxWidth: 200}}
                 >
-                    <option value="NotApplicable">N/A</option>
+                    <option value="">N/A</option>
                     <option value="AcademicCommittee">Academic Committee</option>
                     <option value="FacultyAppeals">Faculty Appeals Board</option>
                 </Select>
@@ -65,6 +92,8 @@ export default function FacultySearch({ session }) {
                         id="facultyName" 
                         type="text" 
                         name="name"
+                        value={name || ""}
+                        onChange={(event) => setName(event.target.value)}
                         placeholder="N/A"
                         style={{display: "flex"}}/>
                 </form>
@@ -72,10 +101,14 @@ export default function FacultySearch({ session }) {
 
             <Button
                 className="button primary block"
-                onClick={() => SearchDatabase()}
+                onClick={() => SearchDatabase(name, rank, committeeInterest)}
             >
                 Search
             </Button>
+            {profiles.length == 0 ? 'loading' : 
+                profiles.map((user) => 
+                    <User user={user} key={user.key}></User>
+            )}
         </div>
     );
 }
