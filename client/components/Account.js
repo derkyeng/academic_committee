@@ -9,6 +9,7 @@ import {
   Select,
   FileInput,
   Checkbox,
+  ListGroup,
 } from "flowbite-react";
 
 export default function Account({ session }) {
@@ -16,6 +17,7 @@ export default function Account({ session }) {
   const [username, setUsername] = useState(null);
   const [rank, setRank] = useState(null);
   const [website, setWebsite] = useState(null);
+  const [committes, setCommittees] = useState([]);
   const [avatar_url, setAvatarUrl] = useState(null);
 
   useEffect(() => {
@@ -144,16 +146,20 @@ export default function Account({ session }) {
       {/* change past committees and committee interests to select multiple options */}
       <div className="mt-2 ">
         <Label htmlFor="past commitees">Past Committees</Label>
-        <Select
-          id="past_committee"
-          type="text"
-          // value={committee || ""}
-          // onChange={(e) => setRank(e.target.value)}
-        >
-          <option value="academic">Academic Committee</option>
-          <option value="athletic">Athletic Committee</option>
-          <option value="custodial">Custodial Faculty</option>
-        </Select>
+        <ListGroup>
+          <ListGroup.Item>
+            <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />
+            <Label pl={2}>Academic Committee</Label>
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />
+            <Label pl={2}>Athletic Committee</Label>
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />
+            <Label pl={2}>Custodial Faculty</Label>
+          </ListGroup.Item>
+        </ListGroup>
       </div>
 
       <div className="mt-2 ">
