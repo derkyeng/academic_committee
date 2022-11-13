@@ -22,14 +22,14 @@ export default function FacultySearch({ session }) {
     async function SearchDatabase(query_username="", query_rank="", query_committee=""){
         let AllProfiles = []
         let { data: profiles_data, error } = await supabase
-            .from('profiles')
+            .from('faculty_profiles')
             .select('*')
         if (error) {
             console.error(error)
             return
         }
         profiles_data.map((user) => {
-            if (query_username && user.username != query_username ){}
+            if (query_username && user.username != query_username){}
             else if (query_rank && user.rank != query_rank) {}
             else if (query_committee && user.committee != query_committee) {}
             else{
@@ -39,7 +39,6 @@ export default function FacultySearch({ session }) {
         })
         setProfiles(AllProfiles)
     }
-
     return(
         <div>
             <h2 style={{fontSize: 30}}>Faculty Search</h2>

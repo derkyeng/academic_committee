@@ -15,8 +15,13 @@ function User({user}) {
         const { data } = supabase.storage
           .from("avatars")
           .getPublicUrl(`avatars/${user.id}`);
-        console.log(data.publicUrl);
-        setProfilePic(data.publicUrl);
+        let isUndefined = (data.publicUrl.substr(data.publicUrl.length - 9));
+        if (isUndefined !== "undefined"){
+          setProfilePic(data.publicUrl);
+        } else {
+          console.log("problem")
+          setProfilePic("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png");
+        }
     }
 
     useEffect(() => {
@@ -24,10 +29,11 @@ function User({user}) {
     }, []);
     return(
         <div className={styles.user}>
-            <Card href="#">
+            <Card href="#" className={styles.card}>
                 <Avatar img={profilePic} rounded={true} />
-                <p className={styles.profile_name}>{user.username}</p>
-                <p>{user.description}</p>
+                <p className={styles.profile_name}>{user.chosenfirstname} {user.chosenlastname}</p>
+                <p>{user.title}</p>
+                <p>{user.Department}</p>
                 <Button
                     className="button primary block"
                     style={{marginLeft: "auto"}}
