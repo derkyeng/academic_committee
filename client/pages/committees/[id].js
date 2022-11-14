@@ -88,7 +88,7 @@ const Details = () => {
           <User user={user} key={user.id}></User>
         </div>}
       )}
-      <h1 className="big">Interested Members:</h1>
+      <h1 className="big">Interested Faculty:</h1>
       {interestedProfiles.length == 0 ? 'loading' : 
         interestedProfiles.map((user) => 
         {
