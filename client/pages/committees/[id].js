@@ -54,7 +54,8 @@ const Details = () => {
     }
     if (committee.interested) {
       for (let i = 0; i < committee.interested.length; i++) {
-        selectedInterest.push(await getProfileWithId(committee.interested[i]));
+        let profile = await getProfileWithId(committee.interested[i]);
+        selectedInterest.push(profile);
       }
     }
     setProfiles(selectProfiles);
@@ -91,7 +92,7 @@ const Details = () => {
           <h2>{committee.description}</h2>
           <h1 className="big">Current Members:</h1>
           {profiles.length == 0
-            ? "loading"
+            ? "Empty"
             : profiles.map((user) => {
                 return (
                   <div>
@@ -101,11 +102,16 @@ const Details = () => {
               })}
           <h1 className="big">Interested Faculty:</h1>
           {interestedProfiles.length == 0
-            ? "loading"
+            ? "Empty"
             : interestedProfiles.map((user) => {
                 return (
                   <div>
-                    <User user={user} key={user.id}></User>
+                    <User
+                      committee={committee}
+                      interested
+                      user={user}
+                      key={user.id}
+                    ></User>
                   </div>
                 );
               })}
