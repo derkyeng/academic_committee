@@ -51,7 +51,6 @@ export default function Account({ session }) {
         .select(`username, website, avatar_url, rank`)
         .eq("id", user.id)
         .single();
-
       if (error && status !== 406) {
         throw error;
       }
@@ -145,7 +144,7 @@ export default function Account({ session }) {
 
       {/* change past committees and committee interests to select multiple options */}
       <div className="mt-2 ">
-        <Label htmlFor="past commitees">Past Committees</Label>
+        <Label htmlFor="past committees">Past Committees</Label>
         <ListGroup>
           <ListGroup.Item>
             <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />

@@ -23,10 +23,13 @@ function Ballot({ ballot }) {
       ballot.candidates.map(async (candidate) => {
         let { data, error, status } = await supabase
           .from("profiles")
-          .select(`username, website, avatar_url, rank`)
+          .select(`username,website, avatar_url, rank`)
           .eq("id", candidate)
           .single();
-        console.log(data);
+        const storageData = supabase.storage
+          .from("avatars")
+          .getPublicUrl(`avatars/${candidate}`);
+        data.avatar_url = storageData.data.publicUrl;
         users.push(data);
         return data;
       })

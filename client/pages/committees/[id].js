@@ -1,65 +1,72 @@
-import React from 'react'
+import React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
-import User from '../../components/User';
-
-
+import User from "../../components/User";
 
 const Details = () => {
-  const [committee, setCommittee] = useState({});
+  const [committee, setCommittee] = useState(null);
   const [profiles, setProfiles] = useState([]);
   const [interestedProfiles, setInterestedProfiles] = useState([]);
   const router = useRouter();
 
-  const getCommitteeWithId = async (committee_id) => {
-    let { data: committee_data, error } = await supabase
-      .from('committees')
-      .select('*')
-      .eq('id', committee_id)
+  const getCommitteeWithId = async (committeeId) => {
+    let { data: committeeData, error } = await supabase
+      .from("committees")
+      .select("*")
+      .eq("id", committeeId);
     if (error) {
-      console.error(error)
-      return
+      console.error(error);
+      return;
     }
-    setCommittee(committee_data[0])
-  }
+    setCommittee(committeeData[0]);
+    console.log(committeeData[0]);
+  };
 
-  const getProfileWithId = async (profile_id) => {
+  const getProfileWithId = async (profileId) => {
     let { data: profile, error } = await supabase
-      .from('faculty_profiles')
-      .select('*')
-      .eq('employeeID', parseInt(profile_id))
+      .from("faculty_profiles")
+      .select("*")
+      .eq("employeeID", parseInt(profileId));
     if (error) {
-      console.error(error)
-      return
+      console.error(error);
+      return;
     }
-    return profile[0]
-  }
+    return profile[0];
+  };
 
   useEffect(() => {
-    getCommitteeWithId(router.query.id)
-  }, []);
+    if (router.query.id) {
+      getCommitteeWithId(router.query.id);
+    }
+  }, [router.query]);
+
+  const getData = async () => {
+    console.log(committee);
+    let selectProfiles = [];
+    let selectedInterest = [];
+    if (committee.members) {
+      console.log(committee.members);
+      for (let i = 0; i < committee.members.length; i++) {
+        let profile = await getProfileWithId(committee.members[i]);
+        selectProfiles.push(profile);
+      }
+    }
+    if (committee.interested) {
+      for (let i = 0; i < committee.interested.length; i++) {
+        selectedInterest.push(await getProfileWithId(committee.interested[i]));
+      }
+    }
+    setProfiles(selectProfiles);
+    console.log(selectedInterest);
+    setInterestedProfiles(selectedInterest);
+  };
 
   useEffect(() => {
-    async function getData() {
-      let selectProfiles = []
-      let selectedInterest = []
-      if (committee.members) {
-        for (let i = 0; i < committee.members.length; i++){
-          selectProfiles.push(await getProfileWithId(committee.members[i]))
-        }
-      }
-      if (committee.interested) {
-        for (let i = 0; i < committee.interested.length; i++){
-          selectedInterest.push(await getProfileWithId(committee.interested[i]))
-        }
-      }
-      setProfiles(selectProfiles)
-      console.log(selectedInterest)
-      setInterestedProfiles(selectedInterest)
+    if (committee) {
+      getData();
     }
-    getData()
-  }, [committee])
+  }, [committee]);
 
   return (
     <div className="body">
@@ -78,26 +85,34 @@ const Details = () => {
           }
         `}
       </style>
-      <h1 className="display">{committee.display_name}</h1>
-      <h2>{committee.description}</h2>
-      <h1 className="big">Current Members:</h1>
-      {profiles.length == 0 ? 'loading' : 
-        profiles.map((user) => 
-        {
-          return <div>
-          <User user={user} key={user.id}></User>
-        </div>}
-      )}
-      <h1 className="big">Interested Faculty:</h1>
-      {interestedProfiles.length == 0 ? 'loading' : 
-        interestedProfiles.map((user) => 
-        {
-          return <div>
-          <User user={user} key={user.id}></User>
-        </div>}
+      {committee && (
+        <div>
+          <h1 className="display">{committee.display_name}</h1>
+          <h2>{committee.description}</h2>
+          <h1 className="big">Current Members:</h1>
+          {profiles.length == 0
+            ? "loading"
+            : profiles.map((user) => {
+                return (
+                  <div>
+                    <User user={user} key={user.id}></User>
+                  </div>
+                );
+              })}
+          <h1 className="big">Interested Faculty:</h1>
+          {interestedProfiles.length == 0
+            ? "loading"
+            : interestedProfiles.map((user) => {
+                return (
+                  <div>
+                    <User user={user} key={user.id}></User>
+                  </div>
+                );
+              })}
+        </div>
       )}
     </div>
   );
-}
+};
 
 export default Details;
