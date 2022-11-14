@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
+import { Button } from "flowbite-react";
 
-const Details = () => {
+const Details = ({ session }) => {
   const [committee, setCommittee] = useState(null);
   const [profiles, setProfiles] = useState([]);
   const [interestedProfiles, setInterestedProfiles] = useState([]);
@@ -28,6 +29,18 @@ const Details = () => {
       .from("faculty_profiles")
       .select("*")
       .eq("employeeID", parseInt(profileId));
+    if (error) {
+      console.error(error);
+      return;
+    }
+    return profile[0];
+  };
+
+  const getUserProfileWithId = async (profileId) => {
+    let { data: profile, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", profileId);
     if (error) {
       console.error(error);
       return;
@@ -63,6 +76,29 @@ const Details = () => {
     setInterestedProfiles(selectedInterest);
   };
 
+  const markInterest = async () => {
+    if (!session || !committee) {
+      return;
+    }
+    const profile = (await getUserProfileWithId(session.user.id)).profile;
+    console.log("add to ballot");
+    let interested = committee.interested;
+    if (!interested) {
+      interested = [];
+    }
+    if (interested.includes(profile)) {
+      return;
+    }
+    interested.push(profile);
+    const updates = {
+      id: committee.id,
+      interested: interested,
+    };
+    const { error } = await supabase.from("committees").upsert(updates);
+    console.error(error);
+    console.log(profile);
+  };
+
   useEffect(() => {
     if (committee) {
       getData();
@@ -88,8 +124,13 @@ const Details = () => {
       </style>
       {committee && (
         <div>
-          <h1 className="display">{committee.display_name}</h1>
-          <h2>{committee.description}</h2>
+          <div className="flex justify-between">
+            <h1 className="display ">{committee.display_name}</h1>
+            <Button onClick={markInterest} style={{ marginTop: "4px" }}>
+              Mark Interest
+            </Button>
+          </div>
+          <h2>{committee.description || "No description"}</h2>
           <h1 className="big">Current Members:</h1>
           {profiles.length == 0
             ? "Empty"

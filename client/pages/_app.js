@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
+import { Button, Card } from "flowbite-react";
 
 function MyApp({ Component, pageProps }) {
   const [session, setSession] = useState(null);
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }) {
     <div>
       <Navbar session={session?.session} />
       <Component session={session?.session} {...pageProps} />
+      {/* Add buttons to go to other pages */}
     </div>
   );
 }
