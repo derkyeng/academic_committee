@@ -22,11 +22,13 @@ const Details = () => {
   useEffect(() => {
     console.log(parseInt(router.query.id))
     getProfileWithId(parseInt(router.query.id))
-    console.log(profile)
+    console.log(profile.chosenfirstname)
   }, []);
   return (
     <div>
-      <h1>Description: </h1>
+      <h1>{profile.chosenfirstname} {profile.chosenlastname}</h1>
+      <h2>{profile.title}</h2>
+      <h2>{profile.department}</h2>
     </div>
   );
 };
