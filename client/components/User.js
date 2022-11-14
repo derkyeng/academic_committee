@@ -54,6 +54,7 @@ function User({ user, interested = false, committee, vote = false }) {
 
   return (
     <div className={styles.user}>
+      <Link href={'/faculty/' + user.employeeID}>
       <Card className={styles.card}>
         <Avatar img={profilePic} rounded={true} />
         <p className={styles.profile_name}>
@@ -79,6 +80,7 @@ function User({ user, interested = false, committee, vote = false }) {
           {vote && <Button className="button primary block">Vote</Button>}
         </div>
       </Card>
+      </Link>
     </div>
   );
 }
