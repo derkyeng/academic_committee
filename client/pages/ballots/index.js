@@ -4,9 +4,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { supabase } from "../../utils/supabaseClient";
 import Link from "next/link";
+import Committee from "../../components/Committee";
 
 function polls() {
-  const [ballots, setBallots] = useState([]);
+  const [committees, setCommittees] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const BUTTON_WRAPPER_STYLES = {
@@ -22,15 +23,14 @@ function polls() {
   };
 
   const getData = async () => {
-    let { data: ballots_data, error } = await supabase
-      .from("ballots")
+    let { data: committees_data, error } = await supabase
+      .from("committees")
       .select("*");
     if (error) {
       console.error(error);
       return;
     }
-    console.log(ballots_data);
-    setBallots(ballots_data);
+    setCommittees(committees_data);
   };
 
   const insertData = async (name, description) => {
@@ -51,22 +51,17 @@ function polls() {
 
   return (
     <div>
-      {ballots.length == 0
+      {committees.length == 0
         ? "loading"
-        : ballots.map((committee_item) => (
-            <Ballot ballot={committee_item} key={committee_item.id} />
-          ))}
-
-      <button onClick={() => setIsOpen(true)}>Open Modal</button>
-      <Modal
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSubmit={(list) => {
-          setIsOpen(false);
-          console.log(list);
-          insertData(list.committeeName, list.committeeDescription);
-        }}
-      />
+        : committees.map((committee_item) => {
+            if (
+              committee_item.ballot != null &&
+              committee_item.ballot.length > 0
+            )
+              return (
+                <Ballot committee={committee_item} key={committee_item.id} />
+              );
+          })}
     </div>
   );
 }

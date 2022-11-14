@@ -25,9 +25,27 @@ function User({ user, interested = false, committee }) {
     }
   }
 
-  const addToBallot = () => {
+  const addToBallot = async () => {
     console.log("add to ballot");
-    console.log(committee);
+    const { data: ucommittee } = await supabase
+      .from("committees")
+      .select("*")
+      .eq("id", committee.id);
+    console.log();
+    let ballot = ucommittee[0].ballot;
+    if (!ballot) {
+      ballot = [];
+    }
+    if (ballot.includes(user.employeeID)) {
+      return;
+    }
+    ballot.push(user.employeeID);
+    const updates = {
+      id: ucommittee[0].id,
+      ballot: ballot,
+    };
+    const { error } = await supabase.from("committees").upsert(updates);
+    console.error(error);
   };
 
   useEffect(() => {

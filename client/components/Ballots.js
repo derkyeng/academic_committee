@@ -3,9 +3,9 @@ import styles from "./Committee.module.css";
 import { Avatar, Card } from "flowbite-react";
 import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
+import User from "./User";
 
-function Ballot({ ballot }) {
-  const [committee, setCommittee] = useState(null);
+function Ballot({ committee }) {
   const [users, setUsers] = useState([]);
 
   const getCommittee = async (committee_id) => {
@@ -20,11 +20,11 @@ function Ballot({ ballot }) {
   const loadUsers = async () => {
     const users = [];
     await Promise.all(
-      ballot.candidates.map(async (candidate) => {
+      committee.ballot.map(async (candidate) => {
         let { data, error, status } = await supabase
-          .from("profiles")
-          .select(`username,website, avatar_url, rank`)
-          .eq("id", candidate)
+          .from("faculty_profiles")
+          .select(`*`)
+          .eq("employeeID", candidate)
           .single();
         const storageData = supabase.storage
           .from("avatars")
@@ -38,34 +38,28 @@ function Ballot({ ballot }) {
   };
 
   useEffect(() => {
-    getCommittee(ballot.committee);
+    console.log(committee);
     loadUsers();
+    console.log(users);
   }, []);
 
   return (
     <div className={styles.card}>
       {committee && (
-        <Link href={"/committees/" + ballot.id}>
+        <Link href={"/committees/" + committee.id}>
           <Card href="#">
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
               {committee.display_name}
             </h5>
             <p className="font-normal text-gray-700 dark:text-gray-400">
-              {committee.description}
+              {committee.description || "No description"}
             </p>
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
               Candidates
             </h5>
             {users.map((user) => {
               console.log(user);
-              return (
-                <div>
-                  <Avatar img={user.avatar_url} />
-                  <p className="font-normal text-gray-700 dark:text-gray-400">
-                    {user.username}
-                  </p>
-                </div>
-              );
+              return <User user={user} />;
             })}
           </Card>
         </Link>
