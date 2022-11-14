@@ -5,6 +5,8 @@ import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
 import { Button } from "flowbite-react";
 
+// BUG CAN OCCUR WHEN A MEMBER WHO IS ON COMMITTEE BUT NOT IN FACULTY TABLE IS FOUND
+
 const Details = ({ session }) => {
   const [committee, setCommittee] = useState(null);
   const [profiles, setProfiles] = useState([]);
@@ -33,7 +35,9 @@ const Details = ({ session }) => {
       console.error(error);
       return;
     }
-    return profile[0];
+    if (profile[0]) {
+      return profile[0];
+    }
   };
 
   const getUserProfileWithId = async (profileId) => {
@@ -45,7 +49,10 @@ const Details = ({ session }) => {
       console.error(error);
       return;
     }
-    return profile[0];
+    console.log(profile[0])
+    if (profile[0]){
+      return profile[0]
+    }
   };
 
   useEffect(() => {
