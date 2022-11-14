@@ -20,7 +20,9 @@ export default function FacultySearch({ session }) {
 
 
     async function SearchDatabase(query_username="", query_rank="", query_committee=""){
-        let AllProfiles = []
+        let AllProfiles = [];
+        query_username = query_username.trim().toLowerCase();
+
         let { data: profiles_data, error } = await supabase
             .from('faculty_profiles')
             .select('*')
@@ -28,10 +30,17 @@ export default function FacultySearch({ session }) {
             console.error(error)
             return
         }
+        console.log(query_rank)
         profiles_data.map((user) => {
-            if (query_username && user.username != query_username){}
-            else if (query_rank && user.rank != query_rank) {}
-            else if (query_committee && user.committee != query_committee) {}
+            let user_firstname = user.chosenfirstname.toLowerCase();
+            let user_lastname = user.chosenlastname.toLowerCase();
+            let user_rank = user.title.toLowerCase();
+
+            if (query_username && query_username != user_firstname && query_username != user_lastname && query_username != user_firstname + " " + user_lastname){}
+            else if (query_rank == "AthleticFaculty" && !user_rank.includes("coach")) {}
+            else if (query_rank == "AssistantProfessor" && !user_rank.includes("assistant")) {}
+            else if (query_rank == "fullProfessorTenured" && (!user_rank.includes("professor") || user_rank.includes("assistant") || user_rank.includes("associate"))) {}
+            else if (query_rank == "associateProfessor" && !user_rank.includes("associate")) {}
             else{
                 AllProfiles.push(user)
             }
@@ -60,8 +69,8 @@ export default function FacultySearch({ session }) {
                 onChange={(event) => setRank(event.target.value)}
                 >
                     <option value="">N/A</option>
-                    <option value="fullProfessorTenured">Full Professor (tenured)</option>
-                    <option value="fullProfessorNotTenured">Full Professor (not tenured)</option>
+                    <option value="fullProfessorTenured">Full Professor</option>
+                    <option value="associateProfessor">Associate Professor</option>
                     <option value="AssistantProfessor">Assistant Professor</option>
                     <option value="AthleticFaculty">Atheltic Faculty</option>
                 </Select>
