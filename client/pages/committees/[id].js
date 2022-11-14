@@ -9,6 +9,7 @@ import User from '../../components/User';
 const Details = () => {
   const [committee, setCommittee] = useState({});
   const [profiles, setProfiles] = useState([]);
+  const [interestedProfiles, setInterestedProfiles] = useState([]);
   const router = useRouter();
 
   const getCommitteeWithId = async (committee_id) => {
@@ -25,9 +26,9 @@ const Details = () => {
 
   const getProfileWithId = async (profile_id) => {
     let { data: profile, error } = await supabase
-      .from('profiles')
+      .from('faculty_profiles')
       .select('*')
-      .eq('id', profile_id)
+      .eq('employeeID', parseInt(profile_id))
     if (error) {
       console.error(error)
       return
@@ -42,16 +43,24 @@ const Details = () => {
   useEffect(() => {
     async function getData() {
       let selectProfiles = []
+      let selectedInterest = []
       if (committee.members) {
         for (let i = 0; i < committee.members.length; i++){
           selectProfiles.push(await getProfileWithId(committee.members[i]))
         }
       }
-      console.log(selectProfiles)
+      if (committee.interested) {
+        for (let i = 0; i < committee.interested.length; i++){
+          selectedInterest.push(await getProfileWithId(committee.interested[i]))
+        }
+      }
       setProfiles(selectProfiles)
+      console.log(selectedInterest)
+      setInterestedProfiles(selectedInterest)
     }
     getData()
   }, [committee])
+
   return (
     <div className="body">
       <style jsx>
@@ -70,11 +79,18 @@ const Details = () => {
         `}
       </style>
       <h1 className="display">{committee.display_name}</h1>
-      <h1 className="big">Description: </h1>
       <h2>{committee.description}</h2>
-      <h1 className="big">Members</h1>
+      <h1 className="big">Current Members:</h1>
       {profiles.length == 0 ? 'loading' : 
         profiles.map((user) => 
+        {
+          return <div>
+          <User user={user} key={user.id}></User>
+        </div>}
+      )}
+      <h1 className="big">Interested Members:</h1>
+      {interestedProfiles.length == 0 ? 'loading' : 
+        interestedProfiles.map((user) => 
         {
           return <div>
           <User user={user} key={user.id}></User>
