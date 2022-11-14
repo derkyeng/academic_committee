@@ -7,6 +7,7 @@ import {
     Button,
     Avatar
   } from "flowbite-react";
+import Link from 'next/link';
 
 function User({user}) {
     const [profilePic, setProfilePic] = useState(null);
@@ -29,18 +30,20 @@ function User({user}) {
     }, []);
     return(
         <div className={styles.user}>
+          <Link href={'/faculty/' + user.employeeID}>
             <Card href="#" className={styles.card}>
-                <Avatar img={profilePic} rounded={true} />
-                <p className={styles.profile_name}>{user.chosenfirstname} {user.chosenlastname}</p>
-                <p>{user.title}</p>
-                <p>{user.Department}</p>
-                <Button
-                    className="button primary block"
-                    style={{marginLeft: "auto"}}
-                >
-                Add to Ballot
-                </Button>
-          </Card>
+                  <Avatar img={profilePic} rounded={true} />
+                  <p className={styles.profile_name}>{user.chosenfirstname} {user.chosenlastname}</p>
+                  <p>{user.title}</p>
+                  <p>{user.Department}</p>
+                  <Button
+                      className="button primary block"
+                      style={{marginLeft: "auto"}}
+                  >
+                  Add to Ballot
+                  </Button>
+            </Card>
+          </Link>
         </div>
       );
 }

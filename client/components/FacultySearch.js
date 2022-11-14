@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
-import User from "../components/User";
+import User from "./User";
 import {
   Navbar,
   Button,
@@ -11,6 +11,8 @@ import {
   FileInput,
   Checkbox,
 } from "flowbite-react";
+import Link from 'next/link';
+
 
 export default function FacultySearch({ session }) {
     const [profiles, setProfiles] = useState([])

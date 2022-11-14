@@ -60,7 +60,7 @@ const Navigationbar = ({ session }) => {
               </Dropdown.Header>
               <Dropdown.Item
                 onClick={() => {
-                  router.push("/dashboard");
+                  router.push("/faculty/dashboard");
                 }}
               >
                 Dashboard

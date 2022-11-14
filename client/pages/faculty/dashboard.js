@@ -1,8 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from "react";
-import { supabase } from "../utils/supabaseClient";
-import FacultySearch from "../components/FacultySearch";
-import User from "../components/User";
+import { supabase } from "../../utils/supabaseClient";
+import FacultySearch from "../../components/FacultySearch";
 
 function dashboard() {
 
