@@ -6,7 +6,7 @@ import { Card, Button, Avatar } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-function User({ user, interested = false, committee }) {
+function User({ user, interested = false, committee, vote = false }) {
   const [profilePic, setProfilePic] = useState(null);
   const router = useRouter();
 
@@ -76,6 +76,7 @@ function User({ user, interested = false, committee }) {
               Add to Ballot
             </Button>
           )}
+          {vote && <Button className="button primary block">Vote</Button>}
         </div>
       </Card>
     </div>

@@ -59,7 +59,7 @@ function Ballot({ committee }) {
             </h5>
             {users.map((user) => {
               console.log(user);
-              return <User user={user} />;
+              return <User vote user={user} />;
             })}
           </Card>
         </Link>

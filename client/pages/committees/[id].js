@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
-import { Button } from "flowbite-react";
+import { Button, Card } from "flowbite-react";
 
 // BUG CAN OCCUR WHEN A MEMBER WHO IS ON COMMITTEE BUT NOT IN FACULTY TABLE IS FOUND
 
