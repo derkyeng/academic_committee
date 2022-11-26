@@ -10,7 +10,9 @@ const Account = ({ session }) => {
     password: "",
   };
 
-  console.log(session);
+  if (session?.user) {
+    console.log(session.user.id)
+  }
   const router = useRouter();
 
   return (

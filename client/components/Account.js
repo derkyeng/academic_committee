@@ -15,13 +15,16 @@ import {
 export default function Account({ session }) {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
+  const [hamId, setHamId] = useState(null);
   const [rank, setRank] = useState(null);
   const [website, setWebsite] = useState(null);
   const [committes, setCommittees] = useState([]);
   const [avatar_url, setAvatarUrl] = useState(null);
+  const [email, setEmail] = useState(null);
 
   useEffect(() => {
     getProfile();
+    setEmail(session?.user.email)
   }, [session]);
 
   async function getCurrentUser() {
@@ -41,6 +44,48 @@ export default function Account({ session }) {
     return session.user;
   }
 
+  const getProfileWithEmail = async ({email, username, hamId}) => {
+    let { data: profiles, error } = await supabase
+      .from('faculty_profiles')
+      .select()
+      .eq('email', email)
+    if (error) {
+      console.error(error)
+      return
+    }
+    if (profiles.length == 0){ 
+      console.log("create")
+      createFacultyProfile({username, hamId})
+    } else {
+      console.log("update")
+      updateFacultyProfile({username, hamId})
+    }
+  }
+
+  const createFacultyProfile = async ({username, hamId}) => {
+    const { data, error } = await supabase
+    .from('faculty_profiles')
+    .insert([
+      { 
+        employeeID: hamId,
+        chosenfirstname: username.split(' ')[0],
+        chosenlastname: username.split(' ')[-1],
+        email: session?.user.email
+       },
+    ])
+  }
+
+  const updateFacultyProfile = async ({username, hamId}) => {
+    const { data, error } = await supabase
+      .from('faculty_profiles')
+      .update({         
+        employeeID: hamId,
+        chosenfirstname: username.split(' ')[0],
+        chosenlastname: username.split(' ')[-1],
+        email: session?.user.email })
+      .eq('employeeID', hamId)
+  }
+
   async function getProfile() {
     try {
       setLoading(true);
@@ -48,7 +93,7 @@ export default function Account({ session }) {
 
       let { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, website, avatar_url, rank`)
+        .select(`username, website, avatar_url, rank, hamId`)
         .eq("id", user.id)
         .single();
       if (error && status !== 406) {
@@ -60,7 +105,9 @@ export default function Account({ session }) {
         setWebsite(data.website);
         setAvatarUrl(data.avatar_url);
         setRank(data.rank);
+        setHamId(data.hamId);
       }
+
     } catch (error) {
       alert(error.message);
     } finally {
@@ -94,6 +141,8 @@ export default function Account({ session }) {
         avatar_url,
         rank,
         updated_at: new Date(),
+        email: session?.user.email,
+        hamId: hamId
       };
 
       let { error } = await supabase.from("profiles").upsert(updates);
@@ -126,6 +175,15 @@ export default function Account({ session }) {
           type="text"
           value={username || ""}
           onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div className="mt-2">
+        <Label htmlFor="username">Hamilton ID</Label>
+        <TextInput
+          id="hamId"
+          type="text"
+          value={hamId || ""}
+          onChange={(e) => setHamId(e.target.value)}
         />
       </div>
       <div className="mt-2">
@@ -197,7 +255,11 @@ export default function Account({ session }) {
         <div className="pr-4">
           <Button
             className="button primary block"
-            onClick={() => updateProfile({ username, website, avatar_url })}
+            onClick={() => {
+              updateProfile({ username, website, avatar_url });
+              getProfileWithEmail({ email, username, hamId });
+            }
+          }
             disabled={loading}
           >
             {loading ? "Loading ..." : "Update"}

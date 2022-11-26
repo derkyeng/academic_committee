@@ -24,12 +24,12 @@ const Login = () => {
       >
         <Button
           onClick={async () => {
-            const { error } = await supabase.auth.signInWithOAuth({
+            const { data, error } = await supabase.auth.signInWithOAuth({
               provider: "google",
             });
             if (error) alert(error.message);
             // push to home page
-            router.push("/");
+            router.push("/account");
           }}
         >
           Log In with Google
