@@ -9,6 +9,7 @@ const Navigationbar = ({ session }) => {
   const [profilePic, setProfilePic] = useState(null);
   const [name, setName] = useState(null);
   const [email, setEmail] = useState(null);
+  const [adminStatus, setAdminStatus] = useState(null);
   const router = useRouter();
 
   async function getProfile() {
@@ -20,6 +21,28 @@ const Navigationbar = ({ session }) => {
       setProfilePic(data.publicUrl);
       setName(session.user.user_metadata.full_name);
       setEmail(session.user.email);
+      getAdminStatus();
+    }
+  }
+
+  async function getAdminStatus() {
+    let { data: profiles, error } = await supabase
+    .from('faculty_profiles')
+    .select()
+    .eq('email', session.user.email)
+    if (error) {
+      console.error(error)
+      return
+    }
+    console.log(profiles)
+    try {
+      if (profiles[0].admin) {
+        setAdminStatus(true)
+      } else {
+        setAdminStatus(false)
+      }
+    } catch {
+      console.log("no admin")
     }
   }
 
@@ -58,20 +81,26 @@ const Navigationbar = ({ session }) => {
                   {email}
                 </span>
               </Dropdown.Header>
-              <Dropdown.Item
-                onClick={() => {
-                  router.push("/faculty/dashboard");
-                }}
-              >
-                Dashboard
-              </Dropdown.Item>
-              <Dropdown.Item
-                onClick={() => {
-                  router.push("/committees/committees");
-                }}
-              >
-                Committees
-              </Dropdown.Item>
+              {adminStatus ?               
+                <Dropdown.Item
+                  onClick={() => {
+                    router.push("/faculty/dashboard");
+                  }}
+                >
+                  Dashboard
+                </Dropdown.Item> :
+                <div></div>
+              }
+              {adminStatus ?               
+                <Dropdown.Item
+                  onClick={() => {
+                    router.push("/committees/committees");
+                  }}
+                >
+                  Committees
+                </Dropdown.Item> :
+                <div></div>
+              }
               <Dropdown.Item
                 onClick={() => {
                   router.push("/ballots");

@@ -62,6 +62,7 @@ export default function Account({ session }) {
     }
   }
 
+  // Creates a new faculty profile if one doesnt exist
   const createFacultyProfile = async ({username, hamId}) => {
     const { data, error } = await supabase
     .from('faculty_profiles')
@@ -69,19 +70,20 @@ export default function Account({ session }) {
       { 
         employeeID: hamId,
         chosenfirstname: username.split(' ')[0],
-        chosenlastname: username.split(' ')[-1],
+        chosenlastname: username.split(' ')[username.split(' ').length - 1],
         email: session?.user.email
        },
     ])
   }
 
+  // Updates an old faculty profile if it exists
   const updateFacultyProfile = async ({username, hamId}) => {
     const { data, error } = await supabase
       .from('faculty_profiles')
       .update({         
         employeeID: hamId,
         chosenfirstname: username.split(' ')[0],
-        chosenlastname: username.split(' ')[-1],
+        chosenlastname: username.split(' ')[username.split(' ').length - 1],
         email: session?.user.email })
       .eq('employeeID', hamId)
   }
