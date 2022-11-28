@@ -72,7 +72,7 @@ const Navigationbar = ({ session }) => {
             </Navbar.Collapse>
           ) : (
             <Dropdown
-              label={<Avatar img={profilePic} rounded={true} />}
+              label={<Avatar img={profilePic} rounded={true} style={{border: '1px solid blue', borderRadius: '50%'}} />}
               arrowIcon={false}
               inline={true}
             >
