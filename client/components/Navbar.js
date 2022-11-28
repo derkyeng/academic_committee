@@ -59,6 +59,7 @@ const Navigationbar = ({ session }) => {
               router.push("/");
             }}
           >
+            <img src="/hamilton_logo.jpg" style={{display: "inline-block", flexDirection: "row", width: "60px"}} />
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
               Academic Committee
             </span>

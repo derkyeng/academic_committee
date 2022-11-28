@@ -1,0 +1,16 @@
+.faculty_search_comp {
+    border: solid;
+    border-width: 0 1px;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: rgb(22, 45, 255);
+}
+
+.user_div {
+    margin: 20px;
+}
+
+.info_div {
+    margin-left: 20px;
+    margin-right: 20px;
+}

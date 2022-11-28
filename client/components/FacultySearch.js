@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import User from "./User";
+import styles from "./FacultySearch.module.css"
 import {
   Navbar,
   Button,
@@ -38,7 +39,12 @@ export default function FacultySearch({ session }) {
     profiles_data.map((user) => {
       let user_firstname = user.chosenfirstname.toLowerCase();
       let user_lastname = user.chosenlastname.toLowerCase();
-      let user_rank = user.title.toLowerCase();
+      let user_rank = '';
+      if (user.title){
+        user_rank = user.title.toLowerCase();
+      } else {
+        user_rank = 'no title';
+      }
 
       if (
         query_username &&
@@ -71,17 +77,19 @@ export default function FacultySearch({ session }) {
     setProfiles(AllProfiles);
   }
   return (
-    <div>
-      <h2 style={{ fontSize: 30 }}>Faculty Search</h2>
-      <p>
-        Fill out the fields below In order to find faculty with specific
-        committee interests, tenure status, a particular name, or other
-        specifications.<br></br>
-        If you are not concerned with a particular field (i.e name does not
-        matter for your search), then leave the field as N/A. Leaving <br></br>{" "}
-        all fields as N/A will retrieve all faculty.
-      </p>
-      <div style={{ display: "flex", flexDirection: "row", marginTop: "14px" }}>
+    <div className={styles.faculty_search_comp}>
+      <div className={styles.info_div}>
+        <h2 style={{ fontSize: 30 }}>Faculty Search</h2>
+        <p>
+          Fill out the fields below In order to find faculty with specific
+          committee interests, tenure status, a particular name, or other
+          specifications.<br></br>
+          If you are not concerned with a particular field (i.e name does not
+          matter for your search), then leave the field as N/A. Leaving <br></br>{" "}
+          all fields as N/A will retrieve all faculty.
+        </p>
+        </div>
+      <div style={{ display: "flex", flexDirection: "row", marginTop: "14px", marginLeft: '20px' }}>
         <div className="select-field">
           <Label htmlFor="rank">Rank</Label>
           <Select
@@ -138,7 +146,7 @@ export default function FacultySearch({ session }) {
         </Button>
       </div>
       {profiles &&
-        profiles.map((user) => <User user={user} key={user.key}></User>)}
+        profiles.map((user) => <div className={styles.user_div}><User user={user} key={user.key}></User></div>)}
     </div>
   );
 }
