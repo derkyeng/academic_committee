@@ -11,6 +11,7 @@ import {
   Checkbox,
   ListGroup,
 } from "flowbite-react";
+import RSelect from "react-select";
 
 export default function Account({ session }) {
   const [loading, setLoading] = useState(true);
@@ -18,14 +19,38 @@ export default function Account({ session }) {
   const [hamId, setHamId] = useState(null);
   const [rank, setRank] = useState(null);
   const [website, setWebsite] = useState(null);
-  const [committes, setCommittees] = useState([]);
+  const [interestedCommittees, setInterestedCommittees] = useState([]);
+  const [pastCommittees, setPastCommittees] = useState([]);
   const [avatar_url, setAvatarUrl] = useState(null);
   const [email, setEmail] = useState(null);
+  const [options, setOptions] = useState([]);
+
+  const getData = async () => {
+    let { data: committees_data, error } = await supabase
+      .from("committees")
+      .select("*");
+    if (error) {
+      console.error(error);
+      return;
+    }
+    let voptions = committees_data.map((committee) => {
+      return {
+        value: committee.id,
+        label: committee.display_name,
+      };
+    });
+
+    setOptions(voptions);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   useEffect(() => {
     getProfile();
-    setEmail(session?.user.email)
-  }, [session]);
+    setEmail(session?.user.email);
+  }, [session, options]);
 
   async function getCurrentUser() {
     const {
@@ -44,49 +69,48 @@ export default function Account({ session }) {
     return session.user;
   }
 
-  const getProfileWithEmail = async ({email, username, hamId}) => {
+  const getProfileWithEmail = async ({ email, username, hamId }) => {
     let { data: profiles, error } = await supabase
-      .from('faculty_profiles')
+      .from("faculty_profiles")
       .select()
-      .eq('email', email)
+      .eq("email", email);
     if (error) {
-      console.error(error)
-      return
+      console.error(error);
+      return;
     }
-    if (profiles.length == 0){ 
-      console.log("create")
-      createFacultyProfile({username, hamId})
+    if (profiles.length == 0) {
+      console.log("create");
+      createFacultyProfile({ username, hamId });
     } else {
-      console.log("update")
-      updateFacultyProfile({username, hamId})
+      console.log("update");
+      updateFacultyProfile({ username, hamId });
     }
-  }
+  };
 
   // Creates a new faculty profile if one doesnt exist
-  const createFacultyProfile = async ({username, hamId}) => {
-    const { data, error } = await supabase
-    .from('faculty_profiles')
-    .insert([
-      { 
+  const createFacultyProfile = async ({ username, hamId }) => {
+    const { data, error } = await supabase.from("faculty_profiles").insert([
+      {
         employeeID: hamId,
-        chosenfirstname: username.split(' ')[0],
-        chosenlastname: username.split(' ')[username.split(' ').length - 1],
-        email: session?.user.email
-       },
-    ])
-  }
+        chosenfirstname: username.split(" ")[0],
+        chosenlastname: username.split(" ")[username.split(" ").length - 1],
+        email: session?.user.email,
+      },
+    ]);
+  };
 
   // Updates an old faculty profile if it exists
-  const updateFacultyProfile = async ({username, hamId}) => {
+  const updateFacultyProfile = async ({ username, hamId }) => {
     const { data, error } = await supabase
-      .from('faculty_profiles')
-      .update({         
+      .from("faculty_profiles")
+      .update({
         employeeID: hamId,
-        chosenfirstname: username.split(' ')[0],
-        chosenlastname: username.split(' ')[username.split(' ').length - 1],
-        email: session?.user.email })
-      .eq('employeeID', hamId)
-  }
+        chosenfirstname: username.split(" ")[0],
+        chosenlastname: username.split(" ")[username.split(" ").length - 1],
+        email: session?.user.email,
+      })
+      .eq("employeeID", hamId);
+  };
 
   async function getProfile() {
     try {
@@ -95,7 +119,9 @@ export default function Account({ session }) {
 
       let { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, website, avatar_url, rank, hamId`)
+        .select(
+          `username, website, avatar_url, rank, hamId, interested_committees, past_committees`
+        )
         .eq("id", user.id)
         .single();
       if (error && status !== 406) {
@@ -108,8 +134,28 @@ export default function Account({ session }) {
         setAvatarUrl(data.avatar_url);
         setRank(data.rank);
         setHamId(data.hamId);
+        if (data.interested_committees && options.length > 0) {
+          const newInterestedCommittees = data.interested_committees.map(
+            (committee) => {
+              return {
+                value: committee,
+                label: options.find((option) => option.value == committee)
+                  .label,
+              };
+            }
+          );
+          setInterestedCommittees(newInterestedCommittees);
+        }
+        if (data.past_committees && options.length > 0) {
+          const newPastCommittees = data.past_committees.map((committee) => {
+            return {
+              value: committee,
+              label: options.find((option) => option.value == committee).label,
+            };
+          });
+          setPastCommittees(newPastCommittees);
+        }
       }
-
     } catch (error) {
       alert(error.message);
     } finally {
@@ -130,11 +176,26 @@ export default function Account({ session }) {
     }
   }
 
+  const setCommitteeInterests = async (interests) => {
+    setInterestedCommittees(interests);
+    console.log(interests);
+  };
+
+  const setPastCommitteeInterests = async (interests) => {
+    setPastCommittees(interests);
+  };
+
   async function updateProfile({ username, website, avatar_url }) {
     try {
       setLoading(true);
       const user = await getCurrentUser();
       uploadProfilePicture(avatar_url);
+      const interestedCommitteesIds = interestedCommittees.map((committee) => {
+        return committee.value;
+      });
+      const pastCommitteesIds = pastCommittees.map((committee) => {
+        return committee.value;
+      });
 
       const updates = {
         id: user.id,
@@ -144,7 +205,9 @@ export default function Account({ session }) {
         rank,
         updated_at: new Date(),
         email: session?.user.email,
-        hamId: hamId
+        hamId: hamId,
+        interested_committees: interestedCommitteesIds,
+        past_committees: pastCommitteesIds,
       };
 
       let { error } = await supabase.from("profiles").upsert(updates);
@@ -205,34 +268,28 @@ export default function Account({ session }) {
       {/* change past committees and committee interests to select multiple options */}
       <div className="mt-2 ">
         <Label htmlFor="past committees">Past Committees</Label>
-        <ListGroup>
-          <ListGroup.Item>
-            <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />
-            <Label pl={2}>Academic Committee</Label>
-          </ListGroup.Item>
-          <ListGroup.Item>
-            <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />
-            <Label pl={2}>Athletic Committee</Label>
-          </ListGroup.Item>
-          <ListGroup.Item>
-            <Checkbox style={{ marginRight: "12px", marginTop: "2px" }} />
-            <Label pl={2}>Custodial Faculty</Label>
-          </ListGroup.Item>
-        </ListGroup>
+        <RSelect
+          isMulti
+          name="Interested Committees"
+          className="basic-multi-select"
+          classNamePrefix="select"
+          options={options}
+          value={pastCommittees}
+          onChange={setPastCommitteeInterests}
+        />
       </div>
 
       <div className="mt-2 ">
-        <Label htmlFor="interested commitees">Interested Committees</Label>
-        <Select
-          id="interested_committee"
-          type="text"
-          // value={committee || ""}
-          // onChange={(e) => setRank(e.target.value)}
-        >
-          <option value="academic"> Academic Committee</option>
-          <option value="athletic">Athletic Committee</option>
-          <option value="custodial">Custodial Faculty</option>
-        </Select>
+        <Label htmlFor="interested committees">Interested Committees</Label>
+        <RSelect
+          isMulti
+          name="Interested Committees"
+          className="basic-multi-select"
+          classNamePrefix="select"
+          options={options}
+          value={interestedCommittees}
+          onChange={setCommitteeInterests}
+        />
       </div>
       {/* ------------------------------------------------------------------------- */}
       {/* Add current committess, not as choice but as a fixed parameter */}
@@ -260,8 +317,7 @@ export default function Account({ session }) {
             onClick={() => {
               updateProfile({ username, website, avatar_url });
               getProfileWithEmail({ email, username, hamId });
-            }
-          }
+            }}
             disabled={loading}
           >
             {loading ? "Loading ..." : "Update"}
