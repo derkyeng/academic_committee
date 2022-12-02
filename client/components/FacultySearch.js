@@ -21,15 +21,19 @@ export default function FacultySearch({ session }) {
     const [rank, setRank] = useState("");
 
     const setInactive = async () => {
-        const { data, error } = await supabase
-            .from("faculty_profiles")
-            .update({ active: false })
-            .eq("admin", "false");
-        if (error) {
-            console.error(error);
-            return;
+        let confirmation = confirm(
+            "Are you sure you want to set all users to inactive?"
+        );
+        if (confirmation) {
+            const { data, error } = await supabase
+                .from("faculty_profiles")
+                .update({ active: false })
+                .eq("admin", "false");
+            if (error) {
+                console.error(error);
+                return;
+            }
         }
-        console.log(data);
     };
 
     async function SearchDatabase(
