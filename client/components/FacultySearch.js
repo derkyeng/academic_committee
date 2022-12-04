@@ -98,6 +98,11 @@ export default function FacultySearch({ session }) {
                 query_rank == "associateProfessor" &&
                 !user_rank.includes("associate")
             ) {
+            } else if (
+                query_committee &&
+                user.interested_committees &&
+                !user.interested_committees.includes(query_committee) 
+            ) {
             } else {
                 // Checks that a user is active
                 if (user.active) {
@@ -178,18 +183,12 @@ export default function FacultySearch({ session }) {
                         }
                         style={{ maxWidth: 200 }}
                     >
+                        <option value="">N/A</option>
                         {committees && committees.map((committee) => (
                             <option value={committee.id}>
                                 {committee.display_name}
                             </option>
                         ))}
-                        <option value="">N/A</option>
-                        <option value="AcademicCommittee">
-                            Academic Committee
-                        </option>
-                        <option value="FacultyAppeals">
-                            Faculty Appeals Board
-                        </option>
                     </Select>
                 </div>
 
