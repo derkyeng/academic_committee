@@ -26,9 +26,7 @@ export default function Account({ session }) {
     const [options, setOptions] = useState([]);
 
     const getData = async () => {
-        let { data: committees_data, error } = await supabase
-            .from("committees")
-            .select("*");
+        let { data: committees_data, error } = await supabase.from("committees").select("*");
         if (error) {
             console.error(error);
             return;
@@ -89,11 +87,9 @@ export default function Account({ session }) {
 
     // Creates a new faculty profile if one doesnt exist
     const createFacultyProfile = async ({ username, hamId }) => {
-        const interestedCommitteesIds = interestedCommittees.map(
-            (committee) => {
-                return committee.value;
-            }
-        );
+        const interestedCommitteesIds = interestedCommittees.map((committee) => {
+            return committee.value;
+        });
         const pastCommitteesIds = pastCommittees.map((committee) => {
             return committee.value;
         });
@@ -101,23 +97,21 @@ export default function Account({ session }) {
             {
                 employeeID: hamId,
                 chosenfirstname: username.split(" ")[0],
-                chosenlastname:
-                    username.split(" ")[username.split(" ").length - 1],
+                chosenlastname: username.split(" ")[username.split(" ").length - 1],
                 email: session?.user.email,
                 interested_committees: interestedCommitteesIds,
                 past_committees: pastCommitteesIds,
                 active: true,
+                profiles_id: session.user.id,
             },
         ]);
     };
 
     // Updates an old faculty profile if it exists
     const updateFacultyProfile = async ({ username, hamId }) => {
-        const interestedCommitteesIds = interestedCommittees.map(
-            (committee) => {
-                return committee.value;
-            }
-        );
+        const interestedCommitteesIds = interestedCommittees.map((committee) => {
+            return committee.value;
+        });
         const pastCommitteesIds = pastCommittees.map((committee) => {
             return committee.value;
         });
@@ -126,12 +120,12 @@ export default function Account({ session }) {
             .update({
                 employeeID: hamId,
                 chosenfirstname: username.split(" ")[0],
-                chosenlastname:
-                    username.split(" ")[username.split(" ").length - 1],
+                chosenlastname: username.split(" ")[username.split(" ").length - 1],
                 email: session?.user.email,
                 interested_committees: interestedCommitteesIds,
                 past_committees: pastCommitteesIds,
                 active: true,
+                profiles_id: session.user.id,
             })
             .eq("employeeID", hamId);
     };
@@ -159,28 +153,21 @@ export default function Account({ session }) {
                 setRank(data.rank);
                 setHamId(data.hamId);
                 if (data.interested_committees && options.length > 0) {
-                    const newInterestedCommittees =
-                        data.interested_committees.map((committee) => {
-                            return {
-                                value: committee,
-                                label: options.find(
-                                    (option) => option.value == committee
-                                ).label,
-                            };
-                        });
+                    const newInterestedCommittees = data.interested_committees.map((committee) => {
+                        return {
+                            value: committee,
+                            label: options.find((option) => option.value == committee).label,
+                        };
+                    });
                     setInterestedCommittees(newInterestedCommittees);
                 }
                 if (data.past_committees && options.length > 0) {
-                    const newPastCommittees = data.past_committees.map(
-                        (committee) => {
-                            return {
-                                value: committee,
-                                label: options.find(
-                                    (option) => option.value == committee
-                                ).label,
-                            };
-                        }
-                    );
+                    const newPastCommittees = data.past_committees.map((committee) => {
+                        return {
+                            value: committee,
+                            label: options.find((option) => option.value == committee).label,
+                        };
+                    });
                     setPastCommittees(newPastCommittees);
                 }
             }
@@ -194,9 +181,7 @@ export default function Account({ session }) {
     async function uploadProfilePicture(path) {
         console.log(path);
         const avatarFile = path;
-        await supabase.storage
-            .from("avatars")
-            .remove(`avatars/${session.user.id}`);
+        await supabase.storage.from("avatars").remove(`avatars/${session.user.id}`);
         const { data, error } = await supabase.storage
             .from("avatars")
             .upload(`avatars/${session.user.id}`, avatarFile);
@@ -220,11 +205,9 @@ export default function Account({ session }) {
             setLoading(true);
             const user = await getCurrentUser();
             uploadProfilePicture(avatar_url);
-            const interestedCommitteesIds = interestedCommittees.map(
-                (committee) => {
-                    return committee.value;
-                }
-            );
+            const interestedCommitteesIds = interestedCommittees.map((committee) => {
+                return committee.value;
+            });
             const pastCommitteesIds = pastCommittees.map((committee) => {
                 return committee.value;
             });
@@ -258,12 +241,7 @@ export default function Account({ session }) {
         <div className="container mx-auto py-4">
             <div className="mt-2 ">
                 <Label htmlFor="email">Email</Label>
-                <TextInput
-                    id="email"
-                    type="text"
-                    value={session?.user.email}
-                    disabled
-                />
+                <TextInput id="email" type="text" value={session?.user.email} disabled />
             </div>
             <div className="mt-2">
                 <Label htmlFor="username">Name</Label>
@@ -312,9 +290,7 @@ export default function Account({ session }) {
             </div>
 
             <div className="mt-2 ">
-                <Label htmlFor="interested committees">
-                    Interested Committees
-                </Label>
+                <Label htmlFor="interested committees">Interested Committees</Label>
                 <RSelect
                     isMulti
                     name="Interested Committees"

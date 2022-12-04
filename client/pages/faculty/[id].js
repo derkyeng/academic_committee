@@ -14,10 +14,23 @@ const Details = () => {
     const router = useRouter();
 
     async function getProfilePic() {
-        setProfilePic(
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-        );
+        let { data: faculty_profiles, error } = await supabase
+            .from("faculty_profiles")
+            .select("profiles_id")
+            .eq("employeeID", router.query.id);
+        const id = faculty_profiles[0].profiles_id;
+        const { data } = supabase.storage.from("avatars").getPublicUrl(`avatars/${id}`);
+        let isUndefined = data.publicUrl.substr(data.publicUrl.length - 9);
+        if (isUndefined !== "undefined") {
+            setProfilePic(data.publicUrl);
+        } else {
+            console.log("problem");
+            setProfilePic(
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+            );
+        }
     }
+
     const getProfileWithId = async (profile_id) => {
         let { data: d_profile, error } = await supabase
             .from("faculty_profiles")
