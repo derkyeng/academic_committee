@@ -19,6 +19,7 @@ export default function FacultySearch({ session }) {
     const [name, setName] = useState("");
     const [committeeInterest, setCommitteeInterest] = useState("");
     const [rank, setRank] = useState("");
+    const [committees, setCommittees] = useState([]);
 
     const setInactive = async () => {
         let confirmation = confirm(
@@ -34,6 +35,17 @@ export default function FacultySearch({ session }) {
                 return;
             }
         }
+    };
+
+    const getCommittees = async () => {
+        let { data: committee_data, error } = await supabase
+            .from("committees")
+            .select("*");
+        if (error) {
+            console.error(error);
+            return;
+        }
+        setCommittees(committee_data);
     };
 
     async function SearchDatabase(
@@ -95,6 +107,10 @@ export default function FacultySearch({ session }) {
         });
         setProfiles(AllProfiles);
     }
+
+    useEffect(() => {
+        getCommittees();
+    }, []);
     return (
         <div className={styles.faculty_search_comp}>
             <div className={styles.info_div}>
@@ -162,6 +178,11 @@ export default function FacultySearch({ session }) {
                         }
                         style={{ maxWidth: 200 }}
                     >
+                        {committees && committees.map((committee) => (
+                            <option value={committee.id}>
+                                {committee.display_name}
+                            </option>
+                        ))}
                         <option value="">N/A</option>
                         <option value="AcademicCommittee">
                             Academic Committee
