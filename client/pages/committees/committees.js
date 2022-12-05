@@ -2,6 +2,7 @@ import Committee from "../../components/Committee";
 import Modal from "../../components/Modal";
 import React from "react";
 import { useState, useEffect } from "react";
+import { Button } from "flowbite-react";
 import { supabase } from "../../utils/supabaseClient";
 
 function committees() {
@@ -21,9 +22,7 @@ function committees() {
     };
 
     const getData = async () => {
-        let { data: committees_data, error } = await supabase
-            .from("committees")
-            .select("*");
+        let { data: committees_data, error } = await supabase.from("committees").select("*");
         if (error) {
             console.error(error);
             return;
@@ -49,16 +48,25 @@ function committees() {
 
     return (
         <div>
+            <div
+                style={{
+                    position: "fixed",
+                    bottom: "3%",
+                    right: "3%",
+                    width: "50px",
+                    height: "50px",
+                    color: "black",
+                }}
+            >
+                <Button onClick={() => setIsOpen(true)}>+</Button>
+            </div>
             {committees.length == 0
                 ? "loading"
                 : committees.map((committee_item) => (
-                      <Committee
-                          committee={committee_item}
-                          key={committee_item.id}
-                      />
+                      <Committee committee={committee_item} key={committee_item.id} />
                   ))}
 
-            <button onClick={() => setIsOpen(true)}>Open Modal</button>
+            {/* <button onClick={() => setIsOpen(true)}>Open Modal</button> */}
             <Modal
                 open={isOpen}
                 onClose={() => setIsOpen(false)}
