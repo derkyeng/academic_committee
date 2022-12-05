@@ -76,6 +76,27 @@ export default function Account({ session }) {
             console.error(error);
             return;
         }
+
+        for (let i = 0; i < interestedCommittees.length; i++) {
+            let { data: committee, error2 } = await supabase
+                .from("committees")
+                .select("*")
+                .eq("id", interestedCommittees[i].value);
+            console.log(committee);
+            let members = committee[0].members;
+            if (members) {
+                if (members.includes(hamId)) {
+                    console.log("already in array");
+                }
+            } else {
+                members = [hamId];
+            }
+            const { data: update, error } = await supabase
+                .from("committees")
+                .update({ members: members })
+                .eq("id", interestedCommittees[i].value);
+        }
+
         if (profiles.length == 0) {
             console.log("create");
             createFacultyProfile({ username, hamId });
