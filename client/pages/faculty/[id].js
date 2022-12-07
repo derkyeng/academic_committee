@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
-import { Avatar } from "flowbite-react";
+import { Avatar, Button } from "flowbite-react";
 import Committee from "../../components/Committee";
 
 const Details = () => {
@@ -11,6 +11,8 @@ const Details = () => {
     const [currentCommittees, setCurrentCommittees] = useState([]);
     const [interestedCommittees, setInterestedCommittees] = useState([]);
     const [pastCommittees, setPastCommittees] = useState([]);
+    const [adminStatus, setAdminStatus] = useState(false);
+    const [profileID, setProfileID] = useState();
     const router = useRouter();
 
     async function getProfilePic() {
@@ -42,6 +44,7 @@ const Details = () => {
         }
         console.log(d_profile);
         setProfile(d_profile[0]);
+        setProfileID(parseInt(profile_id));
 
         let selectedCurrent = [];
         if (d_profile[0].committees) {
@@ -86,9 +89,63 @@ const Details = () => {
         return committeeData[0];
     };
 
+    async function getAdminStatus(profile_id) {
+        let { data: profiles, error } = await supabase
+            .from('faculty_profiles')
+            .select()
+            .eq('employeeID', parseInt(profile_id))
+        if (error) {
+          console.error(error)
+          return
+        }
+        try {
+          if (profiles[0].admin) {
+            setAdminStatus(true)
+          } else {
+            setAdminStatus(false)
+          }
+        } catch {
+          console.log("no admin")
+        }
+        
+    };
+
+    async function updateActivity(profile_id_object) {
+        let profile_id = profile_id_object.profileID
+        let { data: profiles, error } = await supabase
+            .from('faculty_profiles')
+            .select()
+            .eq('employeeID', profile_id)
+        if (error) {
+          console.error(error)
+          return
+        }
+        let profile = profiles[0]
+
+        if (profile && profile.active == true) {
+            // Set profile to inactive
+            const { data, error } = await supabase
+                .from("faculty_profiles")
+                .update({
+                    employeeID: profile_id,
+                    chosenfirstname: profile.chosenfirstname,
+                    chosenlastname: profile.chosenlastname,
+                    email: profile.email,
+                    interested_committees: profile.interested_committees,
+                    past_committees: profile.past_committees,
+                    active: false,
+                    profiles_id: profile_id,
+                })
+                .eq("employeeID", profile_id);
+        };
+        
+        
+    };
+
     useEffect(() => {
         getProfileWithId(router.query.id);
-        getProfilePic();
+        getAdminStatus(router.query.id);
+        // getProfilePic();
     }, []);
 
     return (
@@ -116,6 +173,14 @@ const Details = () => {
                     <img src={profilePic} />
                 </div>
             </div>
+            <Button
+                className="button primary block"
+                onClick={() => {
+                    updateActivity({ profileID });
+                }}
+            >
+                Disable Account
+            </Button>
             <h1 className="display">
                 {profile.chosenfirstname} {profile.chosenlastname}
             </h1>
