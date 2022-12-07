@@ -45,8 +45,20 @@ export default function FacultySearch({ session }) {
             console.error(error);
             return;
         }
+        committee_data.sort(compare_committees)
+        console.log(committee_data)
         setCommittees(committee_data);
     };
+
+    function compare_committees(a, b) {
+        if (a.display_name < b.display_name) {
+            return -1;
+        } else if (a.display_name > b.display_name) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
     async function SearchDatabase(
         query_username = "",
