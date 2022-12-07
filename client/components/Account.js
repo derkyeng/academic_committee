@@ -87,6 +87,8 @@ export default function Account({ session }) {
             if (members) {
                 if (members.includes(hamId)) {
                     console.log("already in array");
+                } else {
+                    members.push(hamId);
                 }
             } else {
                 members = [hamId];
