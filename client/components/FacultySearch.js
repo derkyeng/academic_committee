@@ -22,9 +22,7 @@ export default function FacultySearch({ session }) {
     const [committees, setCommittees] = useState([]);
 
     const setInactive = async () => {
-        let confirmation = confirm(
-            "Are you sure you want to set all users to inactive?"
-        );
+        let confirmation = confirm("Are you sure you want to set all users to inactive?");
         if (confirmation) {
             const { data, error } = await supabase
                 .from("faculty_profiles")
@@ -35,18 +33,17 @@ export default function FacultySearch({ session }) {
                 return;
             }
         }
+        SearchDatabase(name, rank, committeeInterest);
     };
 
     const getCommittees = async () => {
-        let { data: committee_data, error } = await supabase
-            .from("committees")
-            .select("*");
+        let { data: committee_data, error } = await supabase.from("committees").select("*");
         if (error) {
             console.error(error);
             return;
         }
-        committee_data.sort(compare_committees)
-        console.log(committee_data)
+        committee_data.sort(compare_committees);
+        console.log(committee_data);
         setCommittees(committee_data);
     };
 
@@ -60,17 +57,12 @@ export default function FacultySearch({ session }) {
         }
     }
 
-    async function SearchDatabase(
-        query_username = "",
-        query_rank = "",
-        query_committee = ""
-    ) {
+    async function SearchDatabase(query_username = "", query_rank = "", query_committee = "") {
+        setProfiles([]);
         let AllProfiles = [];
         query_username = query_username.trim().toLowerCase();
 
-        let { data: profiles_data, error } = await supabase
-            .from("faculty_profiles")
-            .select("*");
+        let { data: profiles_data, error } = await supabase.from("faculty_profiles").select("*");
         if (error) {
             console.error(error);
             return;
@@ -92,28 +84,19 @@ export default function FacultySearch({ session }) {
                 query_username != user_lastname &&
                 query_username != user_firstname + " " + user_lastname
             ) {
-            } else if (
-                query_rank == "AthleticFaculty" &&
-                !user_rank.includes("coach")
-            ) {
-            } else if (
-                query_rank == "AssistantProfessor" &&
-                !user_rank.includes("assistant")
-            ) {
+            } else if (query_rank == "AthleticFaculty" && !user_rank.includes("coach")) {
+            } else if (query_rank == "AssistantProfessor" && !user_rank.includes("assistant")) {
             } else if (
                 query_rank == "fullProfessorTenured" &&
                 (!user_rank.includes("professor") ||
                     user_rank.includes("assistant") ||
                     user_rank.includes("associate"))
             ) {
-            } else if (
-                query_rank == "associateProfessor" &&
-                !user_rank.includes("associate")
-            ) {
+            } else if (query_rank == "associateProfessor" && !user_rank.includes("associate")) {
             } else if (
                 query_committee &&
                 user.interested_committees &&
-                !user.interested_committees.includes(query_committee) 
+                !user.interested_committees.includes(query_committee)
             ) {
             } else {
                 // Checks that a user is active
@@ -133,13 +116,11 @@ export default function FacultySearch({ session }) {
             <div className={styles.info_div}>
                 <h2 style={{ fontSize: 30 }}>Faculty Search</h2>
                 <p>
-                    Fill out the fields below In order to find faculty with
-                    specific committee interests, tenure status, a particular
-                    name, or other specifications.<br></br>
-                    If you are not concerned with a particular field (i.e name
-                    does not matter for your search), then leave the field as
-                    N/A. Leaving <br></br> all fields as N/A will retrieve all
-                    faculty.
+                    Fill out the fields below In order to find faculty with specific committee
+                    interests, tenure status, a particular name, or other specifications.<br></br>
+                    If you are not concerned with a particular field (i.e name does not matter for
+                    your search), then leave the field as N/A. Leaving <br></br> all fields as N/A
+                    will retrieve all faculty.
                 </p>
             </div>
             <Button
@@ -167,40 +148,27 @@ export default function FacultySearch({ session }) {
                         onChange={(event) => setRank(event.target.value)}
                     >
                         <option value="">N/A</option>
-                        <option value="fullProfessorTenured">
-                            Full Professor
-                        </option>
-                        <option value="associateProfessor">
-                            Associate Professor
-                        </option>
-                        <option value="AssistantProfessor">
-                            Assistant Professor
-                        </option>
-                        <option value="AthleticFaculty">
-                            Atheltic Faculty
-                        </option>
+                        <option value="fullProfessorTenured">Full Professor</option>
+                        <option value="associateProfessor">Associate Professor</option>
+                        <option value="AssistantProfessor">Assistant Professor</option>
+                        <option value="AthleticFaculty">Atheltic Faculty</option>
                     </Select>
                 </div>
 
                 <div className="select-field" style={{ marginLeft: "14px" }}>
-                    <Label htmlFor="committeeInterest">
-                        Committee Interest
-                    </Label>
+                    <Label htmlFor="committeeInterest">Committee Interest</Label>
                     <Select
                         id="committeeInterest"
                         type="text"
                         value={committeeInterest}
-                        onChange={(event) =>
-                            setCommitteeInterest(event.target.value)
-                        }
+                        onChange={(event) => setCommitteeInterest(event.target.value)}
                         style={{ maxWidth: 200 }}
                     >
                         <option value="">N/A</option>
-                        {committees && committees.map((committee) => (
-                            <option value={committee.id}>
-                                {committee.display_name}
-                            </option>
-                        ))}
+                        {committees &&
+                            committees.map((committee) => (
+                                <option value={committee.id}>{committee.display_name}</option>
+                            ))}
                     </Select>
                 </div>
 
@@ -222,9 +190,7 @@ export default function FacultySearch({ session }) {
                 <Button
                     className="button primary block"
                     style={{ marginTop: 24, marginLeft: 10 }}
-                    onClick={() =>
-                        SearchDatabase(name, rank, committeeInterest)
-                    }
+                    onClick={() => SearchDatabase(name, rank, committeeInterest)}
                 >
                     Search
                 </Button>
