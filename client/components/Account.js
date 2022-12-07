@@ -83,7 +83,7 @@ export default function Account({ session }) {
                 .select("*")
                 .eq("id", interestedCommittees[i].value);
             console.log(committee);
-            let members = committee[0].members;
+            let members = committee[0].interested;
             if (members) {
                 if (members.includes(hamId)) {
                     console.log("already in array");
@@ -95,7 +95,7 @@ export default function Account({ session }) {
             }
             const { data: update, error } = await supabase
                 .from("committees")
-                .update({ members: members })
+                .update({ interested: members })
                 .eq("id", interestedCommittees[i].value);
         }
 
