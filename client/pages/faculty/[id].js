@@ -145,7 +145,7 @@ const Details = () => {
     useEffect(() => {
         getProfileWithId(router.query.id);
         getAdminStatus(router.query.id);
-        // getProfilePic();
+        getProfilePic();
     }, []);
 
     return (
