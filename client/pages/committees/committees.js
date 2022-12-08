@@ -21,12 +21,25 @@ function committees() {
         padding: "10px",
     };
 
+    function compare_committees(a, b) {
+        if (a.display_name < b.display_name) {
+            return -1;
+        } else if (a.display_name > b.display_name) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     const getData = async () => {
         let { data: committees_data, error } = await supabase.from("committees").select("*");
         if (error) {
             console.error(error);
             return;
         }
+        console.log(committees_data);
+        committees_data.sort(compare_committees);
+        console.log(committees_data);
         setCommittees(committees_data);
     };
 
