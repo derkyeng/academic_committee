@@ -73,6 +73,12 @@ function Ballot({ committee, members, session }) {
     }
   }, [session]);
 
+  const votingCallback = (user) => {
+    const currentUser = session.user;
+    console.log(currentUser);
+    console.log(user);
+  };
+
   return (
     <div className={styles.card}>
       {thisCommittee && (
@@ -100,7 +106,14 @@ function Ballot({ committee, members, session }) {
           </h5>
           {members.map((user) => {
             console.log(user);
-            return <User adminStatus={adminStatus} vote user={user} />;
+            return (
+              <User
+                votingCallback={votingCallback}
+                adminStatus={adminStatus}
+                vote
+                user={user}
+              />
+            );
           })}
         </Card>
       )}

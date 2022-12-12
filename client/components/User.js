@@ -14,6 +14,7 @@ function User({
   vote = false,
   adminStatus = false,
   removeButton = false,
+  votingCallback,
 }) {
   const [profilePic, setProfilePic] = useState(null);
   const [admin, setAdmin] = useState(null);
@@ -233,7 +234,16 @@ function User({
               {onBallot ? "Remove from Ballot" : "Add to Ballot"}
             </Button>
           )}
-          {vote && <Button className="button primary block">Vote</Button>}
+          {vote && (
+            <Button
+              onClick={() => {
+                votingCallback(user);
+              }}
+              className="button primary block"
+            >
+              Vote
+            </Button>
+          )}
         </div>
       </Card>
     </div>
