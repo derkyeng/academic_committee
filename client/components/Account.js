@@ -295,7 +295,7 @@ export default function Account({ session }) {
                     <option value="assistant">Assistant Professor</option>
                     <option value="full">Full Professor</option>
                     <option value="athletic">Athletic Faculty</option>
-                    <option value="associate">Associate Faculty</option>
+                    <option value="associate">Associate Professor</option>
                 </Select>
             </div>
 
