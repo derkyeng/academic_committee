@@ -12,6 +12,7 @@ function User({
   interested = false,
   committee,
   vote = false,
+  adminStatus = false,
   removeButton = false,
 }) {
   const [profilePic, setProfilePic] = useState(null);
@@ -198,26 +199,31 @@ function User({
             <div></div>
           )}
 
-          <Button
-            style={{ marginRight: "8px" }}
-            className="button primary block"
-            onClick={() => {
-              makeAdmin();
-            }}
-          >
-            <div>
-              {admin ? <p>Remove Admin Status</p> : <p>Give Admin Status</p>}
-            </div>
-          </Button>
-          <Button
-            style={{ marginRight: "8px" }}
-            className="button primary block"
-            onClick={() => {
-              router.push(`/faculty/${user.employeeID}`);
-            }}
-          >
-            Visit Profile
-          </Button>
+          {adminStatus && (
+            <Button
+              style={{ marginRight: "8px" }}
+              className="button primary block"
+              onClick={() => {
+                makeAdmin();
+              }}
+            >
+              <div>
+                {admin ? <p>Remove Admin Status</p> : <p>Give Admin Status</p>}
+              </div>
+            </Button>
+          )}
+          {adminStatus && (
+            <Button
+              style={{ marginRight: "8px" }}
+              className="button primary block"
+              onClick={() => {
+                router.push(`/faculty/${user.employeeID}`);
+              }}
+            >
+              Visit Profile
+            </Button>
+          )}
+
           {interested && (
             <Button
               color={onBallot ? "warning" : "info"}

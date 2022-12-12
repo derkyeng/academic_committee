@@ -142,9 +142,6 @@ const Details = ({ session }) => {
         <div>
           <div className="flex justify-between">
             <h1 className="display ">{committee.display_name}</h1>
-            <Button onClick={markInterest} style={{ marginTop: "4px" }}>
-              Mark Interest
-            </Button>
           </div>
           <h2>{committee.description || "No description"}</h2>
           <h1 className="big">Current Members:</h1>

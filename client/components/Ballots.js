@@ -5,9 +5,31 @@ import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
 import User from "./User";
 
-function Ballot({ committee, members }) {
+function Ballot({ committee, members, session }) {
   const [users, setUsers] = useState([]);
   const [thisCommittee, setThisCommittee] = useState(null);
+  const [adminStatus, setAdminStatus] = useState(null);
+
+  async function getAdminStatus() {
+    let { data: profiles, error } = await supabase
+      .from("faculty_profiles")
+      .select()
+      .eq("email", session.user.email);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    console.log(profiles);
+    try {
+      if (profiles[0].admin) {
+        setAdminStatus(true);
+      } else {
+        setAdminStatus(false);
+      }
+    } catch {
+      console.log("no admin");
+    }
+  }
 
   const getCommittee = async (committee_id) => {
     let { data: committee, error } = await supabase
@@ -40,22 +62,35 @@ function Ballot({ committee, members }) {
 
   useEffect(() => {
     getCommittee(committee);
+
     // loadUsers();
     console.log(users);
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      getAdminStatus();
+    }
+  }, [session]);
 
   return (
     <div className={styles.card}>
       {thisCommittee && (
         <Card>
-          <Link href={"/committees/" + committee}>
-            <Button
-              color="light"
-              className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white "
-            >
+          {adminStatus ? (
+            <Link href={"/committees/" + committee}>
+              <Button
+                color="light"
+                className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white "
+              >
+                {thisCommittee.display_name}
+              </Button>
+            </Link>
+          ) : (
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
               {thisCommittee.display_name}
-            </Button>
-          </Link>
+            </h1>
+          )}
 
           <p className="font-normal text-gray-700 dark:text-gray-400">
             {thisCommittee.description || "No description"}
@@ -65,7 +100,7 @@ function Ballot({ committee, members }) {
           </h5>
           {members.map((user) => {
             console.log(user);
-            return <User vote user={user} />;
+            return <User adminStatus={adminStatus} vote user={user} />;
           })}
         </Card>
       )}

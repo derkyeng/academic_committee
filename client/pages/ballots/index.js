@@ -6,7 +6,7 @@ import { supabase } from "../../utils/supabaseClient";
 import Link from "next/link";
 import Committee from "../../components/Committee";
 
-function polls() {
+function polls({ session }) {
   const [committees, setCommittees] = useState([]);
   const [committeeBallots, setCommitteeBallots] = useState({});
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +71,14 @@ function polls() {
     <div>
       {committeeBallots &&
         Object.entries(committeeBallots).map(([key, value]) => {
-          return <Ballot committee={key} members={value} key={key} />;
+          return (
+            <Ballot
+              session={session}
+              committee={key}
+              members={value}
+              key={key}
+            />
+          );
         })}
       {/* {committees.length == 0
         ? "loading"
