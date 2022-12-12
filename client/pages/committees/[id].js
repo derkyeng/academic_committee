@@ -150,7 +150,12 @@ const Details = ({ session }) => {
             : profiles.map((user) => {
                 return (
                   <div>
-                    <User user={user} key={user.id} removeButton={true}></User>
+                    <User
+                      adminStatus
+                      user={user}
+                      key={user.id}
+                      removeButton={true}
+                    ></User>
                   </div>
                 );
               })}
@@ -161,6 +166,7 @@ const Details = ({ session }) => {
                 return (
                   <div>
                     <User
+                      adminStatus
                       committee={committee}
                       interested
                       user={user}
