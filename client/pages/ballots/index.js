@@ -8,6 +8,7 @@ import Committee from "../../components/Committee";
 
 function polls() {
   const [committees, setCommittees] = useState([]);
+  const [committeeBallots, setCommitteeBallots] = useState({});
   const [isOpen, setIsOpen] = useState(false);
 
   const BUTTON_WRAPPER_STYLES = {
@@ -22,6 +23,34 @@ function polls() {
     padding: "10px",
   };
 
+  const getBallotData = async () => {
+    let ballots = {};
+
+    let { data: profiles_data, error } = await supabase
+      .from("faculty_profiles")
+      .select("*");
+    if (error) {
+      console.error(error);
+      return;
+    }
+    console.log(profiles_data);
+    for (let i = 0; i < profiles_data.length; i++) {
+      if (profiles_data[i].ballots) {
+        console.log(profiles_data[i].ballots);
+        for (let j = 0; j < profiles_data[i].ballots.length; j++) {
+          if (ballots[profiles_data[i].ballots[j]]) {
+            ballots[profiles_data[i].ballots[j]].push(profiles_data[i]);
+          } else {
+            ballots[profiles_data[i].ballots[j]] = [profiles_data[i]];
+          }
+        }
+      }
+    }
+
+    setCommitteeBallots(ballots);
+    console.log(ballots);
+  };
+
   const getData = async () => {
     let { data: committees_data, error } = await supabase
       .from("committees")
@@ -33,25 +62,18 @@ function polls() {
     setCommittees(committees_data);
   };
 
-  const insertData = async (name, description) => {
-    let { data, error } = await supabase
-      .from("committees")
-      .insert([{ display_name: name, description: description }]);
-    if (error) {
-      console.error(error);
-      return;
-    }
-    console.log(data);
-    getData();
-  };
-
   useEffect(() => {
     getData();
+    getBallotData();
   }, []);
 
   return (
     <div>
-      {committees.length == 0
+      {committeeBallots &&
+        Object.entries(committeeBallots).map(([key, value]) => {
+          return <Ballot committee={key} members={value} key={key} />;
+        })}
+      {/* {committees.length == 0
         ? "loading"
         : committees.map((committee_item) => {
             if (
@@ -61,7 +83,7 @@ function polls() {
               return (
                 <Ballot committee={committee_item} key={committee_item.id} />
               );
-          })}
+          })} */}
     </div>
   );
 }

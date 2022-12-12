@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Committee.module.css";
-import { Avatar, Card } from "flowbite-react";
+import { Avatar, Card, Button } from "flowbite-react";
 import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
 import User from "./User";
 
-function Ballot({ committee }) {
+function Ballot({ committee, members }) {
   const [users, setUsers] = useState([]);
+  const [thisCommittee, setThisCommittee] = useState(null);
 
   const getCommittee = async (committee_id) => {
     let { data: committee, error } = await supabase
@@ -14,7 +15,7 @@ function Ballot({ committee }) {
       .select("*")
       .eq("id", committee_id);
 
-    setCommittee(committee[0]);
+    setThisCommittee(committee[0]);
   };
 
   const loadUsers = async () => {
@@ -38,31 +39,35 @@ function Ballot({ committee }) {
   };
 
   useEffect(() => {
-    console.log(committee);
-    loadUsers();
+    getCommittee(committee);
+    // loadUsers();
     console.log(users);
   }, []);
 
   return (
     <div className={styles.card}>
-      {committee && (
-        <Link href={"/committees/" + committee.id}>
-          <Card href="#">
-            <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
-              {committee.display_name}
-            </h5>
-            <p className="font-normal text-gray-700 dark:text-gray-400">
-              {committee.description || "No description"}
-            </p>
-            <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
-              Candidates
-            </h5>
-            {users.map((user) => {
-              console.log(user);
-              return <User vote user={user} />;
-            })}
-          </Card>
-        </Link>
+      {thisCommittee && (
+        <Card>
+          <Link href={"/committees/" + committee}>
+            <Button
+              color="light"
+              className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white "
+            >
+              {thisCommittee.display_name}
+            </Button>
+          </Link>
+
+          <p className="font-normal text-gray-700 dark:text-gray-400">
+            {thisCommittee.description || "No description"}
+          </p>
+          <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
+            Candidates
+          </h5>
+          {members.map((user) => {
+            console.log(user);
+            return <User vote user={user} />;
+          })}
+        </Card>
       )}
     </div>
   );
