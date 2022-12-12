@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { GoTrueAdminApi } from "@supabase/supabase-js";
 
-function User({ user, interested = false, committee, vote = false }) {
+function User({ user, interested = false, committee, vote = false, removeButton = false }) {
     const [profilePic, setProfilePic] = useState(null);
     const [admin, setAdmin] = useState(null);
     const router = useRouter();
@@ -71,6 +71,40 @@ function User({ user, interested = false, committee, vote = false }) {
         console.error(error);
     };
 
+    const removeFromCommittee = async (user) => {
+        let { data: faculty_profiles, error } = await supabase
+            .from("faculty_profiles")
+            .select("*")
+            .eq("email", user.email);
+        console.log(faculty_profiles[0]);
+
+        console.log(router.query.id);
+        if (faculty_profiles[0].committees) {
+            let profile_committees = faculty_profiles[0].committees.filter(
+                (item) => item != router.query.id
+            );
+            console.log(profile_committees);
+            const { data, error } = await supabase
+                .from("faculty_profiles")
+                .update({ committees: profile_committees })
+                .eq("email", user.email);
+        }
+
+        let { data: committeeData, error2 } = await supabase
+            .from("committees")
+            .select("*")
+            .eq("id", router.query.id);
+        console.log(committeeData[0]);
+        if (committeeData[0].members) {
+            let umembers = committeeData[0].members.filter((item) => item != user.employeeID);
+            const { data, error } = await supabase
+                .from("committees")
+                .update({ members: umembers })
+                .eq("id", router.query.id);
+        }
+        window.location.reload();
+    };
+
     useEffect(() => {
         getProfilePic();
     }, []);
@@ -85,6 +119,20 @@ function User({ user, interested = false, committee, vote = false }) {
                 <p>{user.title}</p>
                 <p>{user.Department}</p>
                 <div style={{ display: "flex", marginLeft: "auto" }}>
+                    {removeButton ? (
+                        <Button
+                            style={{ marginRight: "8px" }}
+                            className="button primary block"
+                            onClick={() => {
+                                removeFromCommittee(user);
+                            }}
+                        >
+                            <div>Remove from Committee</div>
+                        </Button>
+                    ) : (
+                        <div></div>
+                    )}
+
                     <Button
                         style={{ marginRight: "8px" }}
                         className="button primary block"
