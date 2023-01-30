@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import { Card, Button, Avatar } from "flowbite-react";
+import Link from "next/link";
 
 function User({ user }) {
 	const [profilePic, setProfilePic] = useState(null);
@@ -27,7 +28,7 @@ function User({ user }) {
 
 	return (
 		<div>
-			<Link>
+			<Link href={"/faculty/" + user.id}>
 				<Card>
 					<Avatar img={profilePic} rounded={true} />
 					<h1>{user.username}</h1>
