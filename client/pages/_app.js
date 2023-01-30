@@ -17,9 +17,6 @@ function MyApp({ Component, pageProps }) {
       }
     };
     setAuthSession();
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
   }, []);
 
   return (
