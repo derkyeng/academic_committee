@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
 
 function id() {
-	return <div>Faculty</div>;
+	const router = useRouter();
+	const user = router.query;
+
+	return <div>{user.username}</div>;
 }
 
 export default id;

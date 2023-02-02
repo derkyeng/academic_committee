@@ -28,7 +28,12 @@ function User({ user }) {
 
 	return (
 		<div>
-			<Link href={"/faculty/" + user.id}>
+			<Link
+				href={{
+					pathname: "/faculty/" + user.id,
+					query: user,
+				}}
+			>
 				<Card>
 					<Avatar img={profilePic} rounded={true} />
 					<h1>{user.username}</h1>
