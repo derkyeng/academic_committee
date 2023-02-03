@@ -18,7 +18,7 @@ export default function FacultyForm({
         handleFormSubmit(name, rank);
     };
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ display: "flex" }}>
             <RankSelect
                 formData={formData}
                 handleFormChange={handleFormChange}

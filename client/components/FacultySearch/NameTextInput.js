@@ -2,7 +2,7 @@ import { TextInput, Label } from "flowbite-react";
 
 export default function NameTextInput({ formData, handleFormChange }) {
     return (
-        <div className="input-field" style={{ marginLeft: "14px" }}>
+        <div className="input-field">
             <Label htmlFor="facultyName">Full Name</Label>
             <TextInput
                 id="facultyName"
