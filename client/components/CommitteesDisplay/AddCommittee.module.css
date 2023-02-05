@@ -1,0 +1,16 @@
+.add_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 64px;
+    padding: 0 24px;
+    border: solid 1px rgb(22, 45, 255);
+    margin: 12px 0;
+    border-radius: 12px;
+}
+
+.header_text {
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 12px;
+}
