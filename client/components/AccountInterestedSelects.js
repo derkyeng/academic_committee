@@ -9,8 +9,13 @@ export default function AccountInterestedSelects({
 	setInterestedCommittees,
 	highInterestCommittees,
 	setHighInterestCommittees,
+	removeWillingCommittees,
+	setRemoveWillingCommittees,
+	removeInterestedCommittees,
+	setRemoveInterestedCommittees,
+	removeHighInterestCommittees,
+	setRemoveHighInterestCommittees,
 }) {
-	// Currently only working when the information is in the database.
 	const removeSelected = (oldOptions, toRemove) => {
 		return oldOptions.filter((item) => !toRemove.includes(item));
 	};
@@ -33,6 +38,18 @@ export default function AccountInterestedSelects({
 					])}
 					value={willingCommittees}
 					onChange={(interests) => {
+						// Removal Occured
+						if (interests.length < willingCommittees.length) {
+							let difference = willingCommittees.filter(
+								(committee) => !interests.includes(committee)
+							);
+							if (!removeWillingCommittees.includes(difference[0].value)) {
+								setRemoveWillingCommittees((current) => [
+									...current,
+									difference[0].value,
+								]);
+							}
+						}
 						setWillingCommittees(interests);
 					}}
 				/>
@@ -51,6 +68,18 @@ export default function AccountInterestedSelects({
 					])}
 					value={interestedCommittees}
 					onChange={(interests) => {
+						// Removal Occured
+						if (interests.length < interestedCommittees.length) {
+							let difference = interestedCommittees.filter(
+								(committee) => !interests.includes(committee)
+							);
+							if (!removeInterestedCommittees.includes(difference[0].value)) {
+								setRemoveInterestedCommittees((current) => [
+									...current,
+									difference[0].value,
+								]);
+							}
+						}
 						setInterestedCommittees(interests);
 					}}
 				/>
@@ -69,6 +98,22 @@ export default function AccountInterestedSelects({
 					])}
 					value={highInterestCommittees}
 					onChange={(interests) => {
+						// Removal Occured
+						console.log("High Interest Change");
+						console.log(interests.length);
+						console.log(removeHighInterestCommittees.length);
+						if (interests.length < highInterestCommittees.length) {
+							let difference = highInterestCommittees.filter(
+								(committee) => !interests.includes(committee)
+							);
+							console.log(difference.value);
+							if (!removeHighInterestCommittees.includes(difference[0].value)) {
+								setRemoveHighInterestCommittees((current) => [
+									...current,
+									difference[0].value,
+								]);
+							}
+						}
 						setHighInterestCommittees(interests);
 					}}
 				/>

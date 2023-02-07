@@ -24,6 +24,9 @@ export default function Account({ session }) {
 	const [highInterestCommittees, setHighInterestCommittees] = useState([]);
 	const [pastCommittees, setPastCommittees] = useState([]);
 	const [currentCommittees, setCurrentCommittees] = useState([]);
+	const [removeWillingCommittees, setRemoveWillingCommittees] = useState([]);
+	const [removeInterestedCommittees, setRemoveInterestedCommittees] = useState([]);
+	const [removeHighInterestCommittees, setRemoveHighInterestCommittees] = useState([]);
 	const [avatar_url, setAvatarUrl] = useState(null);
 	const [email, setEmail] = useState(null);
 	const [options, setOptions] = useState([]);
@@ -248,6 +251,64 @@ export default function Account({ session }) {
 		console.log(interestedUsers);
 	};
 
+	const removeCommitteeMembers = async ({
+		removeWillingCommittees,
+		removeInterestedCommittees,
+		removeHighInterestCommittees,
+	}) => {
+		const user = await getCurrentUser();
+		console.log("----------REMOVING---------");
+		for (let i = 0; i < removeWillingCommittees.length; i++) {
+			let committee = removeWillingCommittees[i];
+			console.log(committee);
+			let { data: willingUsersData, error } = await supabase
+				.from("committees")
+				.select("interested_users")
+				.eq("id", committee);
+			let interested = willingUsersData[0].interested_users;
+			let willingUsers = interested["1"];
+			let newWillingUsers = willingUsers.filter((e) => e !== user.id);
+			interested["1"] = newWillingUsers;
+			let { data: temp, error2 } = await supabase
+				.from("committees")
+				.update({ interested_users: interested })
+				.eq("id", committee);
+		}
+		for (let i = 0; i < removeInterestedCommittees.length; i++) {
+			let committee = removeInterestedCommittees[i];
+			console.log(committee);
+			let { data: willingUsersData, error } = await supabase
+				.from("committees")
+				.select("interested_users")
+				.eq("id", committee);
+			let interested = willingUsersData[0].interested_users;
+			let willingUsers = interested["2"];
+			let newWillingUsers = willingUsers.filter((e) => e !== user.id);
+			interested["2"] = newWillingUsers;
+			let { data: temp, error2 } = await supabase
+				.from("committees")
+				.update({ interested_users: interested })
+				.eq("id", committee);
+		}
+		for (let i = 0; i < removeHighInterestCommittees.length; i++) {
+			let committee = removeHighInterestCommittees[i];
+			console.log(committee);
+			let { data: willingUsersData, error } = await supabase
+				.from("committees")
+				.select("interested_users")
+				.eq("id", committee);
+			let interested = willingUsersData[0].interested_users;
+			let willingUsers = interested["3"];
+			let newWillingUsers = willingUsers.filter((e) => e !== user.id);
+			interested["3"] = newWillingUsers;
+			let { data: temp, error2 } = await supabase
+				.from("committees")
+				.update({ interested_users: interested })
+				.eq("id", committee);
+		}
+		console.log("-----------END-------------");
+	};
+
 	const updateCommitteeMembers = async ({
 		interestedCommittees,
 		pastCommittees,
@@ -256,6 +317,59 @@ export default function Account({ session }) {
 		highInterestCommittees,
 	}) => {
 		const user = await getCurrentUser();
+		console.log("UPDATING COMMITTEES TABLE");
+		console.log(willingCommittees);
+		for (let i = 0; i < willingCommittees.length; i++) {
+			let committee = willingCommittees[i].value;
+			let { data: willingData, error } = await supabase
+				.from("committees")
+				.select("interested_users")
+				.eq("id", committee);
+			let interested = willingData[0].interested_users;
+			let willingUsers = interested["1"];
+			if (!willingUsers.includes(user.id)) {
+				willingUsers.push(user.id);
+			}
+			interested["1"] = willingUsers;
+			let { data: willingUsersData, error2 } = await supabase
+				.from("committees")
+				.update({ interested_users: interested })
+				.eq("id", committee);
+		}
+		for (let i = 0; i < interestedCommittees.length; i++) {
+			let committee = interestedCommittees[i].value;
+			let { data: willingData, error } = await supabase
+				.from("committees")
+				.select("interested_users")
+				.eq("id", committee);
+			let interested = willingData[0].interested_users;
+			let willingUsers = interested["2"];
+			if (!willingUsers.includes(user.id)) {
+				willingUsers.push(user.id);
+			}
+			interested["2"] = willingUsers;
+			let { data: willingUsersData, error2 } = await supabase
+				.from("committees")
+				.update({ interested_users: interested })
+				.eq("id", committee);
+		}
+		for (let i = 0; i < highInterestCommittees.length; i++) {
+			let committee = highInterestCommittees[i].value;
+			let { data: willingData, error } = await supabase
+				.from("committees")
+				.select("interested_users")
+				.eq("id", committee);
+			let interested = willingData[0].interested_users;
+			let willingUsers = interested["3"];
+			if (!willingUsers.includes(user.id)) {
+				willingUsers.push(user.id);
+			}
+			interested["3"] = willingUsers;
+			let { data: willingUsersData, error2 } = await supabase
+				.from("committees")
+				.update({ interested_users: interested })
+				.eq("id", committee);
+		}
 	};
 
 	return (
@@ -333,6 +447,12 @@ export default function Account({ session }) {
 				setInterestedCommittees={setInterestedCommittees}
 				highInterestCommittees={highInterestCommittees}
 				setHighInterestCommittees={setHighInterestCommittees}
+				removeWillingCommittees={removeWillingCommittees}
+				setRemoveWillingCommittees={setRemoveWillingCommittees}
+				removeInterestedCommittees={removeInterestedCommittees}
+				setRemoveInterestedCommittees={setRemoveInterestedCommittees}
+				removeHighInterestCommittees={removeHighInterestCommittees}
+				setRemoveHighInterestCommittees={setRemoveHighInterestCommittees}
 			/>
 
 			{/* ------------------------------------------------------------------------- */}
@@ -366,11 +486,25 @@ export default function Account({ session }) {
 								highInterestCommittees,
 							});
 							console.log("will also update committees");
-							updateCommitteeMembers({
-								interestedCommittees,
-								pastCommittees,
-								currentCommittees,
+							removeCommitteeMembers({
+								removeWillingCommittees,
+								removeInterestedCommittees,
+								removeHighInterestCommittees,
+							}).then(() => {
+								updateCommitteeMembers({
+									interestedCommittees,
+									pastCommittees,
+									currentCommittees,
+									willingCommittees,
+									highInterestCommittees,
+								});
 							});
+
+							console.log("Removing these");
+							console.log(removeWillingCommittees);
+							console.log(removeInterestedCommittees);
+							console.log(removeHighInterestCommittees);
+							// window.location.reload();
 						}}
 						disabled={loading}
 					>
