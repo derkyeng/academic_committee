@@ -6,8 +6,10 @@ import FacultySearch from "../components/FacultySearch";
 import styles from "../styles/Home.module.css";
 import { Card } from "flowbite-react";
 import AccountView from "../components/Account";
+import { useRouter } from "next/router";
 
 export default function Home({ session }) {
+	const router = useRouter();
 	const getProfileWithEmail = async (email) => {
 		let { data: profiles, error } = await supabase
 			.from("faculty_profiles")
@@ -30,6 +32,17 @@ export default function Home({ session }) {
 	}, [session]);
 
 	return (
-		<div style={{ padding: "50px 0 100px 0", margin: "15px" }}>{session && <Card></Card>}</div>
+		<div style={{ padding: "50px 0 100px 0", margin: "15px", textAlign: "center" }}>
+			{session && (
+				<Card
+					onClick={() => {
+						router.push("/account");
+					}}
+				>
+					<h1>Welcome to Hamilton College Academic Committee Organizer</h1>{" "}
+					<h2>Click here to go edit your profile.</h2>
+				</Card>
+			)}
+		</div>
 	);
 }
