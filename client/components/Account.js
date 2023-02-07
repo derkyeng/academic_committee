@@ -184,9 +184,9 @@ export default function Account({ session }) {
 			setLoading(true);
 			const user = await getCurrentUser();
 			uploadProfilePicture(avatar_url);
-			const interestedCommitteesIds = interestedCommittees.map((committee) => {
-				return committee.value;
-			});
+			// const interestedCommitteesIds = interestedCommittees.map((committee) => {
+			// 	return committee.value;
+			// });
 			const pastCommitteesIds = pastCommittees.map((committee) => {
 				return committee.value;
 			});
