@@ -11,6 +11,7 @@ import {
     Checkbox,
     ListGroup,
 } from "flowbite-react";
+import InterestedSelects from "./AccountInterestedSelects";
 import RSelect from "react-select";
 
 export default function Account({ session }) {
@@ -18,8 +19,11 @@ export default function Account({ session }) {
     const [username, setUsername] = useState(null);
     const [hamId, setHamId] = useState(null);
     const [rank, setRank] = useState(null);
+    const [willingCommittees, setWillingCommittees] = useState([]);
     const [interestedCommittees, setInterestedCommittees] = useState([]);
+    const [highInterestCommittees, setHighInterestCommittees] = useState([]);
     const [pastCommittees, setPastCommittees] = useState([]);
+    const [currentCommittees, setCurrentCommittees] = useState([]);
     const [avatar_url, setAvatarUrl] = useState(null);
     const [email, setEmail] = useState(null);
     const [options, setOptions] = useState([]);
@@ -146,6 +150,10 @@ export default function Account({ session }) {
         setPastCommittees(interests);
     };
 
+    const setCurrentCommitteeInterests = (interests) => {
+        setCurrentCommittees(interests);
+    };
+
     async function updateProfile({ username, avatar_url }) {
         try {
             setLoading(true);
@@ -160,6 +168,10 @@ export default function Account({ session }) {
                 return committee.value;
             });
 
+            const currentCommitteeIds = currentCommittees.map((committee) => {
+                return committee.value;
+            });
+
             const updates = {
                 id: user.id,
                 username,
@@ -170,6 +182,7 @@ export default function Account({ session }) {
                 hamId: hamId,
                 interested_committees: interestedCommitteesIds,
                 past_committees: pastCommitteesIds,
+                current_committees: currentCommitteeIds,
             };
 
             let { error } = await supabase.from("profiles").upsert(updates);
@@ -187,6 +200,7 @@ export default function Account({ session }) {
     const updateCommitteeMembers = async ({
         interestedCommittees,
         pastCommittees,
+        currentCommittees,
     }) => {
         const user = await getCurrentUser();
         for (let i = 0; i < interestedCommittees.length; i++) {
@@ -209,6 +223,20 @@ export default function Account({ session }) {
                 .from("committees")
                 .select("past_members")
                 .eq("id", pastCommittees[i].value);
+            let pastMembers = committee[0].past_members;
+            if (!pastMembers.includes(user.id)) {
+                pastMembers.push(user.id);
+            }
+            const { data: update, error2 } = await supabase
+                .from("committees")
+                .update({ past_members: pastMembers })
+                .eq("id", pastCommittees[i].value);
+        }
+        for (let i = 0; i < currentCommittees.length; i++) {
+            let { data: committee, error } = await supabase
+                .from("committees")
+                .select("past_members")
+                .eq("id", currentCommittees[i].value);
             let pastMembers = committee[0].past_members;
             if (!pastMembers.includes(user.id)) {
                 pastMembers.push(user.id);
@@ -266,9 +294,23 @@ export default function Account({ session }) {
 
             {/* change past committees and committee interests to select multiple options */}
             <div className="mt-2 ">
-                <Label htmlFor="past committees">Past Committees</Label>
+                <Label htmlFor="currentcommittees">Current Committees</Label>
                 <RSelect
                     isMulti
+                    id="currentcommittees "
+                    name="Current Committees"
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    options={options}
+                    value={currentCommittees}
+                    onChange={setCurrentCommitteeInterests}
+                />
+            </div>
+            <div className="mt-2 ">
+                <Label htmlFor="pastcommittees">Past Committees</Label>
+                <RSelect
+                    isMulti
+                    id="pastcommittees"
                     name="Interested Committees"
                     className="basic-multi-select"
                     classNamePrefix="select"
@@ -278,20 +320,16 @@ export default function Account({ session }) {
                 />
             </div>
 
-            <div className="mt-2 ">
-                <Label htmlFor="interested committees">
-                    Interested Committees
-                </Label>
-                <RSelect
-                    isMulti
-                    name="Interested Committees"
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    options={options}
-                    value={interestedCommittees}
-                    onChange={setCommitteeInterests}
-                />
-            </div>
+            <InterestedSelects
+                options={options}
+                willingCommittees={willingCommittees}
+                setWillingCommittees={setWillingCommittees}
+                interestedCommittees={interestedCommittees}
+                setInterestedCommittees={setInterestedCommittees}
+                highInterestCommittees={highInterestCommittees}
+                setHighInterestCommittees={setHighInterestCommittees}
+            />
+
             {/* ------------------------------------------------------------------------- */}
             {/* Add current committess, not as choice but as a fixed parameter */}
 
@@ -321,6 +359,7 @@ export default function Account({ session }) {
                             updateCommitteeMembers({
                                 interestedCommittees,
                                 pastCommittees,
+                                currentCommittees,
                             });
                         }}
                         disabled={loading}
