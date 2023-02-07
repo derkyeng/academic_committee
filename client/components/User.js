@@ -9,7 +9,6 @@ function User({ user }) {
 
 	// Make this better in the future
 	async function getProfilePic(user) {
-		console.log(user);
 		const id = user.id;
 		const { data } = supabase.storage.from("avatars").getPublicUrl(`avatars/${id}`);
 		let isUndefined = data.publicUrl.substr(data.publicUrl.length - 9);
@@ -28,7 +27,12 @@ function User({ user }) {
 
 	return (
 		<div>
-			<Link href={"/faculty/" + user.id}>
+			<Link
+				href={{
+					pathname: "/faculty/" + user.id,
+					query: user,
+				}}
+			>
 				<Card>
 					<Avatar img={profilePic} rounded={true} />
 					<h1>{user.username}</h1>

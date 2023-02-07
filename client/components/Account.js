@@ -184,6 +184,42 @@ export default function Account({ session }) {
         }
     }
 
+    const updateCommitteeMembers = async ({
+        interestedCommittees,
+        pastCommittees,
+    }) => {
+        const user = await getCurrentUser();
+        for (let i = 0; i < interestedCommittees.length; i++) {
+            let { data: committee, error } = await supabase
+                .from("committees")
+                .select("interested_users")
+                .eq("id", interestedCommittees[i].value);
+            let interestedUsers = committee[0].interested_users;
+            if (!interestedUsers.includes(user.id)) {
+                interestedUsers.push(user.id);
+            }
+            const { data: update, error2 } = await supabase
+                .from("committees")
+                .update({ interested_users: interestedUsers })
+                .eq("id", interestedCommittees[i].value);
+        }
+
+        for (let i = 0; i < pastCommittees.length; i++) {
+            let { data: committee, error } = await supabase
+                .from("committees")
+                .select("past_members")
+                .eq("id", pastCommittees[i].value);
+            let pastMembers = committee[0].past_members;
+            if (!pastMembers.includes(user.id)) {
+                pastMembers.push(user.id);
+            }
+            const { data: update, error2 } = await supabase
+                .from("committees")
+                .update({ past_members: pastMembers })
+                .eq("id", pastCommittees[i].value);
+        }
+    };
+
     return (
         <div className="container mx-auto py-4">
             <div className="mt-2 ">
@@ -281,6 +317,11 @@ export default function Account({ session }) {
                         className="button primary block"
                         onClick={() => {
                             updateProfile({ username, avatar_url });
+                            console.log("will also update committees");
+                            updateCommitteeMembers({
+                                interestedCommittees,
+                                pastCommittees,
+                            });
                         }}
                         disabled={loading}
                     >
