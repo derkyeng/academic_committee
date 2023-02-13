@@ -1,0 +1,15 @@
+.header {
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.header_2 {
+    font-size: 22px;
+    font-weight: 450;
+}
+
+.signIn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

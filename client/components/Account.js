@@ -505,6 +505,8 @@ export default function Account({ session }) {
 							console.log(removeInterestedCommittees);
 							console.log(removeHighInterestCommittees);
 							// window.location.reload();
+						
+							alert("Profile Information Updated Successfully!")
 						}}
 						disabled={loading}
 					>
