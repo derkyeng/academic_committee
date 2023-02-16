@@ -13,7 +13,7 @@ const useProfiles = () => {
         setProfiles([]);
         // query_username = query_username.trim().toLowerCase();
 
-        let query = supabase.from("faculty_profiles").select("*");
+        let query = supabase.from("profiles").select("*");
 
         if (query_username) {
             query = query.eq("username", query_username);

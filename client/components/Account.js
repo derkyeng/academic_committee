@@ -12,6 +12,7 @@ import {
     ListGroup,
 } from "flowbite-react";
 import InterestedSelects from "./AccountInterestedSelects";
+import InterestedSelects from "./AccountInterestedSelects";
 import RSelect from "react-select";
 
 export default function Account({ session }) {
@@ -24,6 +25,11 @@ export default function Account({ session }) {
     const [highInterestCommittees, setHighInterestCommittees] = useState([]);
     const [pastCommittees, setPastCommittees] = useState([]);
     const [currentCommittees, setCurrentCommittees] = useState([]);
+    const [removeWillingCommittees, setRemoveWillingCommittees] = useState([]);
+    const [removeInterestedCommittees, setRemoveInterestedCommittees] =
+        useState([]);
+    const [removeHighInterestCommittees, setRemoveHighInterestCommittees] =
+        useState([]);
     const [avatar_url, setAvatarUrl] = useState(null);
     const [email, setEmail] = useState(null);
     const [options, setOptions] = useState([]);
@@ -80,7 +86,7 @@ export default function Account({ session }) {
             let { data, error, status } = await supabase
                 .from("profiles")
                 .select(
-                    `username, avatar_url, rank, hamId, interested_committees, past_committees`
+                    `username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees`
                 )
                 .eq("id", user.id)
                 .single();
@@ -94,29 +100,78 @@ export default function Account({ session }) {
                 setRank(data.rank);
                 setHamId(data.hamId);
                 if (data.interested_committees && options.length > 0) {
-                    const newInterestedCommittees =
-                        data.interested_committees.map((committee) => {
-                            return {
-                                value: committee,
-                                label: options.find(
-                                    (option) => option.value == committee
-                                ).label,
-                            };
-                        });
-                    setInterestedCommittees(newInterestedCommittees);
+                    console.log(data.interested_committees["1"]);
+                    if (data.interested_committees["1"].length > 0) {
+                        let willing = data.interested_committees["1"].map(
+                            (committee) => {
+                                return {
+                                    value: committee,
+                                    label: options.find(
+                                        (option) => option.value == committee
+                                    ).label,
+                                };
+                            }
+                        );
+                        console.log(willing);
+                        setWillingCommittees(willing);
+                    }
+
+                    if (data.interested_committees["2"].length > 0) {
+                        let interested = data.interested_committees["2"].map(
+                            (committee) => {
+                                return {
+                                    value: committee,
+                                    label: options.find(
+                                        (option) => option.value == committee
+                                    ).label,
+                                };
+                            }
+                        );
+                        setInterestedCommittees(interested);
+                    }
+                    if (data.interested_committees["3"].length > 0) {
+                        let highly = data.interested_committees["3"].map(
+                            (committee) => {
+                                return {
+                                    value: committee,
+                                    label: options.find(
+                                        (option) => option.value == committee
+                                    ).label,
+                                };
+                            }
+                        );
+                        setHighInterestCommittees(highly);
+                    }
                 }
                 if (data.past_committees && options.length > 0) {
-                    const newPastCommittees = data.past_committees.map(
-                        (committee) => {
-                            return {
-                                value: committee,
-                                label: options.find(
-                                    (option) => option.value == committee
-                                ).label,
-                            };
-                        }
-                    );
-                    setPastCommittees(newPastCommittees);
+                    if (data.past_committees.length > 0) {
+                        const newPastCommittees = data.past_committees.map(
+                            (committee) => {
+                                return {
+                                    value: committee,
+                                    label: options.find(
+                                        (option) => option.value == committee
+                                    ).label,
+                                };
+                            }
+                        );
+                        setPastCommittees(newPastCommittees);
+                    }
+                }
+                if (data.current_committees && options.length > 0) {
+                    if (data.current_committees.length > 0) {
+                        const newCommittees = data.current_committees.map(
+                            (committee) => {
+                                return {
+                                    value: committee,
+                                    label: options.find(
+                                        (option) => option.value == committee
+                                    ).label,
+                                };
+                            }
+                        );
+                        setCurrentCommittees(newCommittees);
+                    }
                 }
             }
         } catch (error) {
@@ -159,11 +214,9 @@ export default function Account({ session }) {
             setLoading(true);
             const user = await getCurrentUser();
             uploadProfilePicture(avatar_url);
-            const interestedCommitteesIds = interestedCommittees.map(
-                (committee) => {
-                    return committee.value;
-                }
-            );
+            // const interestedCommitteesIds = interestedCommittees.map((committee) => {
+            // 	return committee.value;
+            // });
             const pastCommitteesIds = pastCommittees.map((committee) => {
                 return committee.value;
             });
@@ -180,7 +233,6 @@ export default function Account({ session }) {
                 updated_at: new Date(),
                 email: session?.user.email,
                 hamId: hamId,
-                interested_committees: interestedCommitteesIds,
                 past_committees: pastCommitteesIds,
                 current_committees: currentCommitteeIds,
             };
@@ -197,54 +249,159 @@ export default function Account({ session }) {
         }
     }
 
+    let updateProfileCommittees = async ({
+        willingCommittees,
+        interestedCommittees,
+        highInterestCommittees,
+    }) => {
+        const user = await getCurrentUser();
+        let willingCommitteesIds = willingCommittees.map(
+            (committee) => committee.value
+        );
+        let interestedCommitteesIds = interestedCommittees.map(
+            (committee) => committee.value
+        );
+        let highInterestCommitteesIds = highInterestCommittees.map(
+            (committee) => committee.value
+        );
+
+        let compiledInterested = {
+            1: willingCommitteesIds,
+            2: interestedCommitteesIds,
+            3: highInterestCommitteesIds,
+        };
+
+        console.log(compiledInterested);
+
+        let { data: interestedUsers, error } = await supabase
+            .from("profiles")
+            .update({ interested_committees: compiledInterested })
+            .eq("id", user.id);
+        if (error) {
+            console.log(error);
+            return;
+        }
+        console.log(interestedUsers);
+    };
+
+    const removeCommitteeMembers = async ({
+        removeWillingCommittees,
+        removeInterestedCommittees,
+        removeHighInterestCommittees,
+    }) => {
+        const user = await getCurrentUser();
+        console.log("----------REMOVING---------");
+        for (let i = 0; i < removeWillingCommittees.length; i++) {
+            let committee = removeWillingCommittees[i];
+            console.log(committee);
+            let { data: willingUsersData, error } = await supabase
+                .from("committees")
+                .select("interested_users")
+                .eq("id", committee);
+            let interested = willingUsersData[0].interested_users;
+            let willingUsers = interested["1"];
+            let newWillingUsers = willingUsers.filter((e) => e !== user.id);
+            interested["1"] = newWillingUsers;
+            let { data: temp, error2 } = await supabase
+                .from("committees")
+                .update({ interested_users: interested })
+                .eq("id", committee);
+        }
+        for (let i = 0; i < removeInterestedCommittees.length; i++) {
+            let committee = removeInterestedCommittees[i];
+            console.log(committee);
+            let { data: willingUsersData, error } = await supabase
+                .from("committees")
+                .select("interested_users")
+                .eq("id", committee);
+            let interested = willingUsersData[0].interested_users;
+            let willingUsers = interested["2"];
+            let newWillingUsers = willingUsers.filter((e) => e !== user.id);
+            interested["2"] = newWillingUsers;
+            let { data: temp, error2 } = await supabase
+                .from("committees")
+                .update({ interested_users: interested })
+                .eq("id", committee);
+        }
+        for (let i = 0; i < removeHighInterestCommittees.length; i++) {
+            let committee = removeHighInterestCommittees[i];
+            console.log(committee);
+            let { data: willingUsersData, error } = await supabase
+                .from("committees")
+                .select("interested_users")
+                .eq("id", committee);
+            let interested = willingUsersData[0].interested_users;
+            let willingUsers = interested["3"];
+            let newWillingUsers = willingUsers.filter((e) => e !== user.id);
+            interested["3"] = newWillingUsers;
+            let { data: temp, error2 } = await supabase
+                .from("committees")
+                .update({ interested_users: interested })
+                .eq("id", committee);
+        }
+        console.log("-----------END-------------");
+    };
+
     const updateCommitteeMembers = async ({
         interestedCommittees,
         pastCommittees,
         currentCommittees,
+        willingCommittees,
+        highInterestCommittees,
     }) => {
         const user = await getCurrentUser();
-        for (let i = 0; i < interestedCommittees.length; i++) {
-            let { data: committee, error } = await supabase
+        console.log("UPDATING COMMITTEES TABLE");
+        console.log(willingCommittees);
+        for (let i = 0; i < willingCommittees.length; i++) {
+            let committee = willingCommittees[i].value;
+            let { data: willingData, error } = await supabase
                 .from("committees")
                 .select("interested_users")
-                .eq("id", interestedCommittees[i].value);
-            let interestedUsers = committee[0].interested_users;
-            if (!interestedUsers.includes(user.id)) {
-                interestedUsers.push(user.id);
+                .eq("id", committee);
+            let interested = willingData[0].interested_users;
+            let willingUsers = interested["1"];
+            if (!willingUsers.includes(user.id)) {
+                willingUsers.push(user.id);
             }
-            const { data: update, error2 } = await supabase
+            interested["1"] = willingUsers;
+            let { data: willingUsersData, error2 } = await supabase
                 .from("committees")
-                .update({ interested_users: interestedUsers })
-                .eq("id", interestedCommittees[i].value);
+                .update({ interested_users: interested })
+                .eq("id", committee);
         }
-
-        for (let i = 0; i < pastCommittees.length; i++) {
-            let { data: committee, error } = await supabase
+        for (let i = 0; i < interestedCommittees.length; i++) {
+            let committee = interestedCommittees[i].value;
+            let { data: willingData, error } = await supabase
                 .from("committees")
-                .select("past_members")
-                .eq("id", pastCommittees[i].value);
-            let pastMembers = committee[0].past_members;
-            if (!pastMembers.includes(user.id)) {
-                pastMembers.push(user.id);
+                .select("interested_users")
+                .eq("id", committee);
+            let interested = willingData[0].interested_users;
+            let willingUsers = interested["2"];
+            if (!willingUsers.includes(user.id)) {
+                willingUsers.push(user.id);
             }
-            const { data: update, error2 } = await supabase
+            interested["2"] = willingUsers;
+            let { data: willingUsersData, error2 } = await supabase
                 .from("committees")
-                .update({ past_members: pastMembers })
-                .eq("id", pastCommittees[i].value);
+                .update({ interested_users: interested })
+                .eq("id", committee);
         }
-        for (let i = 0; i < currentCommittees.length; i++) {
-            let { data: committee, error } = await supabase
+        for (let i = 0; i < highInterestCommittees.length; i++) {
+            let committee = highInterestCommittees[i].value;
+            let { data: willingData, error } = await supabase
                 .from("committees")
-                .select("past_members")
-                .eq("id", currentCommittees[i].value);
-            let pastMembers = committee[0].past_members;
-            if (!pastMembers.includes(user.id)) {
-                pastMembers.push(user.id);
+                .select("interested_users")
+                .eq("id", committee);
+            let interested = willingData[0].interested_users;
+            let willingUsers = interested["3"];
+            if (!willingUsers.includes(user.id)) {
+                willingUsers.push(user.id);
             }
-            const { data: update, error2 } = await supabase
+            interested["3"] = willingUsers;
+            let { data: willingUsersData, error2 } = await supabase
                 .from("committees")
-                .update({ past_members: pastMembers })
-                .eq("id", pastCommittees[i].value);
+                .update({ interested_users: interested })
+                .eq("id", committee);
         }
     };
 
@@ -328,6 +485,14 @@ export default function Account({ session }) {
                 setInterestedCommittees={setInterestedCommittees}
                 highInterestCommittees={highInterestCommittees}
                 setHighInterestCommittees={setHighInterestCommittees}
+                removeWillingCommittees={removeWillingCommittees}
+                setRemoveWillingCommittees={setRemoveWillingCommittees}
+                removeInterestedCommittees={removeInterestedCommittees}
+                setRemoveInterestedCommittees={setRemoveInterestedCommittees}
+                removeHighInterestCommittees={removeHighInterestCommittees}
+                setRemoveHighInterestCommittees={
+                    setRemoveHighInterestCommittees
+                }
             />
 
             {/* ------------------------------------------------------------------------- */}
@@ -355,12 +520,33 @@ export default function Account({ session }) {
                         className="button primary block"
                         onClick={() => {
                             updateProfile({ username, avatar_url });
-                            console.log("will also update committees");
-                            updateCommitteeMembers({
+                            updateProfileCommittees({
+                                willingCommittees,
                                 interestedCommittees,
-                                pastCommittees,
-                                currentCommittees,
+                                highInterestCommittees,
                             });
+                            console.log("will also update committees");
+                            removeCommitteeMembers({
+                                removeWillingCommittees,
+                                removeInterestedCommittees,
+                                removeHighInterestCommittees,
+                            }).then(() => {
+                                updateCommitteeMembers({
+                                    interestedCommittees,
+                                    pastCommittees,
+                                    currentCommittees,
+                                    willingCommittees,
+                                    highInterestCommittees,
+                                });
+                            });
+
+                            console.log("Removing these");
+                            console.log(removeWillingCommittees);
+                            console.log(removeInterestedCommittees);
+                            console.log(removeHighInterestCommittees);
+                            // window.location.reload();
+
+                            alert("Profile Information Updated Successfully!");
                         }}
                         disabled={loading}
                     >

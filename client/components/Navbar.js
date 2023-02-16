@@ -123,6 +123,7 @@ const Navigationbar = ({ session }) => {
 								onClick={async () => {
 									const { error } = await supabase.auth.signOut();
 									router.push("/");
+									window.location.reload();
 								}}
 							>
 								Sign out
