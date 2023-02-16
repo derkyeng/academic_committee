@@ -12,7 +12,6 @@ import {
     ListGroup,
 } from "flowbite-react";
 import InterestedSelects from "./AccountInterestedSelects";
-import InterestedSelects from "./AccountInterestedSelects";
 import RSelect from "react-select";
 
 export default function Account({ session }) {

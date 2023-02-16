@@ -7,6 +7,7 @@ import CommitteeModal from "../../components/CommitteesDisplay/CommitteeModal";
 import { useCommittees } from "../../hooks";
 function committees() {
     const [committees] = useCommittees();
+
     const [modal, setModal] = useState(false);
     return (
         <div>

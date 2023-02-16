@@ -7,29 +7,41 @@ import EditCommitteeModal from "../components/CommitteesDisplay/EditCommitteeMod
 import Link from "next/link";
 
 function Committee({ committee }) {
-	const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(false);
 
-	return (
-		<div>
-			{/* <Link
-				href={{
-					pathname: "/committees/" + committee.id,
-					query: committee,
-				}}
-			> */}
-				<Card>
-					<h1>{committee.display_name}</h1>
-					<h2>{committee.description}</h2>
-					<img 
-						src="/edit_icon.png" alt="edit button" 
-						className={styles.edit_button} 
-						onClick={() => setModal(true)}
-					/>
- 		           <EditCommitteeModal closeModal={() => setModal(false)} modal={modal} committeeId={committee.id}/>
-				</Card>
-			{/* </Link> */}
-		</div>
-	);
+    // query in nextjs only passes along a shallow level object. Need to stringify the next level object
+    const stringifyCommittee = {
+        ...committee,
+        interested_users: JSON.stringify(committee.interested_users),
+    };
+    return (
+        <div className="cursor-pointer">
+            <Link
+                href={{
+                    pathname: "/committees/" + committee.id,
+                    query: stringifyCommittee,
+                }}
+            >
+                <div>
+                    <Card>
+                        <h1>{committee.display_name}</h1>
+                        <h2>{committee.description}</h2>
+                        <img
+                            src="/edit_icon.png"
+                            alt="edit button"
+                            className={styles.edit_button}
+                            onClick={() => setModal(true)}
+                        />
+                        <EditCommitteeModal
+                            closeModal={() => setModal(false)}
+                            modal={modal}
+                            committeeId={committee.id}
+                        />
+                    </Card>
+                </div>
+            </Link>
+        </div>
+    );
 }
 
 export default Committee;
