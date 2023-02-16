@@ -63,7 +63,7 @@ export default function AccountInterestedSelects({
                     id="highinterest"
                     name="High Interest Commmittees"
                     className="basic-multi-select"
-                    classNamePrefix="select"
+                    classNamePrefigix="select"
                     options={removeSelected(options, [
                         ...willingCommittees,
                         ...interestedCommittees,
