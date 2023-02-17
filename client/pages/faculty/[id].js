@@ -130,18 +130,27 @@ function id() {
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
                     <div>
+                        <h3 className="text-lg font-bold">Willing to Serve:</h3>
                         {willingInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
+                        <h3 className="text-lg font-bold">
+                            Interested in Serving:
+                        </h3>
+
                         {interestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
+                        <h3 className="text-lg font-bold">
+                            High Interest in Serving:
+                        </h3>
+
                         {highInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
