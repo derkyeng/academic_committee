@@ -28,14 +28,14 @@ const useProfiles = () => {
 			if (!firstName) {
 				firstName = "";
 			}
+			let committees = query[i].current_committees;
+			let interestedCommittees = query[i].interested_committees;
 			if (!queryLastName) {
 				if (firstName.includes(queryFirstName) || lastName.includes(queryFirstName)) {
 					console.log(query[i]);
-					let committees = query[i].current_committees;
 					console.log(committees);
 					if (query_committees) {
 						if (committees.includes(query_committees)) {
-							let interestedCommittees = query[i].interest_committees;
 							if (query_interest_committee) {
 								if (interestedCommittees[query_level].includes(query_interest_committee)) {
 									filtered_profiles.push(query[i]);
@@ -45,7 +45,6 @@ const useProfiles = () => {
 							}
 						}
 					} else {
-						let interestedCommittees = query[i].interested_committees;
 						if (query_interest_committee) {
 							if (interestedCommittees[query_level].includes(query_interest_committee)) {
 								filtered_profiles.push(query[i]);
@@ -57,11 +56,8 @@ const useProfiles = () => {
 				}
 			} else {
 				if (firstName.includes(queryFirstName) && lastName.includes(queryLastName)) {
-					let committees = query[i].current_committees;
-					console.log(committees);
 					if (query_committees) {
 						if (committees.includes(query_committees)) {
-							let interestedCommittees = query[i].interest_committees;
 							if (query_interest_committee) {
 								if (interestedCommittees[query_level].includes(query_interest_committee)) {
 									filtered_profiles.push(query[i]);
@@ -71,7 +67,6 @@ const useProfiles = () => {
 							}
 						}
 					} else {
-						let interestedCommittees = query[i].interested_committees;
 						if (query_interest_committee) {
 							if (interestedCommittees[query_level].includes(query_interest_committee)) {
 								filtered_profiles.push(query[i]);
