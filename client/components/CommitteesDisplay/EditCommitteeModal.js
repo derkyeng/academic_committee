@@ -16,8 +16,7 @@ export default function EditCommitteeModal({ modal, closeModal, committeeId, com
 
     const ElectOptions = [
         { value: true, label: 'Elected Committee' },
-        { value: false, label: 'Appointed Committee' },
-        { value: null, label: 'N/A' }
+        { value: false, label: 'Appointed Committee' }
       ]
     const SuccessMessage = () => {
         return (

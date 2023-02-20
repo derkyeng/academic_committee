@@ -10,7 +10,7 @@ function Committee({ committee }) {
 	const [modal, setModal] = useState(false);
 
 	return (
-		<div>
+		<div style={{marginBottom: "30px"}}>
 			{/* <Link
 				href={{
 					pathname: "/committees/" + committee.id,
@@ -18,7 +18,7 @@ function Committee({ committee }) {
 				}}
 			> */}
 				<Card>
-					<h1>{committee.display_name}</h1>
+					<h1 style={{fontSize: "25px", fontWeight: "bold"}}>{committee.display_name}</h1>
 					<h2>{committee.description}</h2>
 					<p>This committee is {committee.elected ? ("Elected") : ("Appointed")}</p>
 					<img 
