@@ -7,7 +7,7 @@ import EditCommitteeModal from "../components/CommitteesDisplay/EditCommitteeMod
 import Link from "next/link";
 
 function Committee({ committee }) {
-	const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(false);
 
 	return (
 		<div style={{marginBottom: "30px"}}>
