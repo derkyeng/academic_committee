@@ -9,14 +9,13 @@ import Link from "next/link";
 function Committee({ committee }) {
     const [modal, setModal] = useState(false);
 
+	const stringifyCommittee = {
+        ...committee,
+        interested_users: JSON.stringify(committee.interested_users),
+    };
+
 	return (
 		<div style={{marginBottom: "30px"}}>
-			{/* <Link
-				href={{
-					pathname: "/committees/" + committee.id,
-					query: committee,
-				}}
-			> */}
 				<Card>
 					<h1 style={{fontSize: "25px", fontWeight: "bold"}}>{committee.display_name}</h1>
 					<h2>{committee.description}</h2>
@@ -32,8 +31,14 @@ function Committee({ committee }) {
 						committeeName={committee.display_name} 
 						committeeElected={committee.elected}
 					/>
+					<Link                
+						href={{
+						pathname: "/committees/" + committee.id,
+						query: stringifyCommittee,
+                	}}>
+					<Button>Visit Committee Page</Button>			
+					</Link>
 				</Card>
-			{/* </Link> */}
 		</div>
 	);
 }
