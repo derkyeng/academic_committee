@@ -180,20 +180,34 @@ export default function Account({ session }) {
         }
     }
 
-    async function uploadProfilePicture(path) {
-        console.log(path);
-        const avatarFile = path;
-        await supabase.storage
-            .from("avatars")
-            .remove(`avatars/${session.user.id}`);
-        const { data, error } = await supabase.storage
-            .from("avatars")
-            .upload(`avatars/${session.user.id}`, avatarFile);
-        console.log(data);
-        if (error) {
-            console.log(error);
-        }
-    }
+	async function uploadProfilePicture(path) {
+		console.log(path);
+		const avatarFile = path;
+		// Update avatar image
+		await supabase.storage.from("avatars").remove(`avatars/${session.user.id}`);
+		const { data, error } = await supabase.storage
+			.from("avatars")
+			.upload(`avatars/${session.user.id}`, avatarFile);
+		console.log(data);
+		if (error) {
+			console.log(error);
+		}
+		// Get public url of avatar
+		const { data: image_url, error2 } = supabase.storage
+			.from("avatars")
+			.getPublicUrl(`avatars/${session.user.id}`);
+		if (error) {
+			console.log(error);
+		}
+
+		// Update avatar url in user database
+		const { error3 } = await supabase
+			.from('profiles')
+			.update({ avatar_url: image_url })
+			.eq('id', session.user.id)
+
+		setAvatarUrl(image_url);
+	}
 
     const setCommitteeInterests = async (interests) => {
         setInterestedCommittees(interests);
