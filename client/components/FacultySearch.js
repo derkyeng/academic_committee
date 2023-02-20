@@ -11,7 +11,7 @@ export default function FacultySearch({ session }) {
 		committeeInterest: "",
 		level: "1",
 		rank: "",
-		committees: [],
+		committees: "",
 	});
 
 	const [profiles, searchForFaculty] = useProfiles();

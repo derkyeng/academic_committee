@@ -4,19 +4,81 @@ import { supabase } from "../utils/supabaseClient";
 const useProfiles = () => {
 	const [profiles, setProfiles] = useState([]);
 
-	async function searchForFaculty(
-		// query_username = "",
-		// query_rank = "",
-		// query_level = ""
-		// // query_committees = [],
-		// // query_interest_committee = [],
-		{ filters }
-	) {
+	async function searchForFaculty(filters) {
 		setProfiles([]);
-		// query_username = query_username.trim().toLowerCase();
-		console.log(filters);
-		// let query = supabase.from("profiles").select("*");
-
+		let query_username = filters.name;
+		let query_rank = filters.rank;
+		let query_level = filters.level;
+		let query_committees = filters.committees;
+		let query_interest_committee = filters.committeeInterest;
+		query_username = query_username.trim().toLowerCase();
+		console.log(query_username);
+		let { data: query, error } = await supabase.from("profiles").select("*");
+		let filtered_profiles = [];
+		for (let i = 0; i < query.length; i++) {
+			let firstName = query[i].username.toLowerCase().split(" ")[0];
+			let lastName = query[i].username.toLowerCase().split(" ")[1];
+			let queryFirstName = query_username.toLowerCase().split(" ")[0];
+			let queryLastName = query_username.toLowerCase().split(" ")[1];
+			if (!lastName) {
+				lastName = "";
+			}
+			if (!queryLastName) {
+				if (firstName.includes(queryFirstName) || lastName.includes(queryFirstName)) {
+					console.log(query[i]);
+					let committees = query[i].current_committees;
+					console.log(committees);
+					if (query_committees) {
+						if (committees.includes(query_committees)) {
+							let interestedCommittees = query[i].interest_committees;
+							if (query_interest_committee) {
+								if (interestedCommittees[query_level].includes(query_interest_committee)) {
+									filtered_profiles.push(query[i]);
+								}
+							} else {
+								filtered_profiles.push(query[i]);
+							}
+						}
+					} else {
+						let interestedCommittees = query[i].interested_committees;
+						if (query_interest_committee) {
+							if (interestedCommittees[query_level].includes(query_interest_committee)) {
+								filtered_profiles.push(query[i]);
+							}
+						} else {
+							filtered_profiles.push(query[i]);
+						}
+					}
+				}
+			} else {
+				if (firstName.includes(queryFirstName) && lastName.includes(queryLastName)) {
+					let committees = query[i].current_committees;
+					console.log(committees);
+					if (query_committees) {
+						if (committees.includes(query_committees)) {
+							let interestedCommittees = query[i].interest_committees;
+							if (query_interest_committee) {
+								if (interestedCommittees[query_level].includes(query_interest_committee)) {
+									filtered_profiles.push(query[i]);
+								}
+							} else {
+								filtered_profiles.push(query[i]);
+							}
+						}
+					} else {
+						let interestedCommittees = query[i].interested_committees;
+						if (query_interest_committee) {
+							if (interestedCommittees[query_level].includes(query_interest_committee)) {
+								filtered_profiles.push(query[i]);
+							}
+						} else {
+							filtered_profiles.push(query[i]);
+						}
+					}
+				}
+			}
+		}
+		setProfiles(filtered_profiles);
 		// if (query_username) {
 		// 	query = query.eq("username", query_username);
 		// }
@@ -70,9 +132,7 @@ const useAvatar = (user_id) => {
 		if (isUndefined !== "undefined") {
 			setProfilePic(data.publicUrl);
 		} else {
-			setProfilePic(
-				"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-			);
+			setProfilePic("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png");
 		}
 	}
 
