@@ -40,18 +40,29 @@ const useProfiles = () => {
 const useCommittees = () => {
     const [committees, setCommittees] = useState([]);
 
-    const getCommittees = async () => {
-        let { data: committees_data, error } = await supabase
-            .from("committees")
-            .select("*");
-        if (error) {
-            console.error(error);
-            return;
-        }
-        console.log("asd", committees_data);
+	const getCommittees = async () => {
+		let { data: committees_data, error } = await supabase.from("committees").select("*");
+		if (error) {
+			console.error(error);
+			return;
+		}
+		committees_data.sort(sort_committees);
+		setCommittees(committees_data);
+	};
 
-        setCommittees(committees_data);
-    };
+	function sort_committees(a, b) {
+		if (a.display_name < b.display_name) {
+		  return -1;
+		} else if (a.display_name > b.display_name) {
+		  return 1;
+		} else {
+		  return 0;
+		}
+	  }
+
+	useEffect(() => {
+		getCommittees();
+	}, []);
 
     useEffect(() => {
         getCommittees();
