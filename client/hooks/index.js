@@ -12,16 +12,21 @@ const useProfiles = () => {
 		let query_committees = filters.committees;
 		let query_interest_committee = filters.committeeInterest;
 		query_username = query_username.trim().toLowerCase();
-		console.log(query_username);
 		let { data: query, error } = await supabase.from("profiles").select("*");
 		let filtered_profiles = [];
 		for (let i = 0; i < query.length; i++) {
+			if (!query[i].username) {
+				continue;
+			}
 			let firstName = query[i].username.toLowerCase().split(" ")[0];
 			let lastName = query[i].username.toLowerCase().split(" ")[1];
 			let queryFirstName = query_username.toLowerCase().split(" ")[0];
 			let queryLastName = query_username.toLowerCase().split(" ")[1];
 			if (!lastName) {
 				lastName = "";
+			}
+			if (!firstName) {
+				firstName = "";
 			}
 			if (!queryLastName) {
 				if (firstName.includes(queryFirstName) || lastName.includes(queryFirstName)) {
@@ -116,13 +121,13 @@ const useCommittees = () => {
 
 	function sort_committees(a, b) {
 		if (a.display_name < b.display_name) {
-		  return -1;
+			return -1;
 		} else if (a.display_name > b.display_name) {
-		  return 1;
+			return 1;
 		} else {
-		  return 0;
+			return 0;
 		}
-	  }
+	}
 
 	useEffect(() => {
 		getCommittees();
