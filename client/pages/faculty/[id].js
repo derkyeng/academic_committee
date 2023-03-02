@@ -130,27 +130,36 @@ function id() {
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
                     <div>
+<<<<<<< HEAD
                         <h3 className="text-lg font-bold">Willing to Serve:</h3>
+=======
+>>>>>>> origin/main
                         {willingInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
+<<<<<<< HEAD
                         <h3 className="text-lg font-bold">
                             Interested in Serving:
                         </h3>
 
+=======
+>>>>>>> origin/main
                         {interestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
+<<<<<<< HEAD
                         <h3 className="text-lg font-bold">
                             High Interest in Serving:
                         </h3>
 
+=======
+>>>>>>> origin/main
                         {highInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
