@@ -83,7 +83,7 @@ function id() {
 			</div>
 			<div>
 				<h3 className="text-lg my-6 font-bold">Comments:</h3>
-				<p class="mb-3 font-light text-black-500 dark:text-gray-400">{comment}</p>
+				<div>{comment.length == 0 ? <p className="mt-6 mx-auto w-fit"></p> : <p>{comment}</p>}</div>
 			</div>
 			<div>
 				<h3 className="text-lg my-6 font-bold">Current Committees:</h3>
