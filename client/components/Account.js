@@ -32,6 +32,18 @@ export default function Account({ session }) {
     const [avatar_url, setAvatarUrl] = useState(null);
     const [email, setEmail] = useState(null);
     const [options, setOptions] = useState([]);
+    const [AccountChangeSaved, setAccountChangeSaved] = useState([]);
+    const SuccessMessage = () => {
+        return (
+            <div style={{  
+                marginTop: "20px",
+                color: "#270",
+                backgroundColor: "#DFF2BF"
+                }}
+            >
+                <p>Your profile information has been updated!</p>
+            </div>
+    );};
 
     const getData = async () => {
         let { data: committees_data, error } = await supabase
@@ -559,12 +571,13 @@ export default function Account({ session }) {
                             console.log(removeHighInterestCommittees);
                             // window.location.reload();
 
-                            alert("Profile Information Updated Successfully!");
+                            setAccountChangeSaved(AccountChangeSaved.concat(<SuccessMessage/>))
                         }}
                         disabled={loading}
                     >
                         {loading ? "Loading ..." : "Update"}
                     </Button>
+                    {AccountChangeSaved}
                 </div>
             </div>
         </div>
