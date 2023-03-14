@@ -7,6 +7,7 @@ import RSelect from "react-select";
 export default function Account({ session }) {
 	const [loading, setLoading] = useState(true);
 	const [comment, setComment] = useState("");
+	const [deptchair, setDeptChair] = useState(null);
 	const [username, setUsername] = useState(null);
 	const [hamId, setHamId] = useState(null);
 	const [rank, setRank] = useState(null);
@@ -31,7 +32,7 @@ export default function Account({ session }) {
 					backgroundColor: "#DFF2BF",
 				}}
 			>
-				<p>Your profile information has been updated!</p>
+				<p>Your profile information has been updated! Reloading...</p>
 			</div>
 		);
 	};
@@ -98,6 +99,7 @@ export default function Account({ session }) {
 				setAvatarUrl(data.avatar_url);
 				setRank(data.rank);
 				setHamId(data.hamId);
+				setDeptChair(data.deptchair);
 				if (data.interested_committees && options.length > 0) {
 					console.log(data.interested_committees["1"]);
 					if (data.interested_committees["1"].length > 0) {
@@ -195,7 +197,7 @@ export default function Account({ session }) {
 		setCurrentCommittees(interests);
 	};
 
-	async function updateProfile({ username, avatar_url }) {
+	async function updateProfile({ username, avatar_url, comment, deptchair }) {
 		try {
 			setLoading(true);
 			const user = await getCurrentUser();
@@ -222,6 +224,7 @@ export default function Account({ session }) {
 				past_committees: pastCommitteesIds,
 				current_committees: currentCommitteeIds,
 				comment: comment,
+				deptchair: deptchair,
 			};
 
 			let { error } = await supabase.from("profiles").upsert(updates);
@@ -336,6 +339,10 @@ export default function Account({ session }) {
 		}
 	};
 
+	const updateChair = () => {
+		setDeptChair(!deptchair);
+	};
+
 	return (
 		<div className="container mx-auto py-4">
 			<div className="mt-2 ">
@@ -388,6 +395,17 @@ export default function Account({ session }) {
 				/>
 			</div>
 
+			<div>
+				<input 
+					id="chair" 
+					type="checkbox" 
+					style={{marginRight: "10px"}}
+					onChange={updateChair}
+					value={deptchair}
+				/>
+				<Label htmlFor="chair">I will be a department or program chair next year</Label>
+			</div>
+
 			<InterestedSelects
 				options={options}
 				willingCommittees={willingCommittees}
@@ -425,7 +443,7 @@ export default function Account({ session }) {
 			<br></br>
 			<div>
 				<label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-					Leave any comments you may have for the Academic Counsil:
+					Leave any comments you may have for the Academic Council:
 				</label>
 				<textarea
 					id="message"
@@ -443,7 +461,7 @@ export default function Account({ session }) {
 					<Button
 						className="button primary block"
 						onClick={() => {
-							updateProfile({ username, avatar_url, comment });
+							updateProfile({ username, avatar_url, comment, deptchair });
 							updateProfileCommittees({
 								willingCommittees,
 								interestedCommittees,
@@ -468,9 +486,22 @@ export default function Account({ session }) {
 							console.log(removeWillingCommittees);
 							console.log(removeInterestedCommittees);
 							console.log(removeHighInterestCommittees);
-							// window.location.reload();
-
+							
 							setAccountChangeSaved(AccountChangeSaved.concat(<SuccessMessage />));
+							
+							if('caches' in window){
+								caches.keys().then((names) => {
+								   // Delete all the cache files
+								   names.forEach(name => {
+									   caches.delete(name);
+								   })
+							   });
+					   
+						   // Makes sure the page reloads. Changes are only visible after you refresh.
+						   }
+
+							// window.location.reload();
+							
 						}}
 						disabled={loading}
 					>
