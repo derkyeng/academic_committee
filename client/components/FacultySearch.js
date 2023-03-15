@@ -9,7 +9,7 @@ export default function FacultySearch({ session }) {
 	const [formData, setFormData] = useState({
 		name: "",
 		committeeInterest: "",
-		level: "1",
+		level: "0",
 		rank: "",
 		committees: "",
 	});
@@ -19,11 +19,10 @@ export default function FacultySearch({ session }) {
 	return (
 		<div className={styles.faculty_search_comp}>
 			<Description>
-				Fill out the fields below In order to find faculty with specific committee
-				interests, tenure status, a particular name, or other specifications.<br></br>
-				If you are not concerned with a particular field (i.e name does not matter for your
-				search), then leave the field as N/A. Leaving <br></br> all fields as N/A will
-				retrieve all faculty.
+				Fill out the fields below In order to find faculty with specific committee interests, tenure status, a particular name, or other
+				specifications.<br></br>
+				If you are not concerned with a particular field (i.e name does not matter for your search), then leave the field as N/A. Leaving{" "}
+				<br></br> all fields as N/A will retrieve all faculty.
 			</Description>
 
 			<FacultyForm

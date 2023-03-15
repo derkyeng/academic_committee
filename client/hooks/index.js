@@ -32,11 +32,15 @@ const useProfiles = () => {
 			let interestedCommittees = query[i].interested_committees;
 			if (!queryLastName) {
 				if (firstName.includes(queryFirstName) || lastName.includes(queryFirstName)) {
-					console.log(query[i]);
-					console.log(committees);
 					if (query_committees) {
 						if (committees.includes(query_committees)) {
-							if (query_interest_committee) {
+							if (query_interest_committee && query_level == 0) {
+								for (let j = 1; j <= 3; j++) {
+									if (interestedCommittees[j].includes(query_interest_committee)) {
+										filtered_profiles.push(query[i]);
+									}
+								}
+							} else if (query_interest_committee && query_level > 0) {
 								if (interestedCommittees[query_level].includes(query_interest_committee)) {
 									filtered_profiles.push(query[i]);
 								}
@@ -45,7 +49,13 @@ const useProfiles = () => {
 							}
 						}
 					} else {
-						if (query_interest_committee) {
+						if (query_interest_committee && query_level == 0) {
+							for (let j = 1; j <= 3; j++) {
+								if (interestedCommittees[j].includes(query_interest_committee)) {
+									filtered_profiles.push(query[i]);
+								}
+							}
+						} else if (query_interest_committee) {
 							if (interestedCommittees[query_level].includes(query_interest_committee)) {
 								filtered_profiles.push(query[i]);
 							}
@@ -58,7 +68,13 @@ const useProfiles = () => {
 				if (firstName.includes(queryFirstName) && lastName.includes(queryLastName)) {
 					if (query_committees) {
 						if (committees.includes(query_committees)) {
-							if (query_interest_committee) {
+							if (query_interest_committee && query_level == 0) {
+								for (let j = 1; j <= 3; j++) {
+									if (interestedCommittees[j].includes(query_interest_committee)) {
+										filtered_profiles.push(query[i]);
+									}
+								}
+							} else if (query_interest_committee) {
 								if (interestedCommittees[query_level].includes(query_interest_committee)) {
 									filtered_profiles.push(query[i]);
 								}
@@ -67,7 +83,13 @@ const useProfiles = () => {
 							}
 						}
 					} else {
-						if (query_interest_committee) {
+						if (query_interest_committee && query_level == 0) {
+							for (let j = 1; j <= 3; j++) {
+								if (interestedCommittees[j].includes(query_interest_committee)) {
+									filtered_profiles.push(query[i]);
+								}
+							}
+						} else if (query_interest_committee) {
 							if (interestedCommittees[query_level].includes(query_interest_committee)) {
 								filtered_profiles.push(query[i]);
 							}
