@@ -19,6 +19,8 @@ export default function Account({ session }) {
 	const [removeWillingCommittees, setRemoveWillingCommittees] = useState([]);
 	const [removeInterestedCommittees, setRemoveInterestedCommittees] = useState([]);
 	const [removeHighInterestCommittees, setRemoveHighInterestCommittees] = useState([]);
+	const [removeCurrentCommittees, setRemoveCurrentCommittees] = useState([]);
+	const [removePastCommittees, setRemovePastCommittees] = useState([]);
 	const [avatar_url, setAvatarUrl] = useState(null);
 	const [email, setEmail] = useState(null);
 	const [options, setOptions] = useState([]);
@@ -297,6 +299,22 @@ export default function Account({ session }) {
 			interested["3"] = newWillingUsers;
 			let { data: temp, error2 } = await supabase.from("committees").update({ interested_users: interested }).eq("id", committee);
 		}
+		for (let i = 0; i < removeCurrentCommittees.length; i++) {
+			let committee = removeCurrentCommittees[i];
+			console.log(committee);
+			let { data: willingUsersData, error } = await supabase.from("committees").select("members").eq("id", committee);
+			let current = willingUsersData[0].members;
+			let newCurrent = current.filter((e) => e !== user.id);
+			let { data: temp, error2 } = await supabase.from("committees").update({ members: newCurrent }).eq("id", committee);
+		}
+		for (let i = 0; i < removePastCommittees.length; i++) {
+			let committee = removePastCommittees[i];
+			console.log(committee);
+			let { data: willingUsersData, error } = await supabase.from("committees").select("past_members").eq("id", committee);
+			let past = willingUsersData[0].past_members;
+			let newPast = past.filter((e) => e !== user.id);
+			let { data: temp, error2 } = await supabase.from("committees").update({ past_members: newPast }).eq("id", committee);
+		}
 		console.log("-----------END-------------");
 	};
 
@@ -336,6 +354,24 @@ export default function Account({ session }) {
 			}
 			interested["3"] = willingUsers;
 			let { data: willingUsersData, error2 } = await supabase.from("committees").update({ interested_users: interested }).eq("id", committee);
+		}
+		for (let i = 0; i < currentCommittees.length; i++) {
+			let committee = currentCommittees[i].value;
+			let { data: currentData, error } = await supabase.from("committees").select("members").eq("id", committee);
+			let current = currentData[0].members;
+			if (!current.includes(user.id)) {
+				current.push(user.id);
+			}
+			let { data: currentUserData, error2 } = await supabase.from("committees").update({ members: current }).eq("id", committee);
+		}
+		for (let i = 0; i < pastCommittees.length; i++) {
+			let committee = pastCommittees[i].value;
+			let { data: pastData, error } = await supabase.from("committees").select("past_members").eq("id", committee);
+			let past = pastData[0].past_members;
+			if (!past.includes(user.id)) {
+				past.push(user.id);
+			}
+			let { data: pastUserData, error2 } = await supabase.from("committees").update({ past_members: past }).eq("id", committee);
 		}
 	};
 
@@ -378,7 +414,16 @@ export default function Account({ session }) {
 					classNamePrefix="select"
 					options={options}
 					value={currentCommittees}
-					onChange={setCurrentCommitteeInterests}
+					onChange={(interests) => {
+						// Removal Occured
+						if (interests.length < currentCommittees.length) {
+							let difference = currentCommittees.filter((committee) => !interests.includes(committee));
+							if (!removeCurrentCommittees.includes(difference[0].value)) {
+								setRemoveCurrentCommittees((current) => [...current, difference[0].value]);
+							}
+						}
+						setCurrentCommittees(interests);
+					}}
 				/>
 			</div>
 			<div className="mt-2 ">
@@ -386,23 +431,26 @@ export default function Account({ session }) {
 				<RSelect
 					isMulti
 					id="pastcommittees"
-					name="Interested Committees"
+					name="Past Committees"
 					className="basic-multi-select"
 					classNamePrefix="select"
 					options={options}
 					value={pastCommittees}
-					onChange={setPastCommitteeInterests}
+					onChange={(interests) => {
+						// Removal Occured
+						if (interests.length < pastCommittees.length) {
+							let difference = pastCommittees.filter((committee) => !interests.includes(committee));
+							if (!removePastCommittees.includes(difference[0].value)) {
+								setRemovePastCommittees((current) => [...current, difference[0].value]);
+							}
+						}
+						setPastCommittees(interests);
+					}}
 				/>
 			</div>
 
 			<div>
-				<input 
-					id="chair" 
-					type="checkbox" 
-					style={{marginRight: "10px"}}
-					onChange={updateChair}
-					value={deptchair}
-				/>
+				<input id="chair" type="checkbox" style={{ marginRight: "10px" }} onChange={updateChair} value={deptchair} />
 				<Label htmlFor="chair">I will be a department or program chair next year</Label>
 			</div>
 
@@ -486,22 +534,21 @@ export default function Account({ session }) {
 							console.log(removeWillingCommittees);
 							console.log(removeInterestedCommittees);
 							console.log(removeHighInterestCommittees);
-							
+
 							setAccountChangeSaved(AccountChangeSaved.concat(<SuccessMessage />));
-							
-							if('caches' in window){
+
+							if ("caches" in window) {
 								caches.keys().then((names) => {
-								   // Delete all the cache files
-								   names.forEach(name => {
-									   caches.delete(name);
-								   })
-							   });
-					   
-						   // Makes sure the page reloads. Changes are only visible after you refresh.
-						   }
+									// Delete all the cache files
+									names.forEach((name) => {
+										caches.delete(name);
+									});
+								});
+
+								// Makes sure the page reloads. Changes are only visible after you refresh.
+							}
 
 							// window.location.reload();
-							
 						}}
 						disabled={loading}
 					>
