@@ -17,15 +17,18 @@ function id() {
     const [currentCommittees, setCurrentCommittees] = useState([]);
     const [pastCommittees, setPastCommittees] = useState([]);
     const [profilePic] = useAvatar(user.id);
+    const [comment, setComment] = useState("");
 
     const getCommittees = async () => {
         const user = router.query;
         let { data: profiles, error } = await supabase
             .from("profiles")
             .select(
-                "interested_committees, current_committees, past_committees"
+                "interested_committees, current_committees, past_committees, comment"
             )
             .eq("id", user.id);
+
+        console.log(profiles);
         if (error) {
             return;
         }
@@ -83,6 +86,7 @@ function id() {
         setHighInterestedCommittees(high);
         setCurrentCommittees(current);
         setPastCommittees(past);
+        setComment(profiles[0].comment);
     };
 
     const getCommitteeWithId = async (committeeId) => {
@@ -96,7 +100,6 @@ function id() {
         }
         return committeeData[0];
     };
-
     useEffect(() => {
         getCommittees();
     }, [router]);
@@ -130,36 +133,18 @@ function id() {
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
                     <div>
-<<<<<<< HEAD
-                        <h3 className="text-lg font-bold">Willing to Serve:</h3>
-=======
->>>>>>> origin/main
                         {willingInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
-<<<<<<< HEAD
-                        <h3 className="text-lg font-bold">
-                            Interested in Serving:
-                        </h3>
-
-=======
->>>>>>> origin/main
                         {interestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
-<<<<<<< HEAD
-                        <h3 className="text-lg font-bold">
-                            High Interest in Serving:
-                        </h3>
-
-=======
->>>>>>> origin/main
                         {highInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
