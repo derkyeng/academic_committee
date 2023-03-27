@@ -3,7 +3,7 @@ import FacultySelect from "./FacultySelect";
 
 function InterestLevel({ formData, handleFormChange }) {
 	const levelOptions = [
-		{ values: "0", label: "Any" },
+		{ value: 0, label: "Any" },
 		{
 			value: "1",
 			label: "Low Interest",
