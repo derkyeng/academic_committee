@@ -6,100 +6,70 @@ import { useAvatar } from "../../hooks";
 import { Avatar } from "flowbite-react";
 
 function id() {
-    const router = useRouter();
-    const user = router.query;
-    const [willingInterestedCommittees, setWillingInterestedCommittees] =
-        useState([]);
-    const [interestedCommittees, setInterestedCommittees] = useState([]);
-    const [highInterestedCommittees, setHighInterestedCommittees] = useState(
-        []
-    );
-    const [currentCommittees, setCurrentCommittees] = useState([]);
-    const [pastCommittees, setPastCommittees] = useState([]);
-    const [profilePic] = useAvatar(user.id);
+	const router = useRouter();
+	const user = router.query;
+	const [willingInterestedCommittees, setWillingInterestedCommittees] = useState([]);
+	const [interestedCommittees, setInterestedCommittees] = useState([]);
+	const [highInterestedCommittees, setHighInterestedCommittees] = useState([]);
+	const [currentCommittees, setCurrentCommittees] = useState([]);
+	const [pastCommittees, setPastCommittees] = useState([]);
+	const [profilePic] = useAvatar(user.id);
+	const [comment, setComment] = useState("");
 
-    const getCommittees = async () => {
-        const user = router.query;
-        let { data: profiles, error } = await supabase
-            .from("profiles")
-            .select(
-                "interested_committees, current_committees, past_committees"
-            )
-            .eq("id", user.id);
-        if (error) {
-            return;
-        }
+	const getCommittees = async () => {
+		const user = router.query;
+		let { data: profiles, error } = await supabase
+			.from("profiles")
+			.select("interested_committees, current_committees, past_committees, comment")
+			.eq("id", user.id);
 
-        let willing = [];
-        let interested = [];
-        let high = [];
-        for (
-            let i = 0;
-            i < profiles[0].interested_committees["1"].length;
-            i++
-        ) {
-            let committee = await getCommitteeWithId(
-                profiles[0].interested_committees["1"][i]
-            );
-            willing.push(committee);
-        }
-        for (
-            let i = 0;
-            i < profiles[0].interested_committees["2"].length;
-            i++
-        ) {
-            let committee = await getCommitteeWithId(
-                profiles[0].interested_committees["2"][i]
-            );
-            interested.push(committee);
-        }
-        for (
-            let i = 0;
-            i < profiles[0].interested_committees["3"].length;
-            i++
-        ) {
-            let committee = await getCommitteeWithId(
-                profiles[0].interested_committees["3"][i]
-            );
-            high.push(committee);
-        }
-        let current = [];
-        for (let i = 0; i < profiles[0].current_committees.length; i++) {
-            let committee = await getCommitteeWithId(
-                profiles[0].current_committees[i]
-            );
-            current.push(committee);
-        }
-        let past = [];
-        for (let i = 0; i < profiles[0].past_committees.length; i++) {
-            let committee = await getCommitteeWithId(
-                profiles[0].past_committees[i]
-            );
-            past.push(committee);
-        }
+		console.log(profiles);
+		if (error) {
+			return;
+		}
 
-        setWillingInterestedCommittees(willing);
-        setInterestedCommittees(interested);
-        setHighInterestedCommittees(high);
-        setCurrentCommittees(current);
-        setPastCommittees(past);
-    };
+		let willing = [];
+		let interested = [];
+		let high = [];
+		for (let i = 0; i < profiles[0].interested_committees["1"].length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].interested_committees["1"][i]);
+			willing.push(committee);
+		}
+		for (let i = 0; i < profiles[0].interested_committees["2"].length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].interested_committees["2"][i]);
+			interested.push(committee);
+		}
+		for (let i = 0; i < profiles[0].interested_committees["3"].length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].interested_committees["3"][i]);
+			high.push(committee);
+		}
+		let current = [];
+		for (let i = 0; i < profiles[0].current_committees.length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].current_committees[i]);
+			current.push(committee);
+		}
+		let past = [];
+		for (let i = 0; i < profiles[0].past_committees.length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].past_committees[i]);
+			past.push(committee);
+		}
 
-    const getCommitteeWithId = async (committeeId) => {
-        let { data: committeeData, error } = await supabase
-            .from("committees")
-            .select("*")
-            .eq("id", committeeId);
-        if (error) {
-            console.error(error);
-            return;
-        }
-        return committeeData[0];
-    };
+		setWillingInterestedCommittees(willing);
+		setInterestedCommittees(interested);
+		setHighInterestedCommittees(high);
+		setCurrentCommittees(current);
+		setPastCommittees(past);
+		setComment(profiles[0].comment);
+	};
 
-    useEffect(() => {
-        getCommittees();
-    }, [router]);
+	const getCommitteeWithId = async (committeeId) => {
+		let { data: committeeData, error } = await supabase.from("committees").select("*").eq("id", committeeId);
+		if (error) {
+			console.error(error);
+			return;
+		}
+		return committeeData[0];
+	};
 
     return (
         <div className="w-full">
@@ -130,36 +100,26 @@ function id() {
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
                     <div>
-<<<<<<< HEAD
                         <h3 className="text-lg font-bold">Willing to Serve:</h3>
-=======
->>>>>>> origin/main
                         {willingInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
-<<<<<<< HEAD
                         <h3 className="text-lg font-bold">
                             Interested in Serving:
                         </h3>
 
-=======
->>>>>>> origin/main
                         {interestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}
                                 key={committee_item.id}
                             />
                         ))}
-<<<<<<< HEAD
                         <h3 className="text-lg font-bold">
                             High Interest in Serving:
                         </h3>
-
-=======
->>>>>>> origin/main
                         {highInterestedCommittees.map((committee_item) => (
                             <Committee
                                 committee={committee_item}

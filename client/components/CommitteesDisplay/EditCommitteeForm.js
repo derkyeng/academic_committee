@@ -12,7 +12,6 @@ export default function EditCommitteeForm({ handleConfirm, children, committeeId
 
     const onSubmit = (event) => {
         //send request
-
         event.preventDefault();
         setFormData(initialData);
         handleConfirm();
