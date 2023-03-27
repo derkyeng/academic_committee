@@ -94,12 +94,14 @@ function id() {
             .from("committees")
             .select("*")
             .eq("id", committeeId);
+
         if (error) {
             console.error(error);
             return;
         }
         return committeeData[0];
     };
+
     useEffect(() => {
         getCommittees();
     }, [router]);
@@ -113,16 +115,29 @@ function id() {
                 <Avatar img={profilePic} rounded={true} />
             </div>
             <div>
+                <h3 className="text-lg my-6 font-bold">Comments:</h3>
+                <div>
+                    {comment.length == 0 ? (
+                        <p className="mt-6 mx-auto w-fit"></p>
+                    ) : (
+                        <p>{comment}</p>
+                    )}
+                </div>
+            </div>
+            <div>
                 <h3 className="text-lg my-6 font-bold">Current Committees:</h3>
                 {currentCommittees.length == 0 ? (
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
-                    currentCommittees.map((committee_item) => (
-                        <Committee
-                            committee={committee_item}
-                            key={committee_item.id}
-                        />
-                    ))
+                    currentCommittees.map(
+                        (committee_item) =>
+                            committee_item && (
+                                <Committee
+                                    committee={committee_item}
+                                    key={committee_item.id}
+                                />
+                            )
+                    )
                 )}
             </div>
             <div>
@@ -133,24 +148,43 @@ function id() {
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
                     <div>
-                        {willingInterestedCommittees.map((committee_item) => (
-                            <Committee
-                                committee={committee_item}
-                                key={committee_item.id}
-                            />
-                        ))}
-                        {interestedCommittees.map((committee_item) => (
-                            <Committee
-                                committee={committee_item}
-                                key={committee_item.id}
-                            />
-                        ))}
-                        {highInterestedCommittees.map((committee_item) => (
-                            <Committee
-                                committee={committee_item}
-                                key={committee_item.id}
-                            />
-                        ))}
+                        <h3 className="text-lg font-bold">Willing to Serve:</h3>
+
+                        {willingInterestedCommittees.map(
+                            (committee_item) =>
+                                committee_item && (
+                                    <Committee
+                                        committee={committee_item}
+                                        key={committee_item.id}
+                                    />
+                                )
+                        )}
+                        <h3 className="text-lg font-bold">
+                            Interested in Serving:
+                        </h3>
+
+                        {interestedCommittees.map(
+                            (committee_item) =>
+                                committee_item && (
+                                    <Committee
+                                        committee={committee_item}
+                                        key={committee_item.id}
+                                    />
+                                )
+                        )}
+                        <h3 className="text-lg font-bold">
+                            High Interest in Serving:
+                        </h3>
+
+                        {highInterestedCommittees.map(
+                            (committee_item) =>
+                                committee_item && (
+                                    <Committee
+                                        committee={committee_item}
+                                        key={committee_item.id}
+                                    />
+                                )
+                        )}
                     </div>
                 )}
             </div>
@@ -159,12 +193,15 @@ function id() {
                 {pastCommittees.length == 0 ? (
                     <p className="mt-6 mx-auto w-fit"></p>
                 ) : (
-                    pastCommittees.map((committee_item) => (
-                        <Committee
-                            committee={committee_item}
-                            key={committee_item.id}
-                        />
-                    ))
+                    pastCommittees.map(
+                        (committee_item) =>
+                            committee_item && (
+                                <Committee
+                                    committee={committee_item}
+                                    key={committee_item.id}
+                                />
+                            )
+                    )
                 )}
             </div>
         </div>
