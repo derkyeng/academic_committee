@@ -8,6 +8,7 @@ import { Avatar } from "flowbite-react";
 function id() {
 	const router = useRouter();
 	const user = router.query;
+	const [name, setName] = useState(null);
 	const [willingInterestedCommittees, setWillingInterestedCommittees] = useState([]);
 	const [interestedCommittees, setInterestedCommittees] = useState([]);
 	const [highInterestedCommittees, setHighInterestedCommittees] = useState([]);
@@ -20,7 +21,7 @@ function id() {
 		const user = router.query;
 		let { data: profiles, error } = await supabase
 			.from("profiles")
-			.select("interested_committees, current_committees, past_committees, comment")
+			.select("username, interested_committees, current_committees, past_committees, comment")
 			.eq("id", user.id);
 
 		console.log(profiles);
@@ -60,6 +61,7 @@ function id() {
 		setCurrentCommittees(current);
 		setPastCommittees(past);
 		setComment(profiles[0].comment);
+		setName(profiles[0].username);
 	};
 
 	const getCommitteeWithId = async (committeeId) => {
@@ -73,11 +75,12 @@ function id() {
 
 	useEffect(() => {
 		getCommittees();
+		console.log(user);
 	}, [router]);
 
 	return (
 		<div className="w-full">
-			<h1 className="text-2xl underline font-bold mx-auto w-fit mt-8">{user.username}</h1>
+			<h1 className="text-2xl underline font-bold mx-auto w-fit mt-8">{name}</h1>
 			<div className="w-full flex my-6 justify-center">
 				<Avatar img={profilePic} rounded={true} />
 			</div>
