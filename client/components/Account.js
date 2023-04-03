@@ -8,6 +8,8 @@ export default function Account({ session }) {
 	const [loading, setLoading] = useState(true);
 	const [comment, setComment] = useState("");
 	const [deptchair, setDeptChair] = useState(null);
+	const [deptChairMarked, setDeptChairMarked] = useState(null);
+	const [deptChairNotMarked, setDeptChairNotMarked] = useState(null);
 	const [username, setUsername] = useState(null);
 	const [hamId, setHamId] = useState(null);
 	const [rank, setRank] = useState(null);
@@ -81,14 +83,14 @@ export default function Account({ session }) {
 		return session.user;
 	}
 
-	async function getProfile() {
+	async function getProfile() {setDeptChair
 		try {
 			setLoading(true);
 			const user = await getCurrentUser();
 
 			let { data, error, status } = await supabase
 				.from("profiles")
-				.select(`username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees, comment`)
+				.select(`username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees, comment, deptchair`)
 				.eq("id", user.id)
 				.single();
 			if (error && status !== 406) {
@@ -102,6 +104,13 @@ export default function Account({ session }) {
 				setRank(data.rank);
 				setHamId(data.hamId);
 				setDeptChair(data.deptchair);
+
+				if (data.deptchair) {
+					setDeptChairMarked(true);
+
+				} else {
+					setDeptChairNotMarked(true);
+				}
 				if (data.interested_committees && options.length > 0) {
 					console.log(data.interested_committees["1"]);
 					if (data.interested_committees["1"].length > 0) {
@@ -241,6 +250,25 @@ export default function Account({ session }) {
 		}
 	}
 
+	function ChairStatus() {
+		if (deptChairMarked) {
+			return (<div>
+				<p style={{ color: "#3399ff" }}>
+					<em>
+						*You have indicated that you WILL be a department/program chair next year.
+					</em>
+				</p>
+			</div>)
+		}
+		return (<div>
+			<p style={{ color: "#cc0000" }}>
+				<em>
+					*You have indicated that you will NOT be a department/program chair next year.
+				</em>
+			</p>
+		</div>)
+	}
+
 	let updateProfileCommittees = async ({ willingCommittees, interestedCommittees, highInterestCommittees }) => {
 		const user = await getCurrentUser();
 		let willingCommitteesIds = willingCommittees.map((committee) => committee.value);
@@ -375,9 +403,17 @@ export default function Account({ session }) {
 		}
 	};
 
-	const updateChair = () => {
-		setDeptChair(!deptchair);
-	};
+	const handleRadioChange = (e) => {
+		console.log(e.target.value)
+		if (deptChairMarked) {
+			setDeptChairMarked(false);
+			setDeptChairNotMarked(true);
+		} else {
+			setDeptChairMarked(true);
+			setDeptChairNotMarked(false);
+		}
+		setDeptChair(e.target.value);
+	  };
 
 	return (
 		<div className="container mx-auto py-4">
@@ -450,8 +486,35 @@ export default function Account({ session }) {
 			</div>
 
 			<div>
-				<input id="chair" type="checkbox" style={{ marginRight: "10px" }} onChange={updateChair} value={deptchair} />
-				<Label htmlFor="chair">I will be a department or program chair next year</Label>
+				<Label>Department chair information</Label>
+
+				<form>
+					<div className="radio">
+						<label>
+							<input 
+								type="radio" 
+								value={true} 
+								checked={deptChairMarked}
+								onChange={handleRadioChange}
+							/>
+							I will be a department chair next semester
+						</label>
+					</div>
+
+					<div className="radio">
+						<label>
+							<input 
+								type="radio" 
+								value={false} 
+								checked={deptChairNotMarked} 
+								onChange={handleRadioChange}
+							/>
+							I will NOT be a department chair next semester
+						</label>
+					</div>
+				</form>
+
+				{ChairStatus()}
 			</div>
 
 			<InterestedSelects
