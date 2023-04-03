@@ -5,21 +5,22 @@ import { TextInput, Label, Button } from "flowbite-react";
 import AccountView from "../components/Account";
 
 const Account = ({ session }) => {
-  const initialState = {
-    email: "",
-    password: "",
-  };
+    const initialState = {
+        email: "",
+        password: "",
+    };
 
-  if (session?.user) {
-    console.log(session.user.id)
-  }
-  const router = useRouter();
+    if (session?.user) {
+        console.log(session.user.id);
+    }
 
-  return (
-    <div>
-      <AccountView session={session} />
-    </div>
-  );
+    const router = useRouter();
+
+    return (
+        <div>
+            <AccountView session={session} />
+        </div>
+    );
 };
 
 export default Account;

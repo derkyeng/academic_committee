@@ -13,32 +13,49 @@ function committees() {
         <div>
             <AddCommitteeBar openModal={() => setModal(true)} />
             <CommitteeModal closeModal={() => setModal(false)} modal={modal} />
-            <h1 style={{fontWeight: "bold", fontSize: "35px", marginBottom: "30px"}}>Elected Committees</h1>
+            <h1
+                style={{
+                    fontWeight: "bold",
+                    fontSize: "35px",
+                    marginBottom: "30px",
+                }}
+            >
+                Elected Committees
+            </h1>
             {committees.length == 0
                 ? "loading"
-                : committees.map((committee_item) => (
-                    committee_item.elected ? 
-                        <Committee
-                            committee={committee_item}
-                            key={committee_item.id}
-                        />
+                : committees.map((committee_item) =>
+                      committee_item.elected ? (
+                          <Committee
+                              committee={committee_item}
+                              key={committee_item.id}
+                          />
+                      ) : (
+                          <></>
+                      )
+                  )}
 
-                    : <></>
-            ))}
-
-            <h1 style={{fontWeight: "bold", fontSize: "35px", marginBottom: "30px"}}>Appointed Committees</h1>
+            <h1
+                style={{
+                    fontWeight: "bold",
+                    fontSize: "35px",
+                    marginBottom: "30px",
+                }}
+            >
+                Appointed Committees
+            </h1>
             {committees.length == 0
                 ? "loading"
-                : committees.map((committee_item) => (
-                    !committee_item.elected ? 
-                        <Committee
-                            committee={committee_item}
-                            key={committee_item.id}
-                        />
-
-                    : <></>
-            ))}
-
+                : committees.map((committee_item) =>
+                      !committee_item.elected ? (
+                          <Committee
+                              committee={committee_item}
+                              key={committee_item.id}
+                          />
+                      ) : (
+                          <></>
+                      )
+                  )}
         </div>
     );
 }
