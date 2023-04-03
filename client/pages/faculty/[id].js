@@ -149,6 +149,7 @@ function id() {
                 {
                     <div>
                         <h3 className="text-lg font-bold">Willing to Serve:</h3>
+<<<<<<< HEAD
                         {willingInterestedCommittees.map(
                             (committee_item) =>
                                 committee_item && (
@@ -183,6 +184,33 @@ function id() {
                                     />
                                 )
                         )}
+=======
+                        {willingInterestedCommittees.map((committee_item) => (
+                            <Committee
+                                committee={committee_item}
+                                key={committee_item.id}
+                            />
+                        ))}
+                        <h3 className="text-lg font-bold">
+                            Interested in Serving:
+                        </h3>
+
+                        {interestedCommittees.map((committee_item) => (
+                            <Committee
+                                committee={committee_item}
+                                key={committee_item.id}
+                            />
+                        ))}
+                        <h3 className="text-lg font-bold">
+                            High Interest in Serving:
+                        </h3>
+                        {highInterestedCommittees.map((committee_item) => (
+                            <Committee
+                                committee={committee_item}
+                                key={committee_item.id}
+                            />
+                        ))}
+>>>>>>> origin/daren_feature
                     </div>
                 }
             </div>
