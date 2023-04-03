@@ -14,9 +14,7 @@ const Navigationbar = ({ session }) => {
 
 	async function getProfile() {
 		if (session?.user) {
-			const { data } = supabase.storage
-				.from("avatars")
-				.getPublicUrl(`avatars/${session.user.id}`);
+			const { data } = supabase.storage.from("avatars").getPublicUrl(`avatars/${session.user.id}`);
 			console.log(data.publicUrl);
 			setProfilePic(data.publicUrl);
 			setName(session.user.user_metadata.full_name);
@@ -26,10 +24,7 @@ const Navigationbar = ({ session }) => {
 	}
 
 	async function getAdminStatus() {
-		let { data: profiles, error } = await supabase
-			.from("profiles")
-			.select()
-			.eq("email", session.user.email);
+		let { data: profiles, error } = await supabase.from("profiles").select().eq("email", session.user.email);
 		if (error) {
 			console.error(error);
 			return;
@@ -59,13 +54,8 @@ const Navigationbar = ({ session }) => {
 							router.push("/");
 						}}
 					>
-						<img
-							src="/hamilton_logo.jpg"
-							style={{ display: "inline-block", flexDirection: "row", width: "60px" }}
-						/>
-						<span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-							Academic Committee
-						</span>
+						<img src="/hamilton_logo.jpg" style={{ display: "inline-block", flexDirection: "row", width: "60px" }} />
+						<span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Academic Committee</span>
 					</button>
 				</Navbar.Brand>
 				<div style={{ display: "flex" }}>
@@ -75,13 +65,7 @@ const Navigationbar = ({ session }) => {
 						</Navbar.Collapse>
 					) : (
 						<Dropdown
-							label={
-								<Avatar
-									img={profilePic}
-									rounded={true}
-									style={{ border: "1px solid blue", borderRadius: "50%" }}
-								/>
-							}
+							label={<Avatar img={profilePic} rounded={true} style={{ border: "1px solid blue", borderRadius: "50%" }} />}
 							arrowIcon={false}
 							inline={true}
 						>
@@ -111,6 +95,14 @@ const Navigationbar = ({ session }) => {
 							) : (
 								<div></div>
 							)}
+							<Dropdown.Item
+								onClick={async () => {
+									router.push("/faculty/" + session.user.id);
+									window.location.reload();
+								}}
+							>
+								My Profile
+							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={() => {
 									router.push("/account");
