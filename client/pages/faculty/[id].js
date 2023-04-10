@@ -22,93 +22,67 @@ function id() {
     const [comment, setComment] = useState("");
     const [commentsModal, setCommentsModal] = useState(false);
 
-    const getCommittees = async () => {
-        const user = router.query;
-        let { data: profiles, error } = await supabase
-            .from("profiles")
-            .select(
-                "username, interested_committees, current_committees, past_committees, comment"
-            )
-            .eq("id", user.id);
+	const getCommittees = async () => {
+		const user = router.query;
+		let { data: profiles, error } = await supabase
+			.from("profiles")
+			.select("username, interested_committees, current_committees, past_committees, comment, leavestatus")
+			.eq("id", user.id);
 
-        console.log(profiles);
-        if (error) {
-            return;
-        }
-        console.log(profiles[0]);
-        let willing = [];
-        let interested = [];
-        let high = [];
-        for (
-            let i = 0;
-            i < profiles[0].interested_committees["1"].length;
-            i++
-        ) {
-            let committee = await getCommitteeWithId(
-                profiles[0].interested_committees["1"][i]
-            );
-            willing.push(committee);
-        }
-        for (
-            let i = 0;
-            i < profiles[0].interested_committees["2"].length;
-            i++
-        ) {
-            let committee = await getCommitteeWithId(
-                profiles[0].interested_committees["2"][i]
-            );
-            interested.push(committee);
-        }
-        for (
-            let i = 0;
-            i < profiles[0].interested_committees["3"].length;
-            i++
-        ) {
-            let committee = await getCommitteeWithId(
-                profiles[0].interested_committees["3"][i]
-            );
-            high.push(committee);
-        }
-        let current = [];
-        for (let i = 0; i < profiles[0].current_committees.length; i++) {
-            let committee = await getCommitteeWithId(
-                profiles[0].current_committees[i]
-            );
-            current.push(committee);
-        }
-        let past = [];
-        for (let i = 0; i < profiles[0].past_committees.length; i++) {
-            let committee = await getCommitteeWithId(
-                profiles[0].past_committees[i]
-            );
-            past.push(committee);
-        }
+		console.log(profiles);
+		if (error) {
+			return;
+		}
+		console.log(profiles[0]);
+		let willing = [];
+		let interested = [];
+		let high = [];
+		for (let i = 0; i < profiles[0].interested_committees["1"].length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].interested_committees["1"][i]);
+			willing.push(committee);
+		}
+		for (let i = 0; i < profiles[0].interested_committees["2"].length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].interested_committees["2"][i]);
+			interested.push(committee);
+		}
+		for (let i = 0; i < profiles[0].interested_committees["3"].length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].interested_committees["3"][i]);
+			high.push(committee);
+		}
+		let current = [];
+		for (let i = 0; i < profiles[0].current_committees.length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].current_committees[i]);
+			current.push(committee);
+		}
+		let past = [];
+		for (let i = 0; i < profiles[0].past_committees.length; i++) {
+			let committee = await getCommitteeWithId(profiles[0].past_committees[i]);
+			past.push(committee);
+		}
 
-        setWillingInterestedCommittees(willing);
-        setInterestedCommittees(interested);
-        setHighInterestedCommittees(high);
-        setCurrentCommittees(current);
-        setPastCommittees(past);
-        setComment(profiles[0].comment);
-        setName(profiles[0].username);
-    };
+		setWillingInterestedCommittees(willing);
+		setInterestedCommittees(interested);
+		setHighInterestedCommittees(high);
+		setCurrentCommittees(current);
+		setPastCommittees(past);
+		setComment(profiles[0].comment);
+		setName(profiles[0].username);
+		setLeave(profiles[0].leavestatus);
+	};
 
-    const getCommitteeWithId = async (committeeId) => {
-        let { data: committeeData, error } = await supabase
-            .from("committees")
-            .select("*")
-            .eq("id", committeeId);
-        if (error) {
-            console.error(error);
-            return;
-        }
-        return committeeData[0];
-    };
+	const getCommitteeWithId = async (committeeId) => {
+		let { data: committeeData, error } = await supabase.from("committees").select("*").eq("id", committeeId);
+		if (error) {
+			console.error(error);
+			return;
+		}
+		return committeeData[0];
+	};
 
-    useEffect(() => {
-        getCommittees();
-        console.log(user);
-    }, [router]);
+	useEffect(() => {
+		getCommittees();
+		console.log(user);
+	}, [router]);
 
     return (
         <div className="w-full">
@@ -262,6 +236,7 @@ function id() {
             </CommitteePreviewWrapper>
         </div>
     );
+
 }
 
 export default id;
