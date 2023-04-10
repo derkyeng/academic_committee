@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
-
+import { Button } from "flowbite-react";
+import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
 const InterestSection = ({ level, interestedNames, children }) => {
     return (
         <div className="my-6 flex flex-col items-center">
@@ -24,7 +25,10 @@ function id() {
         interest: [],
         high: [],
     });
+    const [modal, setModal] = useState(false);
+
     const committee = router.query;
+
     let interestedUsers = {};
     if (committee.interested_users) {
         interestedUsers = JSON.parse(committee.interested_users);
@@ -99,6 +103,18 @@ function id() {
             ) : (
                 <p className="mt-6 mx-auto w-fit">No description.</p>
             )}
+            <div className="w-full mt-6 flex justify-center">
+                <Button className="w-10 mx-auto" onClick={() => setModal(true)}>
+                    Edit Committee
+                </Button>
+            </div>
+            <EditCommitteeModal
+                closeModal={() => setModal(false)}
+                modal={modal}
+                committeeId={committee.id}
+                committeeName={committee.display_name}
+                committeeElected={committee.elected}
+            />
 
             {committee.interested_users ? (
                 <div className="mt-6 mx-20">
