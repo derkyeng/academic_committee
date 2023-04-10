@@ -36,31 +36,51 @@ const useProfiles = () => {
 						if (committees.includes(query_committees)) {
 							if (query_interest_committee && query_level == 0) {
 								for (let j = 1; j <= 3; j++) {
-									if (interestedCommittees[j].includes(query_interest_committee)) {
-										filtered_profiles.push(query[i]);
+									if (
+										interestedCommittees[j].includes(query_interest_committee)
+									) {
+										if (query[i].active) {
+											filtered_profiles.push(query[i]);
+										}
 									}
 								}
 							} else if (query_interest_committee && query_level > 0) {
-								if (interestedCommittees[query_level].includes(query_interest_committee)) {
-									filtered_profiles.push(query[i]);
+								if (
+									interestedCommittees[query_level].includes(
+										query_interest_committee
+									)
+								) {
+									if (query[i].active) {
+										filtered_profiles.push(query[i]);
+									}
 								}
 							} else {
-								filtered_profiles.push(query[i]);
+								if (query[i].active) {
+									filtered_profiles.push(query[i]);
+								}
 							}
 						}
 					} else {
 						if (query_interest_committee && query_level == 0) {
 							for (let j = 1; j <= 3; j++) {
 								if (interestedCommittees[j].includes(query_interest_committee)) {
-									filtered_profiles.push(query[i]);
+									if (query[i].active) {
+										filtered_profiles.push(query[i]);
+									}
 								}
 							}
 						} else if (query_interest_committee) {
-							if (interestedCommittees[query_level].includes(query_interest_committee)) {
-								filtered_profiles.push(query[i]);
+							if (
+								interestedCommittees[query_level].includes(query_interest_committee)
+							) {
+								if (query[i].active) {
+									filtered_profiles.push(query[i]);
+								}
 							}
 						} else {
-							filtered_profiles.push(query[i]);
+							if (query[i].active) {
+								filtered_profiles.push(query[i]);
+							}
 						}
 					}
 				}
@@ -70,31 +90,51 @@ const useProfiles = () => {
 						if (committees.includes(query_committees)) {
 							if (query_interest_committee && query_level == 0) {
 								for (let j = 1; j <= 3; j++) {
-									if (interestedCommittees[j].includes(query_interest_committee)) {
-										filtered_profiles.push(query[i]);
+									if (
+										interestedCommittees[j].includes(query_interest_committee)
+									) {
+										if (query[i].active) {
+											filtered_profiles.push(query[i]);
+										}
 									}
 								}
 							} else if (query_interest_committee) {
-								if (interestedCommittees[query_level].includes(query_interest_committee)) {
-									filtered_profiles.push(query[i]);
+								if (
+									interestedCommittees[query_level].includes(
+										query_interest_committee
+									)
+								) {
+									if (query[i].active) {
+										filtered_profiles.push(query[i]);
+									}
 								}
 							} else {
-								filtered_profiles.push(query[i]);
+								if (query[i].active) {
+									filtered_profiles.push(query[i]);
+								}
 							}
 						}
 					} else {
 						if (query_interest_committee && query_level == 0) {
 							for (let j = 1; j <= 3; j++) {
 								if (interestedCommittees[j].includes(query_interest_committee)) {
-									filtered_profiles.push(query[i]);
+									if (query[i].active) {
+										filtered_profiles.push(query[i]);
+									}
 								}
 							}
 						} else if (query_interest_committee) {
-							if (interestedCommittees[query_level].includes(query_interest_committee)) {
-								filtered_profiles.push(query[i]);
+							if (
+								interestedCommittees[query_level].includes(query_interest_committee)
+							) {
+								if (query[i].active) {
+									filtered_profiles.push(query[i]);
+								}
 							}
 						} else {
-							filtered_profiles.push(query[i]);
+							if (query[i].active) {
+								filtered_profiles.push(query[i]);
+							}
 						}
 					}
 				}
@@ -163,7 +203,9 @@ const useAvatar = (user_id) => {
 		if (isUndefined !== "undefined") {
 			setProfilePic(data.publicUrl);
 		} else {
-			setProfilePic("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png");
+			setProfilePic(
+				"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+			);
 		}
 	}
 
