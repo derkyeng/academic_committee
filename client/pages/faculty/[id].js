@@ -25,50 +25,60 @@ function id() {
 	const [leaveNotMarked, setLeaveNotMarked] = useState(null);
     const [commentsModal, setCommentsModal] = useState(false);
 
-	const getCommittees = async () => {
-		const user = router.query;
-		let { data: profiles, error } = await supabase
-			.from("profiles")
-			.select("username, interested_committees, current_committees, past_committees, comment, leavestatus, deptchair")
-			.eq("id", user.id);
+    const getCommitteeDetails = async (uuids) => {
+        const committees = await Promise.all(
+            uuids.map(async (uuid) => {
+                return await getCommitteeWithId(uuid);
+            })
+        );
+        return committees;
+    };
 
-		console.log(profiles);
-		if (error) {
-			return;
-		}
-		console.log(profiles[0]);
-		let willing = [];
-		let interested = [];
-		let high = [];
-		for (let i = 0; i < profiles[0].interested_committees["1"].length; i++) {
-			let committee = await getCommitteeWithId(profiles[0].interested_committees["1"][i]);
-			willing.push(committee);
-		}
-		for (let i = 0; i < profiles[0].interested_committees["2"].length; i++) {
-			let committee = await getCommitteeWithId(profiles[0].interested_committees["2"][i]);
-			interested.push(committee);
-		}
-		for (let i = 0; i < profiles[0].interested_committees["3"].length; i++) {
-			let committee = await getCommitteeWithId(profiles[0].interested_committees["3"][i]);
-			high.push(committee);
-		}
-		let current = [];
-		for (let i = 0; i < profiles[0].current_committees.length; i++) {
-			let committee = await getCommitteeWithId(profiles[0].current_committees[i]);
-			current.push(committee);
-		}
-		let past = [];
-		for (let i = 0; i < profiles[0].past_committees.length; i++) {
-			let committee = await getCommitteeWithId(profiles[0].past_committees[i]);
-			past.push(committee);
-		}
-		setWillingInterestedCommittees(willing);
-		setInterestedCommittees(interested);
-		setHighInterestedCommittees(high);
-		setCurrentCommittees(current);
-		setPastCommittees(past);
-		setComment(profiles[0].comment);
-		setName(profiles[0].username);
+    const getCommittees = async () => {
+        const user = router.query;
+        let { data: profiles, error } = await supabase
+            .from("profiles")
+            .select(
+                "username, interested_committees, current_committees, past_committees, comment"
+            )
+            .eq("id", user.id);
+
+        if (error) {
+            return;
+        }
+
+        const userProfile = profiles[0];
+
+        const {
+            interested_committees: interestedCommittees,
+            current_committees: currentCommitteesUUIDs,
+            past_committees: pastCommitteesUUIDs,
+        } = userProfile;
+
+        const willingCommittees = await getCommitteeDetails(
+            interestedCommittees["1"]
+        );
+        const interestedCommitteesList = await getCommitteeDetails(
+            interestedCommittees["2"]
+        );
+        const highInterestedCommittees = await getCommitteeDetails(
+            interestedCommittees["3"]
+        );
+        const currentCommitteesList = await getCommitteeDetails(
+            currentCommitteesUUIDs
+        );
+        const pastCommitteesList = await getCommitteeDetails(
+            pastCommitteesUUIDs
+        );
+
+        setWillingInterestedCommittees(willingCommittees);
+        setInterestedCommittees(interestedCommitteesList);
+        setHighInterestedCommittees(highInterestedCommittees);
+        setCurrentCommittees(currentCommitteesList);
+        setPastCommittees(pastCommitteesList);
+        setComment(userProfile.comment);
+        setName(userProfile.username);
+    };
         setDeptChair(profiles[0].deptchair);
         setLeaveStatus(profiles[0].leavestatus)
         
@@ -87,7 +97,27 @@ function id() {
         }
 	};
 
-	const getCommitteeWithId = async (committeeId) => {
+    const renderCommitteeItems = (committees) => {
+        return committees.map((committee_item) => {
+            if (!committee_item) {
+                return null;
+            }
+
+            return (
+                <CommitteePreview
+                    committee={committee_item}
+                    key={committee_item.id}
+                />
+            );
+        });
+    };
+
+    useEffect(() => {
+        getCommittees();
+        console.log(user);
+    }, [router]);
+
+const getCommitteeWithId = async (committeeId) => {
 		let { data: committeeData, error } = await supabase.from("committees").select("*").eq("id", committeeId);
 		if (error) {
 			console.error(error);
@@ -180,9 +210,6 @@ function id() {
             <div className="w-full flex my-6 justify-center">
                 <Avatar img={profilePic} rounded={true} />
             </div>
-            <div>
-                <h3 className="text-lg my-6 font-bold"></h3>
-            </div>
             <CommitteePreviewWrapper>
                 <div className="w-full">
                     <h3
@@ -196,23 +223,11 @@ function id() {
                     >
                         Current Committees:
                     </h3>
-                    {currentCommittees.length == 0 ? (
-                        <p className="mt-6 mx-auto w-fit"></p>
-                    ) : (
-                        currentCommittees.map(
-                            (committee_item) =>
-                                committee_item && (
-                                    <CommitteePreview
-                                        committee={committee_item}
-                                        key={committee_item.id}
-                                    />
-                                )
-                        )
-                    )}
+                    {renderCommitteeItems(currentCommittees)}
                 </div>
                 <div className="w-full">
                     <h3
-                        className="p-2 pl-4 text-lg my-6 font-bold"
+                        className="p-2 pl-4 text-lg my-6 font-bold "
                         style={{
                             border: "solid",
                             borderRadius: "10px",
@@ -222,22 +237,9 @@ function id() {
                     >
                         Past Committees:
                     </h3>
-                    {pastCommittees.length == 0 ? (
-                        <p className="mt-6 mx-auto w-fit"></p>
-                    ) : (
-                        pastCommittees.map(
-                            (committee_item) =>
-                                committee_item && (
-                                    <CommitteePreview
-                                        committee={committee_item}
-                                        key={committee_item.id}
-                                    />
-                                )
-                        )
-                    )}
+                    {renderCommitteeItems(pastCommittees)}
                 </div>
             </CommitteePreviewWrapper>
-
             <h3
                 className="text-lg my-6 font-bold p-4"
                 style={{
@@ -254,44 +256,19 @@ function id() {
                     <h3 className="text-lg font-bold text-red-600">
                         Willing to Serve:
                     </h3>
-                    {willingInterestedCommittees.map(
-                        (committee_item) =>
-                            committee_item && (
-                                <CommitteePreview
-                                    committee={committee_item}
-                                    key={committee_item.id}
-                                />
-                            )
-                    )}
+                    {renderCommitteeItems(willingInterestedCommittees)}
                 </div>
                 <div className="w-full">
                     <h3 className="text-lg font-bold text-blue-600">
                         Interested in Serving:
                     </h3>
-                    {interestedCommittees.map(
-                        (committee_item) =>
-                            committee_item && (
-                                <CommitteePreview
-                                    committee={committee_item}
-                                    key={committee_item.id}
-                                />
-                            )
-                    )}
+                    {renderCommitteeItems(interestedCommittees)}
                 </div>
                 <div className="w-full">
                     <h3 className="text-lg font-bold text-green-600">
                         High Interest in Serving:
                     </h3>
-
-                    {highInterestedCommittees.map(
-                        (committee_item) =>
-                            committee_item && (
-                                <CommitteePreview
-                                    committee={committee_item}
-                                    key={committee_item.id}
-                                />
-                            )
-                    )}
+                    {renderCommitteeItems(highInterestedCommittees)}
                 </div>
             </CommitteePreviewWrapper>
         </div>
