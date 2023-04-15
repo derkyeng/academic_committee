@@ -8,8 +8,11 @@ export default function Account({ session }) {
 	const [loading, setLoading] = useState(true);
 	const [comment, setComment] = useState("");
 	const [deptchair, setDeptChair] = useState(null);
+	const [leavestatus, setLeaveStatus] = useState(null);
 	const [deptChairMarked, setDeptChairMarked] = useState(null);
 	const [deptChairNotMarked, setDeptChairNotMarked] = useState(null);
+	const [leaveMarked, setLeaveMarked] = useState(null);
+	const [leaveNotMarked, setLeaveNotMarked] = useState(null);
 	const [username, setUsername] = useState(null);
 	const [hamId, setHamId] = useState(null);
 	const [rank, setRank] = useState(null);
@@ -90,7 +93,7 @@ export default function Account({ session }) {
 
 			let { data, error, status } = await supabase
 				.from("profiles")
-				.select(`username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees, comment, deptchair`)
+				.select(`username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees, comment, deptchair, leavestatus`)
 				.eq("id", user.id)
 				.single();
 			if (error && status !== 406) {
@@ -104,6 +107,7 @@ export default function Account({ session }) {
 				setRank(data.rank);
 				setHamId(data.hamId);
 				setDeptChair(data.deptchair);
+				setLeaveStatus(data.leavestatus)
 
 				if (data.deptchair) {
 					setDeptChairMarked(true);
@@ -111,6 +115,14 @@ export default function Account({ session }) {
 				} else {
 					setDeptChairNotMarked(true);
 				}
+
+				if (data.leavestatus) {
+					setLeaveMarked(true);
+
+				} else {
+					setLeaveNotMarked(true);
+				}
+
 				if (data.interested_committees && options.length > 0) {
 					console.log(data.interested_committees["1"]);
 					if (data.interested_committees["1"].length > 0) {
@@ -208,7 +220,7 @@ export default function Account({ session }) {
 		setCurrentCommittees(interests);
 	};
 
-	async function updateProfile({ username, avatar_url, comment, deptchair }) {
+	async function updateProfile({ username, avatar_url, comment, deptchair, leavestatus }) {
 		try {
 			setLoading(true);
 			const user = await getCurrentUser();
@@ -236,6 +248,7 @@ export default function Account({ session }) {
 				current_committees: currentCommitteeIds,
 				comment: comment,
 				deptchair: deptchair,
+				leavestatus: leavestatus,
 			};
 
 			let { error } = await supabase.from("profiles").upsert(updates);
@@ -264,6 +277,25 @@ export default function Account({ session }) {
 			<p style={{ color: "#cc0000" }}>
 				<em>
 					*You have indicated that you will NOT be a department/program chair next year.
+				</em>
+			</p>
+		</div>)
+	}
+
+	function LeaveStatus() {
+		if (leaveMarked) {
+			return (<div>
+				<p style={{ color: "#3399ff" }}>
+					<em>
+						*You have indicated that you WILL be on leave for one or both semesters next year.
+					</em>
+				</p>
+			</div>)
+		}
+		return (<div>
+			<p style={{ color: "#cc0000" }}>
+				<em>
+					*You have indicated that you will NOT be on leave for one or both semesters next year.
 				</em>
 			</p>
 		</div>)
@@ -404,7 +436,6 @@ export default function Account({ session }) {
 	};
 
 	const handleRadioChange = (e) => {
-		console.log(e.target.value)
 		if (deptChairMarked) {
 			setDeptChairMarked(false);
 			setDeptChairNotMarked(true);
@@ -413,6 +444,17 @@ export default function Account({ session }) {
 			setDeptChairNotMarked(false);
 		}
 		setDeptChair(e.target.value);
+	  };
+
+	  const handleLeaveRadioChange = (e) => {
+		if (leaveMarked) {
+			setLeaveMarked(false);
+			setLeaveNotMarked(true);
+		} else {
+			setLeaveMarked(true);
+			setLeaveNotMarked(false);
+		}
+		setLeaveStatus(e.target.value);
 	  };
 
 	return (
@@ -517,6 +559,38 @@ export default function Account({ session }) {
 				{ChairStatus()}
 			</div>
 
+			<div>
+				<Label>Leave information</Label>
+
+				<form>
+					<div className="leaveRadio">
+						<label>
+							<input 
+								type="radio" 
+								value={true} 
+								checked={leaveMarked}
+								onChange={handleLeaveRadioChange}
+							/>
+							I WILL be on leave for one or both semesters next year
+						</label>
+					</div>
+
+					<div className="leaveRadio">
+						<label>
+							<input 
+								type="radio" 
+								value={false} 
+								checked={leaveNotMarked} 
+								onChange={handleLeaveRadioChange}
+							/>
+							I will NOT be on leave for one or both semesters next year
+						</label>
+					</div>
+				</form>
+
+				{LeaveStatus()}
+			</div>
+
 			<InterestedSelects
 				options={options}
 				willingCommittees={willingCommittees}
@@ -572,7 +646,7 @@ export default function Account({ session }) {
 					<Button
 						className="button primary block"
 						onClick={() => {
-							updateProfile({ username, avatar_url, comment, deptchair });
+							updateProfile({ username, avatar_url, comment, deptchair, leavestatus });
 							updateProfileCommittees({
 								willingCommittees,
 								interestedCommittees,
