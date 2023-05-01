@@ -539,7 +539,7 @@ export default function Account({ session }) {
 								checked={deptChairMarked}
 								onChange={handleRadioChange}
 							/>
-							I will be a department chair next semester
+							I will be a department or program chair for one or both semesters next year
 						</label>
 					</div>
 
@@ -551,7 +551,7 @@ export default function Account({ session }) {
 								checked={deptChairNotMarked} 
 								onChange={handleRadioChange}
 							/>
-							I will NOT be a department chair next semester
+							I will be NOT a department or program chair next year
 						</label>
 					</div>
 				</form>
