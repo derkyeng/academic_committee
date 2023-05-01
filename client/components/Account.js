@@ -56,7 +56,11 @@ export default function Account({ session }) {
 				label: committee.display_name,
 			};
 		});
-
+		voptions.sort(function(a, b) {
+			if(a.label.toLowerCase() < b.label.toLowerCase()) return -1;
+			if(a.label.toLowerCase() > b.label.toLowerCase()) return 1;
+			return 0;
+		   })
 		setOptions(voptions);
 	};
 
@@ -268,7 +272,7 @@ export default function Account({ session }) {
 			return (<div>
 				<p style={{ color: "#3399ff" }}>
 					<em>
-						*You have indicated that you WILL be a department/program chair next year.
+						*You have indicated that you WILL be a department or program chair for one or both semesters next year
 					</em>
 				</p>
 			</div>)
@@ -276,7 +280,7 @@ export default function Account({ session }) {
 		return (<div>
 			<p style={{ color: "#cc0000" }}>
 				<em>
-					*You have indicated that you will NOT be a department/program chair next year.
+					*You have indicated that you will NOT be a department or program chair for one or both semesters next year
 				</em>
 			</p>
 		</div>)
@@ -287,7 +291,7 @@ export default function Account({ session }) {
 			return (<div>
 				<p style={{ color: "#3399ff" }}>
 					<em>
-						*You have indicated that you WILL be on leave for one or both semesters next year.
+						*You have indicated that you WILL be on leave for one or both semesters next year
 					</em>
 				</p>
 			</div>)
@@ -295,7 +299,7 @@ export default function Account({ session }) {
 		return (<div>
 			<p style={{ color: "#cc0000" }}>
 				<em>
-					*You have indicated that you will NOT be on leave for one or both semesters next year.
+					*You have indicated that you will NOT be on leave for one or both semesters next year
 				</em>
 			</p>
 		</div>)
@@ -456,7 +460,6 @@ export default function Account({ session }) {
 		}
 		setLeaveStatus(e.target.value);
 	  };
-
 	return (
 		<div className="container mx-auto py-4">
 			<div className="mt-2 ">
@@ -551,7 +554,7 @@ export default function Account({ session }) {
 								checked={deptChairNotMarked} 
 								onChange={handleRadioChange}
 							/>
-							I will be NOT a department or program chair next year
+							I will NOT be a department or program chair for one or both semesters next year
 						</label>
 					</div>
 				</form>
