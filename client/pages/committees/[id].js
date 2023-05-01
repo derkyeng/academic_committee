@@ -119,7 +119,7 @@ function id() {
                     </Button>
                  ) : (
                     <></>
-                    )}
+                )}
             </div>
             <EditCommitteeModal
                 closeModal={() => setModal(false)}
@@ -128,8 +128,7 @@ function id() {
                 committeeName={committee.display_name}
                 committeeElected={committee.elected}
             />
-
-            {committee.interested_users ? (
+            {session?.admin && committee.interested_users ? (
                 <div className="mt-6 mx-20">
                     <h3 className="text-lg font-bold">Interested Users:</h3>
 
