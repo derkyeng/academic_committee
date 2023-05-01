@@ -4,6 +4,7 @@ import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
 import { Button } from "flowbite-react";
 import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
+
 const InterestSection = ({ level, interestedNames, children }) => {
     return (
         <div className="my-6 flex flex-col items-center">
@@ -26,7 +27,7 @@ function id() {
         high: [],
     });
     const [modal, setModal] = useState(false);
-
+    const [session, setSession] = useState(null);
     const committee = router.query;
 
     let interestedUsers = {};
@@ -87,7 +88,15 @@ function id() {
 
     useEffect(() => {
         getProfiles();
-        // console.log(committee);
+		const setAuthSession = async () => {
+			const { data, error } = await supabase.auth.getSession();
+			if (!error) {
+				setSession(data);
+			} else {
+				console.error(error);
+			}
+		};
+		setAuthSession();
     }, [router]);
 
     return (
@@ -104,9 +113,13 @@ function id() {
                 <p className="mt-6 mx-auto w-fit">No description.</p>
             )}
             <div className="w-full mt-6 flex justify-center">
-                <Button className="w-10 mx-auto" onClick={() => setModal(true)}>
-                    Edit Committee
-                </Button>
+                {session?.admin ? (
+                    <Button className="w-10 mx-auto" onClick={() => setModal(true)}>
+                        Edit Committee
+                    </Button>
+                 ) : (
+                    <></>
+                    )}
             </div>
             <EditCommitteeModal
                 closeModal={() => setModal(false)}

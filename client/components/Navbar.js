@@ -109,7 +109,7 @@ const Navigationbar = ({ session }) => {
                             ) : (
                                 <div></div>
                             )}
-                            {adminStatus ? (
+                            
                                 <Dropdown.Item
                                     onClick={() => {
                                         router.push("/committees/committees");
@@ -117,9 +117,7 @@ const Navigationbar = ({ session }) => {
                                 >
                                     Committees
                                 </Dropdown.Item>
-                            ) : (
-                                <div></div>
-                            )}
+                            
                             <Dropdown.Item
                                 // onClick={ () => {
                                 //     router.push("/faculty/" + session.user.id);
