@@ -20,6 +20,7 @@ const InterestSection = ({ level, interestedNames, children }) => {
 };
 
 function id() {
+    const [admin, setAdmin] = useState(false)
     const router = useRouter();
     const [interestedNames, setInterestedNames] = useState({
         willing: [],
@@ -99,6 +100,24 @@ function id() {
 		setAuthSession();
     }, [router]);
 
+	async function getAdminStatus(email) {
+		let { data: profiles, error } = await supabase
+			.from('profiles')
+			.select('*')
+			.eq("email", email)
+		if (profiles[0]) {
+			console.log(profiles[0].admin)
+			setAdmin(profiles[0].admin)
+		}
+	}
+
+    useEffect(() => {
+        let email = session?.session.user.email
+        console.log(email)
+        getAdminStatus(email)
+    
+    }, [session]);
+
     return (
         <div className="mt-6 bg-indigo-300">
             <h1 className="text-2xl underline font-bold mx-auto w-fit mt-8">
@@ -128,7 +147,7 @@ function id() {
                 committeeName={committee.display_name}
                 committeeElected={committee.elected}
             />
-            {session?.admin && committee.interested_users ? (
+            {admin && committee.interested_users ? (
                 <div className="mt-6 mx-20">
                     <h3 className="text-lg font-bold">Interested Users:</h3>
 
