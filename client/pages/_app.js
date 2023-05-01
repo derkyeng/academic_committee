@@ -8,6 +8,7 @@ function MyApp({ Component, pageProps }) {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
+    document.title = "Academic Committee"
     const setAuthSession = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (!error) {
