@@ -10,6 +10,7 @@ function committees() {
 	const [committees] = useCommittees();
 	const [modal, setModal] = useState(false);
 	const [session, setSession] = useState(null);
+	const [admin, setAdmin] = useState(false)
 	useEffect(() => {
 		const setAuthSession = async () => {
 			const { data, error } = await supabase.auth.getSession();
@@ -21,12 +22,26 @@ function committees() {
 		};
 		setAuthSession();
 	}, []);
+
+	async function getAdminStatus(email) {
+		let { data: profiles, error } = await supabase
+			.from('profiles')
+			.select('*')
+			.eq("email", email)
+		if (profiles[0]) {
+			console.log(profiles[0].admin)
+			setAdmin(profiles[0].admin)
+		}
+	}
 	useEffect(() => {
-		console.log(session?.session);
+		let email = session?.session.user.email
+		console.log(email)
+		getAdminStatus(email)
+
 	}, [session]);
 	return (
 		<div>
-			{session?.admin ? (
+			{admin ? (
 				<div>
 					<AddCommitteeBar openModal={() => setModal(true)} />
 					<CommitteeModal closeModal={() => setModal(false)} modal={modal} />

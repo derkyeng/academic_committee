@@ -10,7 +10,7 @@ import { supabase } from "../utils/supabaseClient";
 function Committee({ committee }) {
     const [modal, setModal] = useState(false);
 	const [session, setSession] = useState(null);
-
+	const [admin, setAdmin] = useState(false)
 
     const stringifyCommittee = {
         ...committee,
@@ -28,6 +28,23 @@ function Committee({ committee }) {
 		};
 		setAuthSession();
 	}, []);
+
+	async function getAdminStatus(email) {
+		let { data: profiles, error } = await supabase
+			.from('profiles')
+			.select('*')
+			.eq("email", email)
+		if (profiles[0]) {
+			console.log(profiles[0].admin)
+			setAdmin(profiles[0].admin)
+		}
+	}
+	useEffect(() => {
+		let email = session?.session.user.email
+		console.log(email)
+		getAdminStatus(email)
+
+	}, [session]);
     return (
         <div style={{ marginBottom: "30px" }}>
             <Card>
@@ -39,7 +56,7 @@ function Committee({ committee }) {
                     This committee is{" "}
                     {committee.elected ? "Elected" : "Appointed"}
                 </p>
-                {session?.admin ? (
+                {admin ? (
                 <div>
                     <img
                         src="/edit_icon.png"
