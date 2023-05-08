@@ -42,7 +42,7 @@ function id() {
         let { data: profiles, error } = await supabase
             .from("profiles")
             .select(
-                "username, interested_committees, current_committees, past_committees, comment"
+                "username, interested_committees, current_committees, past_committees, comment, deptchair, leavestatus"
             )
             .eq("id", user.id);
 
@@ -84,7 +84,6 @@ function id() {
 
         setDeptChair(profiles[0].deptchair);
         setLeaveStatus(profiles[0].leavestatus);
-
         if (profiles[0].deptchair) {
             setDeptChairMarked(true);
         } else {
@@ -96,6 +95,7 @@ function id() {
         } else {
             setLeaveNotMarked(true);
         }
+
     };
 
     const renderCommitteeItems = (committees) => {
@@ -142,17 +142,18 @@ function id() {
                     </p>
                 </div>
             );
+        } else {
+            return (
+                <div>
+                    <p style={{ color: "#cc0000" }}>
+                        <em>
+                            You have indicated that you will NOT be a
+                            department/program chair next year.
+                        </em>
+                    </p>
+                </div>
+            );
         }
-        return (
-            <div>
-                <p style={{ color: "#cc0000" }}>
-                    <em>
-                        You have indicated that you will NOT be a
-                        department/program chair next year.
-                    </em>
-                </p>
-            </div>
-        );
     }
 
     function LeaveStatus() {
@@ -167,9 +168,9 @@ function id() {
                     </p>
                 </div>
             );
-        }
-        return (
-            <div>
+        } else {
+            return (
+                <div>
                 <p style={{ color: "#cc0000" }}>
                     <em>
                         You have indicated that you will NOT be on leave for one
@@ -178,6 +179,7 @@ function id() {
                 </p>
             </div>
         );
+    }
     }
 
     useEffect(() => {
