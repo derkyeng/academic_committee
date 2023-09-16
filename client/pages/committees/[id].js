@@ -1,24 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
-import User from "../../components/User";
 import { Button } from "flowbite-react";
 import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
 import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
-
-const InterestSection = ({ level, interestedNames, children }) => {
-    return (
-        <div className="my-6 flex flex-col items-center">
-            <h3 className="text-lg font-bold">{children}</h3>
-            <div className="flex flex-wrap justify-center gap-4">
-                {interestedNames[level] &&
-                    interestedNames[level].map((user, index) => {
-                        return <User key={index} user={user} />;
-                    })}
-            </div>
-        </div>
-    );
-};
 
 function id() {
     const [admin, setAdmin] = useState(false);
@@ -72,21 +57,6 @@ function id() {
         });
         setInterestedNames(newInterestedNames);
     };
-
-    const sections = [
-        {
-            level: "willing",
-            title: "Willing to Serve:",
-        },
-        {
-            level: "interest",
-            title: "Interested in Serving:",
-        },
-        {
-            level: "high",
-            title: "High Interest in Serving:",
-        },
-    ];
 
     useEffect(() => {
         getProfiles();
@@ -153,6 +123,7 @@ function id() {
             <CommitteesInterestedUsers
                 admin={admin}
                 interestedUsers={committee.interested_users}
+                interestedNames={interestedNames}
             />
         </div>
     );
