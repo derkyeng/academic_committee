@@ -4,6 +4,7 @@ import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
 import { Button } from "flowbite-react";
 import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
+import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
 
 const InterestSection = ({ level, interestedNames, children }) => {
     return (
@@ -20,7 +21,7 @@ const InterestSection = ({ level, interestedNames, children }) => {
 };
 
 function id() {
-    const [admin, setAdmin] = useState(false)
+    const [admin, setAdmin] = useState(false);
     const router = useRouter();
     const [interestedNames, setInterestedNames] = useState({
         willing: [],
@@ -89,33 +90,32 @@ function id() {
 
     useEffect(() => {
         getProfiles();
-		const setAuthSession = async () => {
-			const { data, error } = await supabase.auth.getSession();
-			if (!error) {
-				setSession(data);
-			} else {
-				console.error(error);
-			}
-		};
-		setAuthSession();
+        const setAuthSession = async () => {
+            const { data, error } = await supabase.auth.getSession();
+            if (!error) {
+                setSession(data);
+            } else {
+                console.error(error);
+            }
+        };
+        setAuthSession();
     }, [router]);
 
-	async function getAdminStatus(email) {
-		let { data: profiles, error } = await supabase
-			.from('profiles')
-			.select('*')
-			.eq("email", email)
-		if (profiles[0]) {
-			console.log(profiles[0].admin)
-			setAdmin(profiles[0].admin)
-		}
-	}
+    async function getAdminStatus(email) {
+        let { data: profiles, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("email", email);
+        if (profiles[0]) {
+            console.log(profiles[0].admin);
+            setAdmin(profiles[0].admin);
+        }
+    }
 
     useEffect(() => {
-        let email = session?.session.user.email
-        console.log(email)
-        getAdminStatus(email)
-    
+        let email = session?.session.user.email;
+        console.log(email);
+        getAdminStatus(email);
     }, [session]);
 
     return (
@@ -133,10 +133,13 @@ function id() {
             )}
             <div className="w-full mt-6 flex justify-center">
                 {session?.admin ? (
-                    <Button className="w-10 mx-auto" onClick={() => setModal(true)}>
+                    <Button
+                        className="w-10 mx-auto"
+                        onClick={() => setModal(true)}
+                    >
                         Edit Committee
                     </Button>
-                 ) : (
+                ) : (
                     <></>
                 )}
             </div>
@@ -147,35 +150,10 @@ function id() {
                 committeeName={committee.display_name}
                 committeeElected={committee.elected}
             />
-            {admin && committee.interested_users ? (
-                <div className="mt-6 mx-20">
-                    <h3 className="text-lg font-bold">Interested Users:</h3>
-
-                    <div
-                        style={{
-                            border: "solid",
-                            borderRadius: "10px",
-                            borderWidth: "2px",
-                            borderColor: "rgb(22, 45, 255)",
-                        }}
-                        className="mt-6 "
-                    >
-                        {sections.map(({ level, title }, index) => (
-                            <InterestSection
-                                interestedNames={interestedNames}
-                                level={level}
-                                key={index}
-                            >
-                                {title}
-                            </InterestSection>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                <p className="mt-6 mx-auto w-fit">
-                    No Interested Faculty Members.
-                </p>
-            )}
+            <CommitteesInterestedUsers
+                admin={admin}
+                interestedUsers={committee.interested_users}
+            />
         </div>
     );
 }
