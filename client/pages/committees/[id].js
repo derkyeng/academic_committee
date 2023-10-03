@@ -4,30 +4,10 @@ import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
 import { Button } from "flowbite-react";
 import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
-<<<<<<< Updated upstream
-
-const InterestSection = ({ level, interestedNames, children }) => {
-    return (
-        <div className="my-6 flex flex-col items-center">
-            <h3 className="text-lg font-bold">{children}</h3>
-            <div className="flex flex-wrap justify-center gap-4">
-                {interestedNames[level] &&
-                    interestedNames[level].map((user, index) => {
-                        return <User key={index} user={user} />;
-                    })}
-            </div>
-        </div>
-    );
-};
-
-function id() {
-    const [admin, setAdmin] = useState(false)
-=======
-import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
+// import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
 import CommitteesCurrentUsers from "../../components/CommitteesCurrentUsers";
 
 function id() {
->>>>>>> Stashed changes
     const router = useRouter();
     const [admin, setAdmin] = useState(false);
     const [interestedNames, setInterestedNames] = useState({
@@ -54,11 +34,15 @@ function id() {
             return;
         }
 
-        current.map((id) => {
-            await 
-        })
+        const users = current.map(async (id) => {
+            const { data: userObject, error } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", id);
+            return userObject;
+        });
 
-        setCurrentUsers();
+        setCurrentUsers(users);
     };
 
     let interestedUsers = {};
@@ -119,17 +103,6 @@ function id() {
 
     useEffect(() => {
         getProfiles();
-<<<<<<< Updated upstream
-		const setAuthSession = async () => {
-			const { data, error } = await supabase.auth.getSession();
-			if (!error) {
-				setSession(data);
-			} else {
-				console.error(error);
-			}
-		};
-		setAuthSession();
-=======
         getCurrentUsers();
         const setAuthSession = async () => {
             const { data, error } = await supabase.auth.getSession();
@@ -142,25 +115,27 @@ function id() {
         setAuthSession();
         // console.log("Users", currentUsers);
         console.log("ID", committee.id);
->>>>>>> Stashed changes
     }, [router]);
 
-	async function getAdminStatus(email) {
-		let { data: profiles, error } = await supabase
-			.from('profiles')
-			.select('*')
-			.eq("email", email)
-		if (profiles[0]) {
-			console.log(profiles[0].admin)
-			setAdmin(profiles[0].admin)
-		}
-	}
+    useEffect(() => {
+        console.log(currentUsers);
+    }, [currentUsers]);
+
+    async function getAdminStatus(email) {
+        let { data: profiles, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("email", email);
+        if (profiles[0]) {
+            console.log(profiles[0].admin);
+            setAdmin(profiles[0].admin);
+        }
+    }
 
     useEffect(() => {
-        let email = session?.session.user.email
-        console.log(email)
-        getAdminStatus(email)
-    
+        let email = session?.session.user.email;
+        console.log(email);
+        getAdminStatus(email);
     }, [session]);
 
     return (
@@ -178,14 +153,17 @@ function id() {
             )}
             <div className="w-full mt-6 flex justify-center">
                 {session?.admin ? (
-                    <Button className="w-10 mx-auto" onClick={() => setModal(true)}>
+                    <Button
+                        className="w-10 mx-auto"
+                        onClick={() => setModal(true)}
+                    >
                         Edit Committee
                     </Button>
-                 ) : (
+                ) : (
                     <></>
                 )}
             </div>
-            <CommitteesCurrentUsers currentNames={} />
+            <CommitteesCurrentUsers currentNames={currentUsers} />
             <EditCommitteeModal
                 closeModal={() => setModal(false)}
                 modal={modal}
