@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../utils/supabaseClient";
-import User from "../../components/User";
 import { Button } from "flowbite-react";
 import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
-// import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
+import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
 import CommitteesCurrentUsers from "../../components/CommitteesCurrentUsers";
 
 function id() {
@@ -16,7 +15,7 @@ function id() {
         high: [],
     });
     // fetch user id's from db (committees table, members column)
-    const [currentUsers, setCurrentUsers] = useState([]);
+    const [currentNames, setCurrentNames] = useState([]);
     //  console.log("Check committee id", committeeId);
 
     // for each user id returned, fetch users from db (profiles table, multiple columns)
@@ -24,7 +23,7 @@ function id() {
     const [modal, setModal] = useState(false);
     const [session, setSession] = useState(null);
     const committee = router.query;
-    const getCurrentUsers = async () => {
+    const getCurrentNames = async () => {
         const { data: current, error } = await supabase
             .from("committees")
             .select("members")
@@ -33,16 +32,17 @@ function id() {
             console.error(error);
             return;
         }
-
-        const users = current.map(async (id) => {
-            const { data: userObject, error } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", id);
+        console.log("KIENTEST", current);
+        const users = current[0].members.map(async (id) => {
+            // const { data: userObject, error } = await supabase
+            //     .from("profiles")
+            //     .select("*")
+            //     .eq("id", id);
+            console.log("DARENTEST", id);
             return userObject;
         });
 
-        setCurrentUsers(users);
+        setCurrentNames(users);
     };
 
     let interestedUsers = {};
@@ -86,24 +86,9 @@ function id() {
         setInterestedNames(newInterestedNames);
     };
 
-    const sections = [
-        {
-            level: "willing",
-            title: "Willing to Serve:",
-        },
-        {
-            level: "interest",
-            title: "Interested in Serving:",
-        },
-        {
-            level: "high",
-            title: "High Interest in Serving:",
-        },
-    ];
-
     useEffect(() => {
         getProfiles();
-        getCurrentUsers();
+        getCurrentNames();
         const setAuthSession = async () => {
             const { data, error } = await supabase.auth.getSession();
             if (!error) {
@@ -113,13 +98,12 @@ function id() {
             }
         };
         setAuthSession();
-        // console.log("Users", currentUsers);
         console.log("ID", committee.id);
     }, [router]);
 
     useEffect(() => {
-        console.log(currentUsers);
-    }, [currentUsers]);
+        console.log("CUR USERS", currentNames);
+    }, [currentNames]);
 
     async function getAdminStatus(email) {
         let { data: profiles, error } = await supabase
@@ -163,7 +147,7 @@ function id() {
                     <></>
                 )}
             </div>
-            <CommitteesCurrentUsers currentNames={currentUsers} />
+            <CommitteesCurrentUsers currentNames={currentNames} />
             <EditCommitteeModal
                 closeModal={() => setModal(false)}
                 modal={modal}
@@ -171,35 +155,11 @@ function id() {
                 committeeName={committee.display_name}
                 committeeElected={committee.elected}
             />
-            {admin && committee.interested_users ? (
-                <div className="mt-6 mx-20">
-                    <h3 className="text-lg font-bold">Interested Users:</h3>
-
-                    <div
-                        style={{
-                            border: "solid",
-                            borderRadius: "10px",
-                            borderWidth: "2px",
-                            borderColor: "rgb(22, 45, 255)",
-                        }}
-                        className="mt-6 "
-                    >
-                        {sections.map(({ level, title }, index) => (
-                            <InterestSection
-                                interestedNames={interestedNames}
-                                level={level}
-                                key={index}
-                            >
-                                {title}
-                            </InterestSection>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                <p className="mt-6 mx-auto w-fit">
-                    No Interested Faculty Members.
-                </p>
-            )}
+            <CommitteesInterestedUsers
+                admin={admin}
+                interestedUsers={committee.interested_users}
+                interestedNames={interestedNames}
+            />
         </div>
     );
 }
