@@ -4,6 +4,7 @@ import { supabase } from "../../utils/supabaseClient";
 import User from "../../components/User";
 import { Button } from "flowbite-react";
 import EditCommitteeModal from "../../components/CommitteesDisplay/EditCommitteeModal";
+<<<<<<< Updated upstream
 
 const InterestSection = ({ level, interestedNames, children }) => {
     return (
@@ -21,15 +22,44 @@ const InterestSection = ({ level, interestedNames, children }) => {
 
 function id() {
     const [admin, setAdmin] = useState(false)
+=======
+import CommitteesInterestedUsers from "../../components/CommitteesInterestedUsers";
+import CommitteesCurrentUsers from "../../components/CommitteesCurrentUsers";
+
+function id() {
+>>>>>>> Stashed changes
     const router = useRouter();
+    const [admin, setAdmin] = useState(false);
     const [interestedNames, setInterestedNames] = useState({
         willing: [],
         interest: [],
         high: [],
     });
+    // fetch user id's from db (committees table, members column)
+    const [currentUsers, setCurrentUsers] = useState([]);
+    //  console.log("Check committee id", committeeId);
+
+    // for each user id returned, fetch users from db (profiles table, multiple columns)
+
     const [modal, setModal] = useState(false);
     const [session, setSession] = useState(null);
     const committee = router.query;
+    const getCurrentUsers = async () => {
+        const { data: current, error } = await supabase
+            .from("committees")
+            .select("members")
+            .eq("id", committee.id);
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        current.map((id) => {
+            await 
+        })
+
+        setCurrentUsers();
+    };
 
     let interestedUsers = {};
     if (committee.interested_users) {
@@ -89,6 +119,7 @@ function id() {
 
     useEffect(() => {
         getProfiles();
+<<<<<<< Updated upstream
 		const setAuthSession = async () => {
 			const { data, error } = await supabase.auth.getSession();
 			if (!error) {
@@ -98,6 +129,20 @@ function id() {
 			}
 		};
 		setAuthSession();
+=======
+        getCurrentUsers();
+        const setAuthSession = async () => {
+            const { data, error } = await supabase.auth.getSession();
+            if (!error) {
+                setSession(data);
+            } else {
+                console.error(error);
+            }
+        };
+        setAuthSession();
+        // console.log("Users", currentUsers);
+        console.log("ID", committee.id);
+>>>>>>> Stashed changes
     }, [router]);
 
 	async function getAdminStatus(email) {
@@ -140,6 +185,7 @@ function id() {
                     <></>
                 )}
             </div>
+            <CommitteesCurrentUsers currentNames={} />
             <EditCommitteeModal
                 closeModal={() => setModal(false)}
                 modal={modal}
