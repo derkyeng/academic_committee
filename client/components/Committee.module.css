@@ -3,5 +3,28 @@
     height: 40px;
     width: 40px;
     cursor: pointer;
-    
+}
+.cardContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+}
+
+.left_section {
+    flex: 70%;
+    padding: 10px;
+}
+
+.right_section {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 25px;
+    flex: 30%;
+    padding: 70px;
+}
+
+.submitButton {
+    padding: 60px;
 }
