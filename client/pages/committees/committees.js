@@ -133,10 +133,10 @@ function committees() {
 			>
 				Appointed Committees
 			</h1>
-			{/* {committees.length == 0
+			{committees.length == 0
 				? "loading"
 				: committees.map((committee_item) =>
-						!committee_item.elected ? (
+						!committee_item.elected && session ? (
 							<Committee
 								committee={committee_item}
 								key={committee_item.id}
@@ -147,7 +147,7 @@ function committees() {
 						) : (
 							<></>
 						)
-				  )} */}
+				  )}
 		</div>
 	);
 }
