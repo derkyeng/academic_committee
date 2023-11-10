@@ -111,7 +111,6 @@ function Committee({ committee, key, curSession, curAdmin }) {
         return newInterestLevels;
     };
 
-<<<<<<< HEAD
 		if (interestLevel !== "Not Interested in Serving") {
 			newInterestLevels[interestLevelsToKey[interestLevel]].push(
 				committee.id
@@ -235,133 +234,12 @@ function Committee({ committee, key, curSession, curAdmin }) {
 						>
 							Submit
 						</Button>
+						{showSuccess && <SuccessMessage />}
 					</form>
 				</div>
 			</Card>
 		</div>
 	);
-=======
-    return (
-        <div style={{ marginBottom: "30px" }}>
-            <Card>
-                <div className={styles.cardContainer}>
-                    <div className={styles.left_section}>
-                        <h1 style={{ fontSize: "25px", fontWeight: "bold" }}>
-                            {committee.display_name}
-                        </h1>
-                        <h2>{committee.description}</h2>
-                        <p>
-                            This committee is{" "}
-                            {committee.elected ? "Elected" : "Appointed"}
-                        </p>
-                        {admin ? (
-                            <div>
-                                <img
-                                    src="/edit_icon.png"
-                                    alt="edit button"
-                                    className={styles.edit_button}
-                                    onClick={() => setModal(true)}
-                                />
-                                <EditCommitteeModal
-                                    closeModal={() => setModal(false)}
-                                    modal={modal}
-                                    committeeId={committee.id}
-                                    committeeName={committee.display_name}
-                                    committeeElected={committee.elected}
-                                />
-                            </div>
-                        ) : (
-                            <></>
-                        )}
-                        <Link
-                            href={{
-                                pathname: "/committees/" + committee.id,
-                                query: stringifyCommittee,
-                            }}
-                        >
-                            <Button>Visit Committee Page</Button>
-                        </Link>
-                    </div>
-                    <form
-                        className={styles.right_section}
-                        onSubmit={updateProfileCommittees}
-                    >
-                        <h3 style={{ fontSize: "20px", fontWeight: "bold" }}>
-                            Interested in {committee.display_name}?
-                        </h3>
-                        <div className="flex items-center gap-2">
-                            <Radio
-                                id="willing"
-                                name="interest"
-                                value="Willing to Serve"
-                                checked={interestLevel === "Willing to Serve"}
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
-                            />
-                            <Label htmlFor="willing">Willing to Serve</Label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Radio
-                                id="interested"
-                                name="interest"
-                                value="Interested to Serve"
-                                checked={
-                                    interestLevel === "Interested to Serve"
-                                }
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
-                            />
-                            <Label htmlFor="interested">
-                                Interested to Serve
-                            </Label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Radio
-                                id="highInt"
-                                name="interest"
-                                value="High Interest to Serve"
-                                checked={
-                                    interestLevel === "High Interest to Serve"
-                                }
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
-                            />
-                            <Label htmlFor="highInt">
-                                High Interest in Serving
-                            </Label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Radio
-                                id="notInt"
-                                name="interest"
-                                checked={
-                                    interestLevel ===
-                                    "Not Interested in Serving"
-                                }
-                                value="Not Interested in Serving"
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
-                            />
-                            <Label htmlFor="notInt">Not Interested</Label>
-                        </div>
-                        <Button
-                            className={styles.submitButton}
-                            type="submit"
-                            // onClick={updateProfileCommittees}
-                        >
-                            Submit
-                        </Button>
-                        {showSuccess && <SuccessMessage />}
-                    </form>
-                </div>
-            </Card>
-        </div>
-    );
->>>>>>> main
-}
+
 
 export default Committee;
