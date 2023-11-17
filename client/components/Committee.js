@@ -6,7 +6,7 @@ import styles from "./Committee.module.css";
 import EditCommitteeModal from "../components/CommitteesDisplay/EditCommitteeModal";
 import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
-import { Label, Radio } from "flowbite-react";
+import { Radio } from "flowbite-react";
 import getCurrentUser from "../utils/getCurrentUser";
 import SuccessMessage from "./SuccessMessage";
 
@@ -169,7 +169,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                     setInterestLevel(e.target.value)
                                 }
                             />
-                            <Label htmlFor="willing">Willing to Serve</Label>
+                            <div>Willing to Serve</div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Radio
@@ -183,9 +183,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                     setInterestLevel(e.target.value)
                                 }
                             />
-                            <Label htmlFor="interested">
-                                Interested to Serve
-                            </Label>
+                            <div>Interested to Serve</div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Radio
@@ -199,9 +197,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                     setInterestLevel(e.target.value)
                                 }
                             />
-                            <Label htmlFor="highInt">
-                                High Interest in Serving
-                            </Label>
+                            <div>High Interest in Serving</div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Radio
@@ -216,7 +212,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                     setInterestLevel(e.target.value)
                                 }
                             />
-                            <Label htmlFor="notInt">Not Interested</Label>
+                            <div>Not Interested</div>
                         </div>
                         <Button
                             className={styles.submitButton}
