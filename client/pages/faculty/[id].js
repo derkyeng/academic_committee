@@ -27,6 +27,7 @@ function id() {
     const [leaveMarked, setLeaveMarked] = useState(null);
     const [leaveNotMarked, setLeaveNotMarked] = useState(null);
     const [commentsModal, setCommentsModal] = useState(false);
+    const [coaMarked, setCoaMarked] = useState(null);
 
     const getCommitteeDetails = async (uuids) => {
         const committees = await Promise.all(
@@ -42,7 +43,7 @@ function id() {
         let { data: profiles, error } = await supabase
             .from("profiles")
             .select(
-                "username, interested_committees, current_committees, past_committees, comment, deptchair, leavestatus"
+                "username, interested_committees, current_committees, past_committees, comment, deptchair, leavestatus, coa"
             )
             .eq("id", user.id);
 
@@ -51,6 +52,7 @@ function id() {
         }
 
         const userProfile = profiles[0];
+        console.log("PROFILE", userProfile);
 
         const {
             interested_committees: interestedCommittees,
@@ -96,6 +98,11 @@ function id() {
             setLeaveNotMarked(true);
         }
 
+        if (profiles[0].coa) {
+            setCoaMarked(true);
+        } else {
+            setCoaMarked(false);
+        }
     };
 
     const renderCommitteeItems = (committees) => {
@@ -171,15 +178,41 @@ function id() {
         } else {
             return (
                 <div>
-                <p style={{ color: "#cc0000" }}>
-                    <em>
-                        You have indicated that you will NOT be on leave for one
-                        or both semesters next year.
-                    </em>
-                </p>
-            </div>
-        );
+                    <p style={{ color: "#cc0000" }}>
+                        <em>
+                            You have indicated that you will NOT be on leave for
+                            one or both semesters next year.
+                        </em>
+                    </p>
+                </div>
+            );
+        }
     }
+
+    function CoaStatus() {
+        if (coaMarked) {
+            return (
+                <div>
+                    <p style={{ color: "#3399ff" }}>
+                        <em>
+                            You have indicated that you WILL be on Committee on
+                            Appointments next year.
+                        </em>
+                    </p>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <p style={{ color: "#cc0000" }}>
+                        <em>
+                            You have indicated that you will NOT be on Committee
+                            on Appointments next year.
+                        </em>
+                    </p>
+                </div>
+            );
+        }
     }
 
     useEffect(() => {
@@ -209,6 +242,9 @@ function id() {
 
                 <label style={{ fontWeight: "bold" }}>
                     Leave Status: {LeaveStatus()}
+                </label>
+                <label style={{ fontWeight: "bold" }}>
+                    Committee on Appointments: {CoaStatus()}
                 </label>
             </div>
             <Modal
