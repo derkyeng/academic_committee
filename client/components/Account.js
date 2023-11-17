@@ -20,10 +20,12 @@ export default function Account({ session }) {
     const [comment, setComment] = useState("");
     const [deptchair, setDeptChair] = useState(null);
     const [leavestatus, setLeaveStatus] = useState(null);
+    const [coastatus, setCoaStatus] = useState(null);
     const [deptChairMarked, setDeptChairMarked] = useState(null);
     const [deptChairNotMarked, setDeptChairNotMarked] = useState(null);
     const [leaveMarked, setLeaveMarked] = useState(null);
     const [leaveNotMarked, setLeaveNotMarked] = useState(null);
+    const [coaMarked, setCoaMarked] = useState(null);
     const [username, setUsername] = useState(null);
     const [hamId, setHamId] = useState(null);
     const [rank, setRank] = useState(null);
@@ -93,18 +95,17 @@ export default function Account({ session }) {
     }
 
     async function getProfile() {
-        setDeptChair;
         try {
             setLoading(true);
             const user = await getCurrentUser();
-
             let { data, error, status } = await supabase
                 .from("profiles")
                 .select(
-                    `username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees, comment, deptchair, leavestatus`
+                    `username, avatar_url, rank, hamId, current_committees, past_committees, interested_committees, comment, deptchair, leavestatus, coa`
                 )
                 .eq("id", user.id)
                 .single();
+
             if (error && status !== 406) {
                 throw error;
             }
@@ -117,6 +118,7 @@ export default function Account({ session }) {
                 setHamId(data.hamId);
                 setDeptChair(data.deptchair);
                 setLeaveStatus(data.leavestatus);
+                setCoaStatus(data.coa);
 
                 if (data.deptchair) {
                     setDeptChairMarked(true);
@@ -130,6 +132,11 @@ export default function Account({ session }) {
                     setLeaveNotMarked(true);
                 }
 
+                if (data.coa) {
+                    setCoaMarked(true);
+                } else {
+                    setCoaMarked(false);
+                }
                 if (data.interested_committees && options.length > 0) {
                     console.log(data.interested_committees["1"]);
                     if (data.interested_committees["1"].length > 0) {
@@ -262,7 +269,9 @@ export default function Account({ session }) {
         comment,
         deptchair,
         leavestatus,
+        coastatus,
     }) {
+        console.log("updatesss", coastatus);
         try {
             setLoading(true);
             const user = await getCurrentUser();
@@ -291,6 +300,7 @@ export default function Account({ session }) {
                 comment: comment,
                 deptchair: deptchair,
                 leavestatus: leavestatus,
+                coa: coastatus,
             };
 
             let { error } = await supabase.from("profiles").upsert(updates);
@@ -349,6 +359,31 @@ export default function Account({ session }) {
                     <em>
                         *You have indicated that you will NOT be on leave for
                         one or both semesters next year
+                    </em>
+                </p>
+            </div>
+        );
+    }
+
+    function ExperienceStatus() {
+        if (coaMarked) {
+            return (
+                <div>
+                    <p style={{ color: "#3399ff" }}>
+                        <em>
+                            *You have indicated that you HAVE at least one year
+                            of experience on COA
+                        </em>
+                    </p>
+                </div>
+            );
+        }
+        return (
+            <div>
+                <p style={{ color: "#cc0000" }}>
+                    <em>
+                        *You have indicated that you DO NOT HAVE at least one
+                        year of experience on COA
                     </em>
                 </p>
             </div>
@@ -590,6 +625,17 @@ export default function Account({ session }) {
         }
         setLeaveStatus(e.target.value);
     };
+
+    const handleExperienceRadioChange = (e) => {
+        if (coaMarked) {
+            setCoaMarked(false);
+        } else {
+            setCoaMarked(true);
+        }
+        setCoaStatus(e.target.value);
+        console.log("COA TEST", coastatus);
+    };
+
     return (
         <div className="container mx-auto py-4">
             <div className="mt-2 ">
@@ -766,6 +812,38 @@ export default function Account({ session }) {
                 {LeaveStatus()}
             </div>
 
+            <div>
+                <Label>Experience information</Label>
+
+                <form>
+                    <div className="experienceRadio">
+                        <label>
+                            <input
+                                type="radio"
+                                value={true}
+                                checked={coaMarked}
+                                onChange={handleExperienceRadioChange}
+                            />
+                            I WILL have, at the end of this academic year, at
+                            least one year of experience on COA
+                        </label>
+                    </div>
+                    <div className="experienceRadio">
+                        <label>
+                            <input
+                                type="radio"
+                                value={false}
+                                checked={!coaMarked}
+                                onChange={handleExperienceRadioChange}
+                            />
+                            I WILL NOT have, at the end of this academic year,
+                            at least one year of experience on COA
+                        </label>
+                    </div>
+                </form>
+
+                {ExperienceStatus()}
+            </div>
             <InterestedSelects
                 options={options}
                 willingCommittees={willingCommittees}
@@ -832,6 +910,7 @@ export default function Account({ session }) {
                                 comment,
                                 deptchair,
                                 leavestatus,
+                                coastatus,
                             });
                             updateProfileCommittees({
                                 willingCommittees,
