@@ -195,8 +195,8 @@ function id() {
                 <div>
                     <p style={{ color: "#3399ff" }}>
                         <em>
-                            You have indicated that you WILL be on Committee on
-                            Appointments next year.
+                            You have indicated that you WILL have 1 yr
+                            experience on COA before next year.
                         </em>
                     </p>
                 </div>
@@ -206,8 +206,8 @@ function id() {
                 <div>
                     <p style={{ color: "#cc0000" }}>
                         <em>
-                            You have indicated that you will NOT be on Committee
-                            on Appointments next year.
+                            You have indicated that you will NOT have 1 yr
+                            experience on COA before next year.
                         </em>
                     </p>
                 </div>
