@@ -23,7 +23,6 @@ function Committee({ committee, key, curSession, curAdmin }) {
     const [interestLevel, setInterestLevel] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [interestLevelsState, setInterestLevelsState] = useState(null);
-
     const stringifyCommittee = {
         ...committee,
         interested_users: JSON.stringify(committee.interested_users),
@@ -57,6 +56,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
     }
 
     useEffect(() => {
+        // console.log("USER here", user);
         async function getInterestedCommittees() {
             const { data, error, status } = await supabase
                 .from("profiles")
@@ -75,10 +75,11 @@ function Committee({ committee, key, curSession, curAdmin }) {
         getInterestedCommittees();
     }, []);
 
-    const updateProfileCommittees = async (e) => {
-        e.preventDefault();
-        const newInterestLevels = handleInterestLevelsChange();
+    const updateProfileCommittees = async (newValue) => {
+        const newInterestLevels = handleInterestLevelsChange(newValue);
+        // we want to add the committee id from newValue into the newInterestLevels obj
 
+        console.log("newInterestLevels", newInterestLevels);
         const { data, error } = await supabase
             .from("profiles")
             .update({ interested_committees: newInterestLevels })
@@ -90,25 +91,88 @@ function Committee({ committee, key, curSession, curAdmin }) {
         } else {
             console.log("DATA", data);
         }
+        await handleInterestUsersInCommittee(newValue);
+
         setShowSuccess(true);
+        setTimeout(() => {
+            setShowSuccess(false);
+        }, 3000);
         // return data;
     };
 
-    const handleInterestLevelsChange = () => {
+    const handleInterestLevelsChange = (newInterestLevel) => {
         let newInterestLevels = { ...interestLevelsState };
+        console.log("interestLevel in handleChange", newInterestLevel);
         for (let key in newInterestLevels) {
             newInterestLevels[key] = newInterestLevels[key].filter(
                 (id) => id !== committee.id
             );
         }
 
-        if (interestLevel !== "Not Interested in Serving") {
-            newInterestLevels[interestLevelsToKey[interestLevel]].push(
+        if (newInterestLevel !== "Not Interested in Serving") {
+            newInterestLevels[interestLevelsToKey[newInterestLevel]].push(
                 committee.id
             );
         }
         setInterestLevelsState(newInterestLevels);
         return newInterestLevels;
+    };
+
+    const getInterestedUsersFromCommittees = async () => {
+        const { data, error } = await supabase
+            .from("committees")
+            .select("interested_users")
+            .eq("id", committee.id);
+
+        if (error) {
+            console.log(error);
+            return;
+        } else {
+            return data;
+        }
+    };
+
+    const handleInterestUsersInCommittee = async (newInterestLevel) => {
+        let interestedUsers = await getInterestedUsersFromCommittees();
+
+        for (let key in interestedUsers[0]["interested_users"]) {
+            interestedUsers[0]["interested_users"][key] = interestedUsers[0][
+                "interested_users"
+            ][key].filter((id) => id !== user.id);
+        }
+        // console.log(
+        //     "K here",
+        //     user.id,
+        //     interestedUsers[0]["interested_users"],
+        //     newInterestLevel,
+        //     interestLevelsToKey[newInterestLevel]
+        // );
+        if (newInterestLevel !== "Not Interested in Serving") {
+            let key = interestLevelsToKey[newInterestLevel];
+            interestedUsers[0]["interested_users"][key].push(user.id);
+        }
+
+        console.log("K new", interestedUsers[0]["interested_users"]);
+
+        const { data, error } = await supabase
+            .from("committees")
+            .update({
+                interested_users: interestedUsers[0]["interested_users"],
+            })
+            .eq("id", committee.id);
+
+        if (error) {
+            console.log(error);
+            return;
+        } else {
+            console.log("NEW DATA", data);
+        }
+    };
+
+    const onFormUpdate = async (e) => {
+        console.log("format of e", e.target.value);
+        setInterestLevel(e.target.value);
+        await updateProfileCommittees(e.target.value);
     };
 
     return (
@@ -152,10 +216,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                             <Button>Visit Committee Page</Button>
                         </Link>
                     </div>
-                    <form
-                        className={styles.right_section}
-                        onSubmit={updateProfileCommittees}
-                    >
+                    <form className={styles.right_section}>
                         <h3 style={{ fontSize: "20px", fontWeight: "bold" }}>
                             Interested in {committee.display_name}?
                         </h3>
@@ -165,9 +226,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                 name="interest"
                                 value="Willing to Serve"
                                 checked={interestLevel === "Willing to Serve"}
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
+                                onChange={onFormUpdate}
                             />
                             <div>Willing to Serve</div>
                         </div>
@@ -179,9 +238,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                 checked={
                                     interestLevel === "Interested to Serve"
                                 }
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
+                                onChange={onFormUpdate}
                             />
                             <div>Interested to Serve</div>
                         </div>
@@ -193,9 +250,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                 checked={
                                     interestLevel === "High Interest to Serve"
                                 }
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
+                                onChange={onFormUpdate}
                             />
                             <div>High Interest in Serving</div>
                         </div>
@@ -208,19 +263,10 @@ function Committee({ committee, key, curSession, curAdmin }) {
                                     "Not Interested in Serving"
                                 }
                                 value="Not Interested in Serving"
-                                onChange={(e) =>
-                                    setInterestLevel(e.target.value)
-                                }
+                                onChange={onFormUpdate}
                             />
                             <div>Not Interested</div>
                         </div>
-                        <Button
-                            className={styles.submitButton}
-                            type="submit"
-                            // onClick={updateProfileCommittees}
-                        >
-                            Submit
-                        </Button>
                         {showSuccess && <SuccessMessage />}
                     </form>
                 </div>
