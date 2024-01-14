@@ -76,7 +76,7 @@ function Committee({ committee, key, curSession, curAdmin }) {
     }, []);
 
     const updateProfileCommittees = async (newValue) => {
-        const newInterestLevels = handleInterestLevelsChange(newValue);
+        const newInterestLevels = await handleInterestLevelsChange(newValue);
         // we want to add the committee id from newValue into the newInterestLevels obj
 
         console.log("newInterestLevels", newInterestLevels);
@@ -100,8 +100,18 @@ function Committee({ committee, key, curSession, curAdmin }) {
         // return data;
     };
 
-    const handleInterestLevelsChange = (newInterestLevel) => {
-        let newInterestLevels = { ...interestLevelsState };
+    const handleInterestLevelsChange = async (newInterestLevel) => {
+        const { data, error, status } = await supabase
+            .from("profiles")
+            .select("interested_committees")
+            .eq("id", curSession.session.user.id);
+
+        if (error && status !== 406) {
+            throw error;
+        }
+
+        let newInterestLevels = data[0].interested_committees;
+        console.log("TEST", newInterestLevels);
         console.log("interestLevel in handleChange", newInterestLevel);
         for (let key in newInterestLevels) {
             newInterestLevels[key] = newInterestLevels[key].filter(
