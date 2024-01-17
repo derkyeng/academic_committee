@@ -277,7 +277,19 @@ function Committee({ committee, key, curSession, curAdmin }) {
                             />
                             <div>Not Interested</div>
                         </div>
-                        {showSuccess && <SuccessMessage />}
+                        {showSuccess && (
+                            <div
+                                style={{
+                                    marginTop: "20px",
+                                    color: "#270",
+                                    backgroundColor: "#DFF2BF",
+                                }}
+                            >
+                                <p>
+                                    Your profile information has been updated!
+                                </p>
+                            </div>
+                        )}
                     </form>
                 </div>
             </Card>
