@@ -232,13 +232,15 @@ function Committee({ committee, key, curSession, curAdmin }) {
                         </h3>
                         <div className="flex items-center gap-2">
                             <Radio
-                                id="willing"
+                                id="highInt"
                                 name="interest"
-                                value="Willing to Serve"
-                                checked={interestLevel === "Willing to Serve"}
+                                value="High Interest to Serve"
+                                checked={
+                                    interestLevel === "High Interest to Serve"
+                                }
                                 onChange={onFormUpdate}
                             />
-                            <div>Willing to Serve</div>
+                            <div>High Interest in Serving</div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Radio
@@ -254,15 +256,13 @@ function Committee({ committee, key, curSession, curAdmin }) {
                         </div>
                         <div className="flex items-center gap-2">
                             <Radio
-                                id="highInt"
+                                id="willing"
                                 name="interest"
-                                value="High Interest to Serve"
-                                checked={
-                                    interestLevel === "High Interest to Serve"
-                                }
+                                value="Willing to Serve"
+                                checked={interestLevel === "Willing to Serve"}
                                 onChange={onFormUpdate}
                             />
-                            <div>High Interest in Serving</div>
+                            <div>Willing to Serve</div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Radio

@@ -311,10 +311,10 @@ function id() {
             </h3>
             <CommitteePreviewWrapper>
                 <div className="w-full">
-                    <h3 className="text-lg font-bold text-red-600">
-                        Willing to Serve:
+                    <h3 className="text-lg font-bold text-green-600">
+                        High Interest in Serving:
                     </h3>
-                    {renderCommitteeItems(willingInterestedCommittees)}
+                    {renderCommitteeItems(highInterestedCommittees)}
                 </div>
                 <div className="w-full">
                     <h3 className="text-lg font-bold text-blue-600">
@@ -323,10 +323,10 @@ function id() {
                     {renderCommitteeItems(interestedCommittees)}
                 </div>
                 <div className="w-full">
-                    <h3 className="text-lg font-bold text-green-600">
-                        High Interest in Serving:
+                    <h3 className="text-lg font-bold text-red-600">
+                        Willing to Serve:
                     </h3>
-                    {renderCommitteeItems(highInterestedCommittees)}
+                    {renderCommitteeItems(willingInterestedCommittees)}
                 </div>
             </CommitteePreviewWrapper>
         </div>

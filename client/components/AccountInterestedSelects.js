@@ -24,37 +24,41 @@ export default function AccountInterestedSelects({
             <h2 className="mt-4 text-lg font-bold">
                 Select the committees you are interested in serving on.{" "}
             </h2>
-            <div className="mt-2 ">
-                <Label htmlFor="willing">Willing to Serve</Label>
+            <div className="mt-2">
+                <Label htmlFor="highinterest">High Interest in Serving</Label>
                 <RSelect
                     isMulti
-                    id="willing"
-                    name="Willing To Serve"
+                    id="highinterest"
+                    name="High Interest Commmittees"
                     className="basic-multi-select"
                     classNamePrefix="select"
                     options={removeSelected(options, [
+                        ...willingCommittees,
                         ...interestedCommittees,
-                        ...highInterestCommittees,
                     ])}
-                    value={willingCommittees}
+                    value={highInterestCommittees}
                     onChange={(interests) => {
                         // Removal Occured
-                        if (interests.length < willingCommittees.length) {
-                            let difference = willingCommittees.filter(
+                        console.log("High Interest Change");
+                        console.log(interests.length);
+                        console.log(removeHighInterestCommittees.length);
+                        if (interests.length < highInterestCommittees.length) {
+                            let difference = highInterestCommittees.filter(
                                 (committee) => !interests.includes(committee)
                             );
+                            console.log(difference.value);
                             if (
-                                !removeWillingCommittees.includes(
+                                !removeHighInterestCommittees.includes(
                                     difference[0].value
                                 )
                             ) {
-                                setRemoveWillingCommittees((current) => [
+                                setRemoveHighInterestCommittees((current) => [
                                     ...current,
                                     difference[0].value,
                                 ]);
                             }
                         }
-                        setWillingCommittees(interests);
+                        setHighInterestCommittees(interests);
                     }}
                 />
             </div>
@@ -94,41 +98,37 @@ export default function AccountInterestedSelects({
                     }}
                 />
             </div>
-            <div className="mt-2">
-                <Label htmlFor="highinterest">High Interest in Serving</Label>
+            <div className="mt-2 ">
+                <Label htmlFor="willing">Willing to Serve</Label>
                 <RSelect
                     isMulti
-                    id="highinterest"
-                    name="High Interest Commmittees"
+                    id="willing"
+                    name="Willing To Serve"
                     className="basic-multi-select"
                     classNamePrefix="select"
                     options={removeSelected(options, [
-                        ...willingCommittees,
                         ...interestedCommittees,
+                        ...highInterestCommittees,
                     ])}
-                    value={highInterestCommittees}
+                    value={willingCommittees}
                     onChange={(interests) => {
                         // Removal Occured
-                        console.log("High Interest Change");
-                        console.log(interests.length);
-                        console.log(removeHighInterestCommittees.length);
-                        if (interests.length < highInterestCommittees.length) {
-                            let difference = highInterestCommittees.filter(
+                        if (interests.length < willingCommittees.length) {
+                            let difference = willingCommittees.filter(
                                 (committee) => !interests.includes(committee)
                             );
-                            console.log(difference.value);
                             if (
-                                !removeHighInterestCommittees.includes(
+                                !removeWillingCommittees.includes(
                                     difference[0].value
                                 )
                             ) {
-                                setRemoveHighInterestCommittees((current) => [
+                                setRemoveWillingCommittees((current) => [
                                     ...current,
                                     difference[0].value,
                                 ]);
                             }
                         }
-                        setHighInterestCommittees(interests);
+                        setWillingCommittees(interests);
                     }}
                 />
             </div>
