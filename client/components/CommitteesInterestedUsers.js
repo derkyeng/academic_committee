@@ -14,16 +14,16 @@ function CommitteesInterestedUsers({
     }
     const sections = [
         {
-            level: "willing",
-            title: "Willing to Serve:",
+            level: "high",
+            title: "High Interest in Serving:",
         },
         {
             level: "interest",
             title: "Interested in Serving:",
         },
         {
-            level: "high",
-            title: "High Interest in Serving:",
+            level: "willing",
+            title: "Willing to Serve:",
         },
     ];
     return (

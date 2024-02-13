@@ -5,16 +5,16 @@ function InterestLevel({ formData, handleFormChange }) {
     const levelOptions = [
         { value: 0, label: "Any" },
         {
-            value: "1",
-            label: "Willing",
+            value: "3",
+            label: "High Interest",
         },
         {
             value: "2",
             label: "Interested",
         },
         {
-            value: "3",
-            label: "High Interest",
+            value: "1",
+            label: "Willing",
         },
     ];
 
