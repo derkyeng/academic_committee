@@ -6,157 +6,142 @@ import { supabase } from "../utils/supabaseClient";
 import { useRouter } from "next/router";
 
 const Navigationbar = ({ session }) => {
-    const [profilePic, setProfilePic] = useState(null);
-    const [name, setName] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [adminStatus, setAdminStatus] = useState(null);
-    const router = useRouter();
+	const [profilePic, setProfilePic] = useState(null);
+	const [name, setName] = useState(null);
+	const [email, setEmail] = useState(null);
+	const [adminStatus, setAdminStatus] = useState(null);
+	const router = useRouter();
 
-    async function getProfile() {
-        if (session?.user) {
-            const { data } = supabase.storage
-                .from("avatars")
-                .getPublicUrl(`avatars/${session.user.id}`);
-            console.log(data.publicUrl);
-            setProfilePic(data.publicUrl);
-            setName(session.user.user_metadata.full_name);
-            setEmail(session.user.email);
-            getAdminStatus();
-        }
-    }
+	async function getProfile() {
+		if (session?.user) {
+			const { data } = supabase.storage
+				.from("avatars")
+				.getPublicUrl(`avatars/${session.user.id}`);
+			console.log(data.publicUrl);
+			setProfilePic(data.publicUrl);
+			setName(session.user.user_metadata.full_name);
+			setEmail(session.user.email);
+			getAdminStatus();
+		}
+	}
 
-    async function getAdminStatus() {
-        let { data: profiles, error } = await supabase
-            .from("profiles")
-            .select()
-            .eq("email", session.user.email);
-        if (error) {
-            console.error(error);
-            return;
-        }
-        console.log(profiles);
-        try {
-            if (profiles[0].admin) {
-                setAdminStatus(true);
-            } else {
-                setAdminStatus(false);
-            }
-        } catch {
-            console.log("no admin");
-        }
-    }
+	async function getAdminStatus() {
+		let { data: profiles, error } = await supabase
+			.from("profiles")
+			.select()
+			.eq("email", session.user.email);
+		if (error) {
+			console.error(error);
+			return;
+		}
+		console.log(profiles);
+		try {
+			if (profiles[0].admin) {
+				setAdminStatus(true);
+			} else {
+				setAdminStatus(false);
+			}
+		} catch {
+			console.log("no admin");
+		}
+	}
 
-    useEffect(() => {
-        getProfile();
-    }, [session]);
+	useEffect(() => {
+		getProfile();
+	}, [session]);
 
-    return (
-        <div>
-            <Navbar fluid={true} rounded={true}>
-                <Navbar.Brand>
-                    <button
-                        onClick={() => {
-                            router.push("/");
-                        }}
-                    >
-                        <img
-                            src="/hamilton_logo.jpg"
-                            style={{
-                                display: "inline-block",
-                                flexDirection: "row",
-                                width: "60px",
-                            }}
-                        />
-                        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                            Academic Committee
-                        </span>
-                    </button>
-                </Navbar.Brand>
-                <div style={{ display: "flex" }}>
-                    {!session?.user ? (
-                        <Navbar.Collapse>
-                            <Navbar.Link href="/login">Login</Navbar.Link>
-                        </Navbar.Collapse>
-                    ) : (
-                        <Dropdown
-                            label={
-                                <Avatar
-                                    img={profilePic}
-                                    rounded={true}
-                                    style={{
-                                        border: "1px solid blue",
-                                        borderRadius: "50%",
-                                    }}
-                                />
-                            }
-                            arrowIcon={false}
-                            inline={true}
-                        >
-                            <Dropdown.Header>
-                                <span className="block text-sm">{name}</span>
-                                <span className="block truncate text-sm font-medium">
-                                    {email}
-                                </span>
-                            </Dropdown.Header>
-                            {adminStatus ? (
-                                <Dropdown.Item
-                                    onClick={() => {
-                                        router.push("/faculty/dashboard");
-                                    }}
-                                >
-                                    Dashboard
-                                </Dropdown.Item>
-                            ) : (
-                                <div></div>
-                            )}
-                            
-                                <Dropdown.Item
-                                    onClick={() => {
-                                        router.push("/committees/committees");
-                                    }}
-                                >
-                                    Committees
-                                </Dropdown.Item>
-                            
-                            <Dropdown.Item
-                                // onClick={ () => {
-                                //     router.push("/faculty/" + session.user.id);
-                                //     console.log("YAABBAA", session.user.id);
+	return (
+		<div>
+			<Navbar fluid={true} rounded={true}>
+				<Navbar.Brand>
+					<button
+						onClick={() => {
+							router.push("/");
+						}}
+					>
+						<img
+							src="/hamilton_logo.jpg"
+							style={{
+								display: "inline-block",
+								flexDirection: "row",
+								width: "60px",
+							}}
+						/>
+						<span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+							Academic Committee
+						</span>
+					</button>
+				</Navbar.Brand>
+				<div style={{ display: "flex" }}>
+					{!session?.user ? (
+						<Navbar.Collapse>
+							<Navbar.Link href="/login">Login</Navbar.Link>
+						</Navbar.Collapse>
+					) : (
+						<div className="flex space-x-4">
+							<Avatar img={profilePic} rounded>
+								<div className="space-y-1 font-medium dark:text-white">
+									<div>{name}</div>
+									<div className="text-sm text-gray-500 dark:text-gray-400">
+										{email}
+									</div>
+								</div>
+							</Avatar>
+							<Dropdown label="Menu" color="light">
+								{adminStatus ? (
+									<Dropdown.Item
+										onClick={() => {
+											router.push("/faculty/dashboard");
+										}}
+									>
+										Dashboard
+									</Dropdown.Item>
+								) : (
+									<div></div>
+								)}
+								<Dropdown.Item
+									onClick={() => {
+										router.push("/committees/committees");
+									}}
+								>
+									Committees
+								</Dropdown.Item>
 
-                                //     window.location.reload();
-                                // }}
-                                onClick={() => {
-                                    // console.log(session.user.id);
-                                    router.push("/faculty/" + session.user.id);
-                                    window.location.reload;
-                                }}
-                            >
-                                My Profile
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                                onClick={() => {
-                                    router.push("/account");
-                                }}
-                            >
-                                Edit Profile
-                            </Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item
-                                onClick={async () => {
-                                    const { error } =
-                                        await supabase.auth.signOut();
-                                    router.push("/");
-                                    window.location.reload();
-                                }}
-                            >
-                                Sign out
-                            </Dropdown.Item>
-                        </Dropdown>
-                    )}
-                </div>
-            </Navbar>
-        </div>
-    );
+								<Dropdown.Item
+									onClick={() => {
+										router.push(
+											"/faculty/" + session.user.id
+										);
+										window.location.reload;
+									}}
+								>
+									My Profile
+								</Dropdown.Item>
+								<Dropdown.Item
+									onClick={() => {
+										router.push("/account");
+									}}
+								>
+									Edit Profile
+								</Dropdown.Item>
+								<Dropdown.Divider />
+								<Dropdown.Item
+									onClick={async () => {
+										const { error } =
+											await supabase.auth.signOut();
+										router.push("/");
+										window.location.reload();
+									}}
+								>
+									Sign out
+								</Dropdown.Item>
+							</Dropdown>
+						</div>
+					)}
+				</div>
+			</Navbar>
+		</div>
+	);
 };
 
 export default Navigationbar;
