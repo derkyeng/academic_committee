@@ -87,7 +87,11 @@ const Navigationbar = ({ session }) => {
 									</div>
 								</div>
 							</Avatar>
-							<Dropdown label="Menu" color="light">
+							<Dropdown
+								label="Menu"
+								color="light"
+								dismissOnClick={false}
+							>
 								{adminStatus ? (
 									<Dropdown.Item
 										onClick={() => {
