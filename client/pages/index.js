@@ -34,7 +34,7 @@ export default function Home({ session }) {
 
 	return (
 		<div style={{ padding: "50px 0 100px 0", margin: "15px", textAlign: "center" }}>
-			{session && (
+			{session ? (
 				<Card>
 					<h1 className={styles.header}>Welcome to the Hamilton College Academic Committee Website!</h1>
 					<h2 className={styles.header_2}>Click the button below to view and edit your profile.</h2>
@@ -49,6 +49,11 @@ export default function Home({ session }) {
 						</Button>
 					</div>
 				</Card>
+			) : (
+				<div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+					<h1 className={styles.header}>Welcome to Hamilton College Academic Committee</h1>
+					<h2 className={styles.header_2}>Please click the Login button in the top right corner to get started</h2>
+				</div>
 			)}
 		</div>
 	);
