@@ -8,7 +8,7 @@ import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
 import { Radio } from "flowbite-react";
 import getCurrentUser from "../utils/getCurrentUser";
-import SuccessMessage from "./SuccessMessage";
+import { SuccessMessage, WarningMessage } from "./Message";
 
 const interestLevelsToKey = {
     "Willing to Serve": "1",

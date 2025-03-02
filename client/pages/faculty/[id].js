@@ -215,38 +215,102 @@ function id() {
         }
     }
 
-    useEffect(() => {
-        getCommittees();
-        console.log(user);
-    }, [router]);
-
     return (
-        <div className="w-full">
-            <div className="flex items-end cursor-pointer justify-center">
-                <h1 className="text-2xl underline font-bold w-fit mt-8 mr-3">
-                    {name}
-                </h1>
-                <div
-                    className="w-6 h-6"
-                    onClick={() => {
-                        setCommentsModal(true);
-                    }}
+        <div className="w-full max-w-6xl mx-auto px-4 py-8">
+            <div className="flex items-end justify-between mb-8 border-b-2 border-blue-200 pb-6">
+                <div className="flex items-end gap-4">
+                    <Avatar 
+                        img="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" 
+                        rounded={true} 
+                        size="xl" 
+                    />
+                    <h1 className="text-3xl font-bold text-gray-800">{name}</h1>
+                </div>
+                <div 
+                    className="cursor-pointer hover:bg-blue-50 p-2 rounded-full"
+                    onClick={() => setCommentsModal(true)}
                 >
-                    <img src="/messages-regular.svg"></img>
+                    <img src="/messages-regular.svg" className="w-8 h-8 text-blue-600" />
                 </div>
             </div>
-            <div>
-                <label style={{ fontWeight: "bold" }}>
-                    Department Chair Status: {ChairStatus()}
-                </label>
 
-                <label style={{ fontWeight: "bold" }}>
-                    Leave Status: {LeaveStatus()}
-                </label>
-                <label style={{ fontWeight: "bold" }}>
-                    Committee on Appointments: {CoaStatus()}
-                </label>
+            <div className="grid md:grid-cols-3 gap-4 mb-12">
+                <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                    <label className="text-sm font-semibold text-gray-600 block mb-2">
+                        Department Chair Status
+                    </label>
+                    {ChairStatus()}
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                    <label className="text-sm font-semibold text-gray-600 block mb-2">
+                        Leave Status
+                    </label>
+                    {LeaveStatus()}
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                    <label className="text-sm font-semibold text-gray-600 block mb-2">
+                        Committee on Appointments
+                    </label>
+                    {CoaStatus()}
+                </div>
             </div>
+
+            <CommitteePreviewWrapper>
+                <div className="space-y-8">
+                    <section>
+                        <h3 className="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-blue-500">
+                            Current Committees
+                        </h3>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {renderCommitteeItems(currentCommittees)}
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 className="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-blue-500">
+                            Past Committees
+                        </h3>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {renderCommitteeItems(pastCommittees)}
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 className="text-xl font-bold text-gray-800 mb-4 pl-2 border-l-4 border-blue-500">
+                            Interested Committees
+                        </h3>
+                        <div className="space-y-6">
+                            <div className="bg-red-50 p-4 rounded-lg">
+                                <h4 className="text-lg font-semibold text-red-700 mb-3">
+                                    Willing to Serve
+                                </h4>
+                                <div className="grid md:grid-cols-2 gap-3">
+                                    {renderCommitteeItems(willingInterestedCommittees)}
+                                </div>
+                            </div>
+                            
+                            <div className="bg-blue-50 p-4 rounded-lg">
+                                <h4 className="text-lg font-semibold text-blue-700 mb-3">
+                                    Interested in Serving
+                                </h4>
+                                <div className="grid md:grid-cols-2 gap-3">
+                                    {renderCommitteeItems(interestedCommittees)}
+                                </div>
+                            </div>
+                            
+                            <div className="bg-green-50 p-4 rounded-lg">
+                                <h4 className="text-lg font-semibold text-green-700 mb-3">
+                                    High Interest in Serving
+                                </h4>
+                                <div className="grid md:grid-cols-2 gap-3">
+                                    {renderCommitteeItems(highInterestedCommittees)}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </CommitteePreviewWrapper>
+
             <Modal
                 dismissible={true}
                 show={commentsModal}
@@ -265,70 +329,6 @@ function id() {
                     </div>
                 </Modal.Body>
             </Modal>
-            <div className="w-full flex my-6 justify-center">
-                <Avatar img={profilePic} rounded={true} />
-            </div>
-            <CommitteePreviewWrapper>
-                <div className="w-full">
-                    <h3
-                        className="p-2 pl-4 text-lg my-6 font-bold"
-                        style={{
-                            border: "solid",
-                            borderRadius: "10px",
-                            borderWidth: "2px",
-                            borderColor: "rgb(22, 45, 255)",
-                        }}
-                    >
-                        Current Committees:
-                    </h3>
-                    {renderCommitteeItems(currentCommittees)}
-                </div>
-                <div className="w-full">
-                    <h3
-                        className="p-2 pl-4 text-lg my-6 font-bold "
-                        style={{
-                            border: "solid",
-                            borderRadius: "10px",
-                            borderWidth: "2px",
-                            borderColor: "rgb(22, 45, 255)",
-                        }}
-                    >
-                        Past Committees:
-                    </h3>
-                    {renderCommitteeItems(pastCommittees)}
-                </div>
-            </CommitteePreviewWrapper>
-            <h3
-                className="text-lg my-6 font-bold p-4"
-                style={{
-                    border: "solid",
-                    borderRadius: "10px",
-                    borderWidth: "2px",
-                    borderColor: "rgb(22, 45, 255)",
-                }}
-            >
-                Interested Committees:
-            </h3>
-            <CommitteePreviewWrapper>
-                <div className="w-full">
-                    <h3 className="text-lg font-bold text-red-600">
-                        Willing to Serve:
-                    </h3>
-                    {renderCommitteeItems(willingInterestedCommittees)}
-                </div>
-                <div className="w-full">
-                    <h3 className="text-lg font-bold text-blue-600">
-                        Interested in Serving:
-                    </h3>
-                    {renderCommitteeItems(interestedCommittees)}
-                </div>
-                <div className="w-full">
-                    <h3 className="text-lg font-bold text-green-600">
-                        High Interest in Serving:
-                    </h3>
-                    {renderCommitteeItems(highInterestedCommittees)}
-                </div>
-            </CommitteePreviewWrapper>
         </div>
     );
 }

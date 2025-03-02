@@ -79,7 +79,10 @@ const Navigationbar = ({ session }) => {
 						</Navbar.Collapse>
 					) : (
 						<div className="flex space-x-4">
-							<Avatar img={profilePic} rounded>
+							<Avatar 
+								img="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" 
+								rounded
+							>
 								<div className="space-y-1 font-medium dark:text-white">
 									<div>{name}</div>
 									<div className="text-sm text-gray-500 dark:text-gray-400">

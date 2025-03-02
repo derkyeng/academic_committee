@@ -13,7 +13,7 @@ import {
 } from "flowbite-react";
 import InterestedSelects from "./AccountInterestedSelects";
 import RSelect from "react-select";
-import SuccessMessage from "./SuccessMessage";
+import { SuccessMessage, WarningMessage } from "./Message";
 
 export default function Account({ session }) {
     const [loading, setLoading] = useState(true);
@@ -657,6 +657,7 @@ export default function Account({ session }) {
 
     return (
         <div className="container mx-auto py-4">
+            {!hamId && <WarningMessage />}
             {leavestatus && (
                 <p className="text-red-700">
                     <em>

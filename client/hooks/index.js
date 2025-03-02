@@ -196,17 +196,9 @@ const useCommittees = () => {
 const useAvatar = (user_id) => {
 	const [profilePic, setProfilePic] = useState(null);
 
-	// Make this better in the future
+	// Modified to always return default avatar
 	async function getProfilePic(user_id) {
-		const { data } = supabase.storage.from("avatars").getPublicUrl(`avatars/${user_id}`);
-		let isUndefined = data.publicUrl.substr(data.publicUrl.length - 9);
-		if (isUndefined !== "undefined") {
-			setProfilePic(data.publicUrl);
-		} else {
-			setProfilePic(
-				"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
-			);
-		}
+		setProfilePic("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png");
 	}
 
 	useEffect(() => {

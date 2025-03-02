@@ -38,7 +38,10 @@ function User({ user }) {
 				}}
 			>
 				<Card>
-					<Avatar img={profilePic} rounded={true} />
+					<Avatar 
+						img="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" 
+						rounded={true} 
+					/>
 					<h1>{user.username}</h1>
 					<div style={{ display: "flex", marginLeft: "auto" }}>
 						{!admin ? 
