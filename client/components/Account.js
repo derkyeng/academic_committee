@@ -656,339 +656,296 @@ export default function Account({ session }) {
     };
 
     return (
-        <div className="container mx-auto py-4">
+        <div className="container mx-auto py-4 max-w-4xl">
             {!hamId && <WarningMessage />}
-            {leavestatus && (
-                <p className="text-red-700">
-                    <em>
-                        You have indicated that you are on leave. Please update
-                        your leave status in order to re-activate your profile
-                    </em>
-                </p>
-            )}
-            <div className="mt-2 ">
-                <Label htmlFor="email">Email</Label>
-                <TextInput
-                    id="email"
-                    type="text"
-                    value={session?.user.email}
-                    disabled
-                />
-            </div>
-            <div className="mt-2">
-                <Label htmlFor="username">Name</Label>
-                <TextInput
-                    id="username"
-                    type="text"
-                    value={username || ""}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-            </div>
-            <div className="mt-2">
-                <Label htmlFor="username">Hamilton ID</Label>
-                <TextInput
-                    id="hamId"
-                    type="text"
-                    value={hamId || ""}
-                    onChange={(e) => setHamId(e.target.value)}
-                />
-            </div>
-            <div className="mt-2">
-                <Label htmlFor="username">Rank</Label>
-                <Select
-                    id="username"
-                    type="text"
-                    value={rank || ""}
-                    onChange={(e) => setRank(e.target.value)}
-                >
-                    <option value="assistant">Assistant Professor</option>
-                    <option value="full">Full Professor</option>
-                    <option value="athletic">Athletic Faculty</option>
-                    <option value="associate">Associate Professor</option>
-                </Select>
-            </div>
+            
+            {/* Main Form Container */}
+            <Card className="shadow-lg">
+                {/* Personal Information Section */}
+                <div className="space-y-6">
+                    <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
+                        Profile Information
+                    </h2>
 
-            {/* change past committees and committee interests to select multiple options */}
-            <div className="mt-2 ">
-                <Label htmlFor="currentcommittees">Current Committees</Label>
-                <RSelect
-                    isMulti
-                    id="currentcommittees "
-                    name="Current Committees"
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    options={options}
-                    value={currentCommittees}
-                    onChange={(interests) => {
-                        // Removal Occured
-                        if (interests.length < currentCommittees.length) {
-                            let difference = currentCommittees.filter(
-                                (committee) => !interests.includes(committee)
-                            );
-                            if (
-                                !removeCurrentCommittees.includes(
-                                    difference[0].value
-                                )
-                            ) {
-                                setRemoveCurrentCommittees((current) => [
-                                    ...current,
-                                    difference[0].value,
-                                ]);
-                            }
-                        }
-                        setCurrentCommittees(interests);
-                    }}
-                />
-            </div>
-            <div className="mt-2 ">
-                <Label htmlFor="pastcommittees">Past Committees</Label>
-                <RSelect
-                    isMulti
-                    id="pastcommittees"
-                    name="Past Committees"
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    options={options}
-                    value={pastCommittees}
-                    onChange={(interests) => {
-                        // Removal Occured
-                        if (interests.length < pastCommittees.length) {
-                            let difference = pastCommittees.filter(
-                                (committee) => !interests.includes(committee)
-                            );
-                            if (
-                                !removePastCommittees.includes(
-                                    difference[0].value
-                                )
-                            ) {
-                                setRemovePastCommittees((current) => [
-                                    ...current,
-                                    difference[0].value,
-                                ]);
-                            }
-                        }
-                        setPastCommittees(interests);
-                    }}
-                />
-            </div>
-
-            <div>
-                <Label>Department chair information</Label>
-
-                <form>
-                    <div className="radio">
-                        <label>
-                            <input
-                                type="radio"
-                                value={true}
-                                checked={deptChairMarked}
-                                onChange={handleRadioChange}
-                            />
-                            I will be a department or program chair for one or
-                            both semesters next year
-                        </label>
+                    {/* Email Field */}
+                    <div>
+                        <Label htmlFor="email" value="Email" className="text-gray-700" />
+                        <TextInput
+                            id="email"
+                            value={session?.user.email}
+                            disabled
+                            className="mt-1 bg-gray-50"
+                        />
                     </div>
 
-                    <div className="radio">
-                        <label>
-                            <input
-                                type="radio"
-                                value={false}
-                                checked={deptChairNotMarked}
-                                onChange={handleRadioChange}
+                    {/* Grid Layout for Name and Hamilton ID */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="username" value="Full Name" className="text-gray-700" />
+                            <TextInput
+                                id="username"
+                                value={username || ""}
+                                onChange={(e) => setUsername(e.target.value)}
+                                className="mt-1"
                             />
-                            I will NOT be a department or program chair for one
-                            or both semesters next year
-                        </label>
-                    </div>
-                </form>
-
-                {ChairStatus()}
-            </div>
-
-            <div>
-                <Label>Leave information</Label>
-
-                <form>
-                    <div className="leaveRadio">
-                        <label>
-                            <input
-                                type="radio"
-                                value={true}
-                                checked={leaveMarked}
-                                onChange={handleLeaveRadioChange}
+                        </div>
+                        <div>
+                            <Label htmlFor="hamId" value="Hamilton ID" className="text-gray-700" />
+                            <TextInput
+                                id="hamId"
+                                value={hamId || ""}
+                                onChange={(e) => setHamId(e.target.value)}
+                                className="mt-1"
                             />
-                            I WILL be on leave for one or both semesters next
-                            year
-                        </label>
+                        </div>
                     </div>
 
-                    <div className="leaveRadio">
-                        <label>
-                            <input
-                                type="radio"
-                                value={false}
-                                checked={leaveNotMarked}
-                                onChange={handleLeaveRadioChange}
-                            />
-                            I will NOT be on leave for one or both semesters
-                            next year
-                        </label>
+                    {/* Rank Selection */}
+                    <div>
+                        <Label htmlFor="rank" value="Academic Rank" className="text-gray-700" />
+                        <Select
+                            id="rank"
+                            value={rank || ""}
+                            onChange={(e) => setRank(e.target.value)}
+                            className="mt-1"
+                        >
+                            <option value="assistant">Assistant Professor</option>
+                            <option value="full">Full Professor</option>
+                            <option value="athletic">Athletic Faculty</option>
+                            <option value="associate">Associate Professor</option>
+                        </Select>
                     </div>
-                </form>
 
-                {LeaveStatus()}
-            </div>
-
-            <div>
-                <Label>Experience information</Label>
-
-                <form>
-                    <div className="experienceRadio">
-                        <label>
-                            <input
-                                type="radio"
-                                value={true}
-                                checked={coaMarked}
-                                onChange={handleExperienceRadioChange}
+                    {/* Committee Sections */}
+                    <div className="space-y-6 pt-4 border-t">
+                        <h3 className="text-xl font-semibold text-gray-800">Committee Involvement</h3>
+                        
+                        {/* Current Committees */}
+                        <div>
+                            <Label value="Current Committees" className="text-gray-700" />
+                            <RSelect
+                                isMulti
+                                options={options}
+                                value={currentCommittees}
+                                onChange={(interests) => {
+                                    // Removal Occured
+                                    if (interests.length < currentCommittees.length) {
+                                        let difference = currentCommittees.filter(
+                                            (committee) => !interests.includes(committee)
+                                        );
+                                        if (
+                                            !removeCurrentCommittees.includes(
+                                                difference[0].value
+                                            )
+                                        ) {
+                                            setRemoveCurrentCommittees((current) => [
+                                                ...current,
+                                                difference[0].value,
+                                            ]);
+                                        }
+                                    }
+                                    setCurrentCommittees(interests);
+                                }}
+                                className="mt-1 border rounded-lg"
                             />
-                            I WILL have, at the end of this academic year, at
-                            least one year of experience on COA
-                        </label>
-                    </div>
-                    <div className="experienceRadio">
-                        <label>
-                            <input
-                                type="radio"
-                                value={false}
-                                checked={!coaMarked}
-                                onChange={handleExperienceRadioChange}
+                        </div>
+
+                        {/* Past Committees */}
+                        <div>
+                            <Label value="Past Committees" className="text-gray-700" />
+                            <RSelect
+                                isMulti
+                                options={options}
+                                value={pastCommittees}
+                                onChange={(interests) => {
+                                    // Removal Occured
+                                    if (interests.length < pastCommittees.length) {
+                                        let difference = pastCommittees.filter(
+                                            (committee) => !interests.includes(committee)
+                                        );
+                                        if (
+                                            !removePastCommittees.includes(
+                                                difference[0].value
+                                            )
+                                        ) {
+                                            setRemovePastCommittees((current) => [
+                                                ...current,
+                                                difference[0].value,
+                                            ]);
+                                        }
+                                    }
+                                    setPastCommittees(interests);
+                                }}
+                                className="mt-1 border rounded-lg"
                             />
-                            I WILL NOT have, at the end of this academic year,
-                            at least one year of experience on COA
-                        </label>
+                        </div>
                     </div>
-                </form>
 
-                {ExperienceStatus()}
-            </div>
-            <InterestedSelects
-                options={options}
-                willingCommittees={willingCommittees}
-                setWillingCommittees={setWillingCommittees}
-                interestedCommittees={interestedCommittees}
-                setInterestedCommittees={setInterestedCommittees}
-                highInterestCommittees={highInterestCommittees}
-                setHighInterestCommittees={setHighInterestCommittees}
-                removeWillingCommittees={removeWillingCommittees}
-                setRemoveWillingCommittees={setRemoveWillingCommittees}
-                removeInterestedCommittees={removeInterestedCommittees}
-                setRemoveInterestedCommittees={setRemoveInterestedCommittees}
-                removeHighInterestCommittees={removeHighInterestCommittees}
-                setRemoveHighInterestCommittees={
-                    setRemoveHighInterestCommittees
-                }
-            />
+                    {/* Status Sections with Cards */}
+                    <div className="space-y-6 pt-4 border-t">
+                        <div className="p-4 bg-blue-50 rounded-lg">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Department Chair Status</h3>
+                            <form>
+                                <div className="radio">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={true}
+                                            checked={deptChairMarked}
+                                            onChange={handleRadioChange}
+                                        />
+                                        I will be a department or program chair for one or
+                                        both semesters next year
+                                    </label>
+                                </div>
 
-            {/* ------------------------------------------------------------------------- */}
-            {/* Add current committess, not as choice but as a fixed parameter */}
+                                <div className="radio">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={false}
+                                            checked={deptChairNotMarked}
+                                            onChange={handleRadioChange}
+                                        />
+                                        I will NOT be a department or program chair for one
+                                        or both semesters next year
+                                    </label>
+                                </div>
+                            </form>
 
-            <div className="mt-2 " id="fileUpload">
-                <div className="mb-2 block">
-                    <Label htmlFor="profile" value="Upload Profile Picture" />
-                </div>
-                <FileInput
-                    id="avatar"
-                    name="avatar"
-                    type="file"
-                    onChange={(e) => {
-                        setAvatarUrl(e.target?.files[0]);
-                    }}
-                    accept="image/png, image/jpeg"
-                    helperText="A profile picture is useful to confirm your are logged into your account"
-                />
-            </div>
-            <br></br>
-            <div>
-                <label
-                    for="message"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                    Leave any comments you may have for the Academic Council:
-                </label>
-                <textarea
-                    id="message"
-                    rows="4"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Write your thoughts here..."
-                    onChange={(e) => {
-                        setComment(e.target.value);
-                    }}
-                    value={comment}
-                ></textarea>
-            </div>
-            <div className="mt-4 flex">
-                <div className="pr-4">
-                    <Button
-                        className="button primary block"
-                        onClick={() => {
-                            updateProfile({
-                                username,
-                                avatar_url,
-                                comment,
-                                deptchair,
-                                leavestatus,
-                                coastatus,
-                            });
-                            updateProfileCommittees({
-                                willingCommittees,
-                                interestedCommittees,
-                                highInterestCommittees,
-                            });
-                            console.log("will also update committees");
-                            removeCommitteeMembers({
-                                removeWillingCommittees,
-                                removeInterestedCommittees,
-                                removeHighInterestCommittees,
-                            }).then(() => {
-                                updateCommitteeMembers({
-                                    interestedCommittees,
-                                    pastCommittees,
-                                    currentCommittees,
+                            {ChairStatus()}
+                        </div>
+
+                        <div className="p-4 bg-blue-50 rounded-lg">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Leave Status</h3>
+                            <form>
+                                <div className="leaveRadio">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={true}
+                                            checked={leaveMarked}
+                                            onChange={handleLeaveRadioChange}
+                                        />
+                                        I WILL be on leave for one or both semesters next
+                                        year
+                                    </label>
+                                </div>
+
+                                <div className="leaveRadio">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={false}
+                                            checked={leaveNotMarked}
+                                            onChange={handleLeaveRadioChange}
+                                        />
+                                        I will NOT be on leave for one or both semesters
+                                        next year
+                                    </label>
+                                </div>
+                            </form>
+
+                            {LeaveStatus()}
+                        </div>
+
+                        <div className="p-4 bg-blue-50 rounded-lg">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">COA Experience</h3>
+                            <form>
+                                <div className="experienceRadio">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={true}
+                                            checked={coaMarked}
+                                            onChange={handleExperienceRadioChange}
+                                        />
+                                        I WILL have, at the end of this academic year, at
+                                        least one year of experience on COA
+                                    </label>
+                                </div>
+                                <div className="experienceRadio">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value={false}
+                                            checked={!coaMarked}
+                                            onChange={handleExperienceRadioChange}
+                                        />
+                                        I WILL NOT have, at the end of this academic year,
+                                        at least one year of experience on COA
+                                    </label>
+                                </div>
+                            </form>
+
+                            {ExperienceStatus()}
+                        </div>
+                    </div>
+
+                    {/* Update Button */}
+                    <div className="pt-6 border-t">
+                        <Button
+                            gradientMonochrome="info"
+                            className="w-full md:w-auto px-8 py-2.5"
+                            onClick={() => {
+                                updateProfile({
+                                    username,
+                                    avatar_url,
+                                    comment,
+                                    deptchair,
+                                    leavestatus,
+                                    coastatus,
+                                });
+                                updateProfileCommittees({
                                     willingCommittees,
+                                    interestedCommittees,
                                     highInterestCommittees,
                                 });
-                            });
-
-                            console.log("Removing these");
-                            console.log(removeWillingCommittees);
-                            console.log(removeInterestedCommittees);
-                            console.log(removeHighInterestCommittees);
-
-                            setAccountChangeSaved(
-                                AccountChangeSaved.concat(<SuccessMessage />)
-                            );
-
-                            if ("caches" in window) {
-                                caches.keys().then((names) => {
-                                    // Delete all the cache files
-                                    names.forEach((name) => {
-                                        caches.delete(name);
+                                console.log("will also update committees");
+                                removeCommitteeMembers({
+                                    removeWillingCommittees,
+                                    removeInterestedCommittees,
+                                    removeHighInterestCommittees,
+                                }).then(() => {
+                                    updateCommitteeMembers({
+                                        interestedCommittees,
+                                        pastCommittees,
+                                        currentCommittees,
+                                        willingCommittees,
+                                        highInterestCommittees,
                                     });
                                 });
 
-                                // Makes sure the page reloads. Changes are only visible after you refresh.
-                            }
+                                console.log("Removing these");
+                                console.log(removeWillingCommittees);
+                                console.log(removeInterestedCommittees);
+                                console.log(removeHighInterestCommittees);
 
-                            // window.location.reload();
-                        }}
-                        disabled={loading}
-                    >
-                        {loading ? "Loading ..." : "Update"}
-                    </Button>
-                    {AccountChangeSaved}
+                                setAccountChangeSaved(
+                                    AccountChangeSaved.concat(<SuccessMessage />)
+                                );
+
+                                if ("caches" in window) {
+                                    caches.keys().then((names) => {
+                                        // Delete all the cache files
+                                        names.forEach((name) => {
+                                            caches.delete(name);
+                                        });
+                                    });
+
+                                    // Makes sure the page reloads. Changes are only visible after you refresh.
+                                }
+
+                                // window.location.reload();
+                            }}
+                            disabled={loading}
+                        >
+                            {loading ? "Saving..." : "Save Changes"}
+                        </Button>
+                        {AccountChangeSaved}
+                    </div>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 }

@@ -6,6 +6,7 @@ import AddCommitteeBar from "../../components/CommitteesDisplay/AddCommitteeBar"
 import CommitteeModal from "../../components/CommitteesDisplay/CommitteeModal";
 import { useCommittees } from "../../hooks";
 import { supabase } from "../../utils/supabaseClient";
+
 function committees() {
     const [committees] = useCommittees();
     const [modal, setModal] = useState(false);
@@ -88,68 +89,65 @@ function committees() {
         getAdminStatus(email);
         getInterestedCommittees();
     }, [session]);
-    return (
-        <div>
-            {admin ? (
-                <div>
-                    <AddCommitteeBar openModal={() => setModal(true)} />
-                    <CommitteeModal
-                        closeModal={() => setModal(false)}
-                        modal={modal}
-                    />
-                </div>
-            ) : (
-                <></>
-            )}
-            <h1
-                style={{
-                    fontWeight: "bold",
-                    fontSize: "35px",
-                    marginBottom: "30px",
-                }}
-            >
-                Elected Committees
-            </h1>
-            {committees.length == 0
-                ? "loading"
-                : committees.map((committee_item) =>
-                      committee_item.elected && session ? (
-                          <Committee
-                              committee={committee_item}
-                              key={committee_item.id}
-                              curSession={session}
-                              interestLevels={interested_committees}
-                              curAdmin={admin}
-                          />
-                      ) : (
-                          <></>
-                      )
-                  )}
 
-            <h1
-                style={{
-                    fontWeight: "bold",
-                    fontSize: "35px",
-                    marginBottom: "30px",
-                }}
-            >
-                Appointed Committees
-            </h1>
-            {committees.length == 0
-                ? "loading"
-                : committees.map((committee_item) =>
-                      !committee_item.elected && session ? (
-                          <Committee
-                              committee={committee_item}
-                              key={committee_item.id}
-                              interestLevels={interested_committees}
-                              curSession={session}
-                              curAdmin={admin}
-                          />
-                      ) : (
-                          <></>
-                      )
-                  )}
+    return (
+        <div className="container mx-auto px-4 py-8">
+            {admin && (
+                <div className="mb-8 flex justify-end">
+                    <Button 
+                        gradientMonochrome="info"
+                        onClick={() => setModal(true)}
+                        className="px-6 py-3"
+                    >
+                        + Add New Committee
+                    </Button>
+                </div>
+            )}
+
+            {/* Elected Committees Section */}
+            <section className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-blue-500 pb-2">
+                    Elected Committees
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {committees.map((committee_item) => 
+                        committee_item.elected && session && (
+                            <Committee 
+                                key={committee_item.id}
+                                committee={committee_item}
+                                curSession={session}
+                                interestLevels={interested_committees}
+                                curAdmin={admin}
+                            />
+                        )
+                    )}
+                </div>
+            </section>
+
+            {/* Appointed Committees Section */}
+            <section className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-blue-500 pb-2">
+                    Appointed Committees
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {committees.map((committee_item) => 
+                        !committee_item.elected && session && (
+                            <Committee 
+                                key={committee_item.id}
+                                committee={committee_item}
+                                curSession={session}
+                                interestLevels={interested_committees}
+                                curAdmin={admin}
+                            />
+                        )
+                    )}
+                </div>
+            </section>
+
+            <CommitteeModal
+                closeModal={() => setModal(false)}
+                modal={modal}
+            />
         </div>
     );
 }
