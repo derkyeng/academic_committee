@@ -16,7 +16,7 @@ export default function Home({ session }) {
 			.from("faculty_profiles")
 			.select()
 			.eq("email", email);
-		if (error) {
+	if (error) {
 			console.error(error);
 			return;
 		}
