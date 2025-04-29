@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Button } from "flowbite-react";
+import { Button, TextInput } from "flowbite-react";
 import Committee from "../../components/Committee";
 import AddCommitteeBar from "../../components/CommitteesDisplay/AddCommitteeBar";
 import CommitteeModal from "../../components/CommitteesDisplay/CommitteeModal";
@@ -13,6 +13,7 @@ function committees() {
     const [session, setSession] = useState(null);
     const [admin, setAdmin] = useState(false);
     const [interested_committees, setInterestedCommittees] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const setAuthSession = async () => {
@@ -90,19 +91,41 @@ function committees() {
         getInterestedCommittees();
     }, [session]);
 
+    // Filter committees based on search term
+    const filteredCommittees = committees.filter(committee => 
+        committee.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        committee.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="container mx-auto px-4 py-8">
-            {admin && (
-                <div className="mb-8 flex justify-end">
-                    <Button 
-                        gradientMonochrome="info"
-                        onClick={() => setModal(true)}
-                        className="px-6 py-3"
-                    >
-                        + Add New Committee
-                    </Button>
+            {/* Search and Add Committee Bar */}
+            <div className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="w-full md:w-1/2">
+                    <TextInput
+                        id="search"
+                        type="text"
+                        placeholder="Search committees..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full"
+                        icon="search"
+                    />
                 </div>
-            )}
+                
+                {admin && (
+                    <div className="flex justify-end">
+                        <Button 
+                            gradientDuoTone="purpleToBlue"
+                            size="lg"
+                            onClick={() => setModal(true)}
+                            className="px-6 py-2 font-bold shadow-lg hover:scale-105 transition-transform"
+                        >
+                            + Add New Committee
+                        </Button>
+                    </div>
+                )}
+            </div>
 
             {/* Elected Committees Section */}
             <section className="mb-12">
@@ -110,7 +133,7 @@ function committees() {
                     Elected Committees
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {committees.map((committee_item) => 
+                    {filteredCommittees.map((committee_item) => 
                         committee_item.elected && session && (
                             <Committee 
                                 key={committee_item.id}
@@ -130,7 +153,7 @@ function committees() {
                     Appointed Committees
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {committees.map((committee_item) => 
+                    {filteredCommittees.map((committee_item) => 
                         !committee_item.elected && session && (
                             <Committee 
                                 key={committee_item.id}
